@@ -1,0 +1,1 @@
+per ora metto solo le folder per l'inserimento dei file html css ecc per loredana, ho già upload"ato" il mio mini progetto con waitress e ha funzionato
