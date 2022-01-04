@@ -1,0 +1,32 @@
+
+/* Variables section */
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,400&display=swap');
+:root {
+    --darker-color: #1A2541;
+    --primary-color: #054B86;
+    --azure-color: #0083C7;
+    --celeste-color: #71C3E8;
+    --light-color: #BCD9EB;
+    --black-color: #0B1632;
+    --white-color: #F3F7FB;
+}
+body {
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+}
+.step > div {
+    background-color: var(--white-color);
+    border: 2px solid var(--darker-color);
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    text-align: center;
+    font-size: 14px;
+}
+.step > p {
+    font-size: 12px;
+    font-weight: 700;
+}
+#step2, #step3 {
+    visibility: hidden;
+}
