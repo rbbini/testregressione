@@ -115,10 +115,14 @@ def preprocessing(data):
     
     columns_to_drop = ['Data operazione', 'Data dimissione', 'Procedura intervento', 'HHS Function PreOp', 'HHS Total PreOp']
     
-    data_preop(columns_to_drop, axis  = 1, inplace = True)
+    data_preop.drop(columns_to_drop, axis  = 1, inplace = True)
     
     return data_preop
     
     
-    
+def predictions_hip_phys_6months(data):   
+    loaded_model = pickle.load(open('saveTestToyPhysical.sav', 'rb'))
+    predictions = loaded_model.predict(data)
+    # in che formato devo passare le cose a loredana?
+    return True
     
