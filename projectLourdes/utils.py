@@ -139,11 +139,11 @@ def predictions_hip_6months(data):
             #nel caso bisogni aggiungere dati al estimation qui :
             
             
-estimation = {"SF12 PhysicalScore 6months": predictionsP['SF12 PhysicalScore 6months'], 
-              "SF12 MentalScore 6months": predictionsM['SF12 MentalScore 6months']
-}            
+    estimation = {"SF12 PhysicalScore 6months": predictionsP['SF12 PhysicalScore 6months'], 
+                  "SF12 MentalScore 6months": predictionsM['SF12 MentalScore 6months']
+    }            
             
-      path = Path.cwd()
+    path = Path.cwd()
         
     with open(path, 'w') as fp:
         json.dump(pd.DataFrame.from_dict(estimation,orient = 'columns').to_json(), fp)
