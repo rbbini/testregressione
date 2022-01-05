@@ -9,6 +9,9 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import ElasticNet
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import RepeatedKFold
+import os 
+import os.path
+from pathlib import Path
 
 
 data = pd.read_excel(r'C:\Users\rober\Desktop\PROMS\data\data_reg_anca.xls')
@@ -120,9 +123,34 @@ def preprocessing(data):
     return data_preop
     
     
-def predictions_hip_phys_6months(data):   
+def predictions_hip_6months(data):   
     loaded_model = pickle.load(open('saveTestToyPhysical.sav', 'rb'))
-    predictions = loaded_model.predict(data)
-    # in che formato devo passare le cose a loredana?
-    return True
+    predictionsP = loaded_model.predict(data)
+    loaded_model = pickle.load(open('saveTestToyMental.sav', 'rb'))
+    predictionsM = loaded_model.predict(data)
+    
+
+
+#estimation = {"ID":patient_id.ID, "DATA_VISITA": patient_id['DATA VISITA'],
+    #              "Sesso":patient_id.SESSO,"Age": observations["ETA'"].round(0),'Peso': patient_id['PESO (Kg)'],
+              #    'Altezza':patient_id['ALTEZZA (cm)'], 'Age_Reader_Score': predictions.round(3),
+                #  'Biological_Age':estimated_age,'Delta':delta.round(3)}
+
+            #nel caso bisogni aggiungere dati al estimation qui :
+            
+            
+estimation = {"SF12 PhysicalScore 6months": predictionsP['SF12 PhysicalScore 6months'], 
+              "SF12 MentalScore 6months": predictionsM['SF12 MentalScore 6months']
+}            
+            
+      path = Path.cwd()
+        
+    with open(path, 'w') as fp:
+        json.dump(pd.DataFrame.from_dict(estimation,orient = 'columns').to_json(), fp)
+    return pd.DataFrame.from_dict(estimation,orient = 'columns')
+
+
+
+
+
     
