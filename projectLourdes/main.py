@@ -1,6 +1,8 @@
-from flask import Flask, flash, request, secure_filename, render_template
+from flask import Flask, flash, request, render_template
+from werkzeug.utils import secure_filename
 import os
 import pandas as pd
+from utils import preprocessing, predictions_hip_6months
 
 app = Flask(__name__)
 
@@ -43,7 +45,9 @@ def input():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
         dataset = pd.read_excel(filepath)
-        return render_template('inserire il nome della pagina html')
+        data_preprocessed = preprocessing(dataset)
+        predictions_hip_6months(data_preprocessed)
+        return render_template('base.html')
     return True
 
 
