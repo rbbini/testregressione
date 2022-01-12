@@ -1,18 +1,7 @@
 import pandas as pd 
 import numpy as np
 import pickle
-import matplotlib.pyplot as plt 
-import seaborn as sns
-import xgboost
-from sklearn.model_selection import GroupShuffleSplit
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import ElasticNet
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import RepeatedKFold
-import os 
-import os.path
-from pathlib import Path
-import json
+import statistics
 
 
 data = pd.read_excel(r'C:\Users\rober\Desktop\PROMS\data\data_reg_anca.xls')
@@ -52,15 +41,62 @@ def from_obj_to_num(x):
     return res 
 
 
+def check_gender(x):
+    if x.lower() == 'm':
+        gender = 0
+    elif x.lower() == 'f':
+        gender = 1
+    else:
+        gender = np.nan
+    return gender
+
+
+def check_equipe(df):
+    if not '36h orto - moroni' in df.columns:
+        df['36h orto - moroni'] = 0
+    if not '36p orto - parente' in df.columns:
+        df['36p orto - parente'] = 0
+    if not 'casco' in df.columns:
+        df['casco'] = 0   
+    if not 'centro di traumatologia dello sport' in df.columns:
+        df['centro di traumatologia dello sport'] = 0
+    if not 'chirurgia anca i' in df.columns:
+        df['chirurgia anca i'] = 0
+    if not 'clinica ortopedica' in df.columns:
+        df['clinica ortopedica'] = 0
+    if not 'e.u.o.r.r.' in df.columns:
+        df['e.u.o.r.r.'] = 0
+    if not 'gspine4' in df.columns:
+        df['gspine4'] = 0
+    if not 'oraco' in df.columns:
+        df['oraco'] = 0
+    if not 'ot9 orto - ventura2' in df.columns:
+        df['ot9 orto - ventura2'] = 0
+    return df
+
+
+def check_event(df):
+    if not 'bilaterale protesi primo intervento' in df.columns:
+        df['bilaterale protesi primo intervento'] = 0
+    if not 'destra protesi primo intervento' in df.columns:
+        df['destra protesi primo intervento'] = 0
+    if not 'destra revisione' in df.columns:
+        df['destra revisione'] = 0
+    if not 'sinistra protesi primo intervento' in df.columns:
+        df['sinistra protesi primo intervento'] = 0
+    if not 'sinistra revisione' in df.columns:
+        df['sinistra revisione'] = 0
+    return df
+
 
 def preprocessing(data):
     data = data.replace('#null', np.nan)
     
     data = data.apply(from_obj_to_num)
 
-    data = data[~data['SF12 MentalScore 6months'].isna()]
-    
-    data = data[~data['SF12 PhysicalScore 6months'].isna()]
+    #data = data[~data['SF12 MentalScore 6months'].isna()]
+
+    #data = data[~data['SF12 PhysicalScore 6months'].isna()]
     
     data = data[~data['SF12 MentalScore PreOp'].isna()]
     
@@ -84,15 +120,15 @@ def preprocessing(data):
     
     data_preop = data_clean.loc[:, columns_preop]
 
+    with open('lista_nome_evento.pkl', 'rb') as f:
+        lista_nome_evento = pickle.load(f)
+        
     def normalize_nomevento(x):
         if x in lista_nome_evento:
             nome_evento = x
         else:
             nome_evento = np.nan
         return nome_evento
-
-    with open('lista_nome_evento.pkl', 'rb') as f:
-        lista_nome_evento = pickle.load(f)
     
     data_preop['Nome evento'] = preproces_nomeevento(data_preop)
 
@@ -107,11 +143,14 @@ def preprocessing(data):
     
     data_preop = data_preop[data_preop['Nome equipe'] != 'chirurgia del ginocchio i']
     
-    data_preop.Sesso = pd.get_dummies(data_preop.Sesso, drop_first= True) #0 F 1 M
-    
     data_preop = pd.concat([data_preop.drop(['Nome evento'], axis = 1), pd.get_dummies(data_preop['Nome evento'])], axis = 1)
 
     data_preop = pd.concat([data_preop.drop(['Nome equipe'], axis = 1), pd.get_dummies(data_preop['Nome equipe'])], axis = 1)
+    
+    #data_preop.Sesso = pd.get_dummies(data_preop.Sesso, drop_first= True) #0 F 1 M
+    data_preop['Sesso'] = data_preop['Sesso'].apply(check_gender)
+    data_preop = check_equipe(data_preop)
+    data_preop = check_event(data_preop)
     
     columns_to_drop = ['Data operazione', 'Data dimissione', 'Procedura intervento', 'HHS Function PreOp', 'HHS Total PreOp']
     
@@ -119,17 +158,18 @@ def preprocessing(data):
     
     
     # dopo la colonna "Uid" (la prima) elimina tutte le colonne che non hanno nel nome "3months"/"6months"/"12months"
-    data_3month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='3months', axis=1)], axis = 1)
+    #data_3month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='3months', axis=1)], axis = 1)
     
-    data_6month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='6months', axis=1)], axis = 1)
+    #data_6month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='6months', axis=1)], axis = 1)
     
-    data_12month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='12months', axis=1)], axis = 1)
+    #data_12month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='12months', axis=1)], axis = 1)
     
     
     return data_preop
     
     
 def predictions_hip_6months(data):  
+    # drop dell'id perchè non riesce a convertirlo in float
     data.drop('Uid', axis = 1, inplace = True)
     
     with open("model_6months_phy.pkl", 'rb') as file:
@@ -139,32 +179,55 @@ def predictions_hip_6months(data):
         loaded_model2 = pickle.load(file)
     predictionsM = loaded_model2.predict(data)
     
-
-
-#estimation = {"ID":patient_id.ID, "DATA_VISITA": patient_id['DATA VISITA'],
-    #              "Sesso":patient_id.SESSO,"Age": observations["ETA'"].round(0),'Peso': patient_id['PESO (Kg)'],
-              #    'Altezza':patient_id['ALTEZZA (cm)'], 'Age_Reader_Score': predictions.round(3),
-                #  'Biological_Age':estimated_age,'Delta':delta.round(3)}
-
-            #nel caso bisogni aggiungere dati al estimation qui :
-            
+    age = data['Anni ricovero'].to_numpy()
+    age = age.astype(int)           
             
     estimation = {"SF12 PhysicalScore 6months": predictionsP, 
-                  "SF12 MentalScore 6months": predictionsM
-    }            
-            
-    path = Path.cwd()
-    path = path / "result.json"
-        
-    with open(path, 'w') as fp:
-        json.dump(pd.DataFrame.from_dict(estimation,orient = 'columns').to_json(), fp)
-    return True
+                  "SF12 MentalScore 6months": predictionsM,
+                  "age": age,
+                  "medianaP": statistics.median(predictionsP), # la mediana è sui valori giusti?
+                  "medianaM": statistics.median(predictionsM)
+    }      
 
-#data_prepr = preprocessing(data)
-#predictions_hip_6months(data_prepr)
+    # "eta'": data[['Anni ricovero']]
+    # QUESTA RIGA RIPORTA I VALORI IN UN FORMATO DIVERSO RISPETTO A QUELLE SOPRA. CREA PROBLEMI?
+    # print(data['Anni ricovero'])
+    return estimation
 
 
 
+
+
+
+# -------------------- PER TESTING --------------------------------------------
+"""
+data_prepr = preprocessing(data)
+e =predictions_hip_6months(data_prepr)
+print(e)
+input_data = {
+    "Uid": 'IOG1RH100000001',#.id_paziente.data
+    "Sesso": 'M', #.sesso.data
+    "Anni ricovero": '10',
+    "Data operazione": '2013-01-07 00:00:00.0',
+    "Data dimissione": '2013-01-11 00:00:00.0',
+    "Nome evento": 'SINISTRA protesi primo intervento',
+    "Nome equipe": 'ORACO',
+    "Procedura intervento": 'PROTESI ANCA  SIN',
+    "HHS Function PreOp": '#null',
+    "HHS Total PreOp": '54999',
+    "VAS PAIN risp PreOp": '0',
+    "SF12 PhysicalScore PreOp": '29',
+    "SF12 MentalScore PreOp": '41.1',
+    "HOOSPS Total PreOp": '37.7',
+    "BMI altezza risp PreOp": '0',
+    "BMI peso risp PreOp": '0',
+    "BMI Total PreOp": '0'
+    }
+input_data = pd.DataFrame.from_dict(input_data, orient='index').T
+data_preprocessed = preprocessing(input_data)
+estimation = predictions_hip_6months(data_preprocessed)
+print(estimation)
+"""
 
 
 
