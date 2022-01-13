@@ -11,10 +11,10 @@ function goToNextStep(step) {
     nextStep.classList.add('visible');
     console.log(obj);
 }
-const radioButtons = document.querySelector('input[name="dataSource"]');
-radioButtons.addEventListener('change',function(e){
-    if(this.checked){
-        if(this.value == 'manually'){
+const objFormSource = document.getElementById("objSource");
+    objFormSource.addEventListener('change',function(e){
+        const sourceValue = document.querySelector('input[name="dataSource"]:checked').value;
+        if(sourceValue == 'manually'){
             const manualStep = document.getElementById('manuallyForm');
             manualStep.classList.add('visible');
             const otherStep = document.getElementById('episodeForm');
@@ -22,7 +22,7 @@ radioButtons.addEventListener('change',function(e){
                 otherStep.classList.remove('visible');
             }
 
-        } else if (this.value == 'patientEpisode'){
+        } else if (sourceValue == 'patientEpisode'){
             const episodeStep = document.getElementById('episodeForm');
             episodeStep.classList.add('visible');
             const otherStep = document.getElementById('manuallyForm');
@@ -30,14 +30,13 @@ radioButtons.addEventListener('change',function(e){
                 otherStep.classList.remove('visible');
             }
         }
-    }
-});
+    });
 function goToResults() {
-//    const formData = document.getElementById('step1').elements;
-//    for(var i = 0 ; i < formData.length ; i++){
-//        var item = formData.item(i);
-//        obj[item.name] = item.value;
-//    }
+    const formData = document.getElementById('step1').elements;
+    for(var i = 0 ; i < formData.length ; i++){
+        var item = formData.item(i);
+        obj[item.name] = item.value;
+    }
 //    const hideStep = document.getElementById('step1');
 //        hideStep.classList.add('hidden');
     /* passare obj se serve prendere l'oggetto che viene generato dal form per passarlo al backend

@@ -61,30 +61,29 @@ def output():
         elif request.form.get("submit_b"):
             form = request.form
             input_data = {
-                "Uid": form,#.id_paziente.data
-                "Sesso": form, #.sesso.data
-                "Anni ricovero": form,
-                "Data operazione": form,
-                "Data dimissione": form,
-                "Nome evento": form,
-                "Nome equipe": form,
-                "Procedura intervento": form,
-                "HHS Function PreOp": form,
-                "HHS Total PreOp": form,
-                "VAS PAIN risp PreOp": form,
-                "SF12 PhysicalScore PreOp": form,
-                "SF12 MentalScore PreOp": form,
-                "HOOSPS Total PreOp": form,
-                "BMI altezza risp PreOp": form,
-                "BMI peso risp PreOp": form,
-                "BMI Total PreOp": form,
+                "Uid": form['uid'],#.id_paziente.data
+                "Sesso": form['sesso'], #.sesso.data
+                "Anni ricovero": form['anni_ricovero'],
+                "Data operazione": form['data_operazione'],
+                "Data dimissione": form['data_dimissione'],
+                "Nome evento": form['nome_evento'],
+                "Nome equipe": form['nome_equipe'],
+                "Procedura intervento": form['procedura_intervento'],
+                "HHS Function PreOp": form['anni_ricovero'],
+                "HHS Total PreOp": form['anni_ricovero'],
+                "VAS PAIN risp PreOp": form['anni_ricovero'],
+                "SF12 PhysicalScore PreOp": form['anni_ricovero'],
+                "SF12 MentalScore PreOp": form['anni_ricovero'],
+                "HOOSPS Total PreOp": form['anni_ricovero'],
+                "BMI altezza risp PreOp": form['anni_ricovero'],
+                "BMI peso risp PreOp": form['anni_ricovero'],
+                "BMI Total PreOp": form['anni_ricovero'],
                 }
             input_data = pd.DataFrame.from_dict(input_data).T
             data_preprocessed = preprocessing(input_data)
             results = jsonify(predictions_hip_6months(data_preprocessed))
             return results
-
-        return 'Dati non validi'
+        else: return 'Dati non validi'
 
 
 if __name__ =="__main__":  

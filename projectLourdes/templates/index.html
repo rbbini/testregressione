@@ -97,12 +97,12 @@
 		</div>
 		<div class="border-bottom py-4">
 			<h2 class="text-blue text-uppercase">Input data</h2>
-			<p>Selezionare il data source e l'episodio</p>
+			<p>Selezionare il data source o inserire l'episodio</p>
 			<p>Seleziona il data source</p>
-			<div class="row">
+			<div class="row" id="objSource">
 				<div class="col-xl-4 col-md-6 col-12">
 					<div class="form-check">
-						<input class="form-check-input" type="radio" name="dataSource" id="dataSourceManual" value="manually" checked>
+						<input class="form-check-input" type="radio" name="dataSource" id="dataSourceManual" value="manually">
 						<label class="form-check-label" for="dataSourceManual">
 							Insert data maunaully
 						</label>
@@ -117,16 +117,112 @@
 					</div>
 				</div>
 			</div>
-			<div class="" id="manuallyForm">Inserisci manuale</div>
-			<div id="episodeForm">Inserisci episodio</div>
+			<div class="row" id="manuallyForm">
+				<div class="form-group col-xl-4 col-md-6 col-12">
+					<label for="file" class="form-label">Inserisci dataset</label>
+					<input class="form-control" aria-label="insert file xsls or xls" id="file" name="file" type="file">
+				</div>
+				<div class="col-12 text-end mt-3">
+					<button type="submit" class="btn btn-primary" onclick="goToResults()" name="submit_a">
+						visualizza grafici
+					</button>
+				</div>
+			</div>
+			<div id="episodeForm">
+				<div class="row">
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="uid" class="form-label">Uid</label>
+						<input class="form-control" aria-label="UID" id="uid" name="uid" type="text">
+					</div>
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="sex" class="form-label">Sesso</label>
+						<div class="d-flex" id="sex">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="sesso" value="male" id="male">
+								<label class="form-check-label" for="male">
+									Maschio
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="radio" value="female" name="sesso" id="female">
+								<label class="form-check-label" for="female">
+									Femmina
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="anni_ricovero" class="form-label">Età paziente</label>
+						<input class="form-control" aria-label="età" id="anni_ricovero" name="anni_ricovero" type="number">
+					</div>
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="data_operazione" class="form-label">Data operazione</label>
+						<input class="form-control" aria-label="Data operazione" id="data_operazione" name="data_operazione" type="date">
+					</div>
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="data_dimissione" class="form-label">Data dimissione</label>
+						<input class="form-control" aria-label="Data dimissione" id="data_dimissione" name="data_dimissione" type="date">
+					</div>
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="nome_evento" class="form-label">Nome evento</label>
+						<input class="form-control" aria-label="Nome evento" id="nome_evento" name="nome_evento" type="text">
+					</div>
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="nome_equipe" class="form-label">Nome equipe</label>
+						<input class="form-control" aria-label="Nome equipe" id="nome_equipe" name="nome_equipe" type="text">
+					</div>
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="procedura_intervento" class="form-label">Procedura intervento</label>
+						<input class="form-control" aria-label="procedura intervento" id="procedura_intervento" name="procedura_intervento" type="text">
+					</div>
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="HHS_FpreOp" class="form-label">HHS Function PreOp</label>
+						<input class="form-control" aria-label="HHS_FpreOp" id="HHS_FpreOp" name="HHS_FpreOp" type="text">
+					</div>
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="HHS_TpreOp" class="form-label">HHS Total PreOp</label>
+						<input class="form-control" aria-label="UID" id="HHS_TpreOp" name="HHS_TpreOp" type="text">
+					</div>
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="VAS_PAIN_PreOp" class="form-label">VAS PAIN risp PreOp</label>
+						<input class="form-control" aria-label="UID" id="VAS_PAIN_PreOp" name="VAS_PAIN_PreOp" type="text">
+					</div>
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="physicalScore" class="form-label">SF12 PhysicalScore PreOp</label>
+						<input class="form-control" aria-label="physicalScore" id="physicalScore" name="physicalScore" type="text">
+					</div>
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="mentalScore" class="form-label">SF12 MentalScore PreOp</label>
+						<input class="form-control" aria-label="mentalScore" id="mentalScore" name="mentalScore" type="text">
+					</div>
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="HOOSPS" class="form-label">HOOSPS Total PreOp</label>
+						<input class="form-control" aria-label="HOOSPS" id="HOOSPS" name="HOOSPS" type="text">
+					</div>
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="bmi_altezza_preOp" class="form-label">BMI altezza risp PreOp</label>
+						<input class="form-control" aria-label="BMI altezza risp PreOp" id="bmi_altezza_preOp" name="bmi_altezza_preOp" type="text">
+					</div>
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="bmi_peso_preOp" class="form-label">BMI peso risp PreOp</label>
+						<input class="form-control" aria-label="BMI peso risp PreOp" id="bmi_peso_preOp" name="bmi_peso_preOp" type="text">
+					</div>
+					<div class="form-group col-xl-4 col-md-6 col-12">
+						<label for="bmi_total_preOp" class="form-label">BMI Total PreOp</label>
+						<input class="form-control" aria-label="BMI Total PreOp" id="bmi_total_preOp" name="bmi_total_preOp" type="text">
+					</div>
+				</div>
+				<div class="col-12 text-end mt-3">
+					<button type="submit" class="btn btn-primary" onclick="goToResults()" name="submit_b">
+						visualizza grafici
+					</button>
+				</div>
+			</div>
 		</div>
 		<div class="col-12 text-end mt-3">
-			<button type="button" class="btn btn-primary" onclick="goToResults()">
-				visualizza grafici
-			</button>
-			<button type="button" class="btn btn-primary" onclick="violinPlot()">
-				visualizza violin
-			</button>
+<!--			<button type="button" class="btn btn-primary" onclick="violinPlot()">-->
+<!--				visualizza violin-->
+<!--			</button>-->
 		</div>
 	</form>
 </div>
