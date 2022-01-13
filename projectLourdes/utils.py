@@ -16,7 +16,7 @@ from pathlib import Path
 import json
 
 
-data = pd.read_excel(r'C:\Users\rober\Desktop\PROMS\data\data_reg_anca.xls')
+data = pd.read_excel(r'C:\Users\Loredana\Documents\epimetheus-project\testregressione\data\data_reg_anca.xls')
 
 columns_preop = ['Uid', 'Sesso', 'Anni ricovero', 'Data operazione', 'Data dimissione',
            'Nome evento', 'Nome equipe', 'Procedura intervento', 'HHS Function PreOp',	

@@ -45,10 +45,10 @@ def output():
             file = request.files['file']
             if file.filename == '':
                 flash("you have to select a file!")
-                return render_template('index.html')
+                return 'File inserito correttamente'
             if not allowed_file(file.filename):
                 flash('only xlsx or xls files are accepted')
-                return render_template('index.html')
+                return 'File inserito non valido'
 
             # SALVO DATASET NELLA CARTELLA static E LO LEGGO
             filename = secure_filename(file.filename)
@@ -84,7 +84,7 @@ def output():
             results = jsonify(predictions_hip_6months(data_preprocessed))
             return results
 
-        return render_template('index.html')
+        return 'Dati non validi'
 
 
 if __name__ =="__main__":  

@@ -67,36 +67,6 @@
 		</div>
 		<div class="border-bottom py-4">
 			<div class="row">
-				<h2 class="col-12 text-blue text-uppercase">Input data</h2>
-				<p class="col-12">Selezionare il data source e il tipo di episodio</p>
-				<div class="col-xl-4 col-md-6 col-12">
-					<p>Seleziona il data source</p>
-					<div class="form-check">
-						<input class="form-check-input" type="radio" name="dataSource" id="dataSourceManual" value="manually">
-						<label class="form-check-label" for="dataSourceManual">
-							Insert data maunaully
-						</label>
-					</div>
-					<div class="form-check">
-						<input class="form-check-input" type="radio" name="dataSource" id="dataSourcePatient" value="patientEpisode">
-						<label class="form-check-label" for="dataSourcePatient">
-							Select patient episode
-						</label>
-					</div>
-				</div>
-				<div class="form-group col-xl-4 col-md-6 col-12">
-					<label for="formScore" class="form-label">Patient/episode</label>
-					<select class="form-select" aria-label="Select for score" id="formEpisode" name="patientEpisode">
-						<option selected>Seleziona il patient/episode</option>
-						<option value="1">One</option>
-						<option value="2">Two</option>
-						<option value="3">Three</option>
-					</select>
-				</div>
-			</div>
-		</div>
-		<div class="border-bottom py-4">
-			<div class="row">
 				<h2 class="col-12 text-blue text-uppercase">Preference selection</h2>
 				<p class="col-12">Select preference</p>
 				<div class="col-xl-4 col-md-6 col-12">
@@ -123,15 +93,40 @@
 						</label>
 					</div>
 				</div>
-				<div class="col-12 text-end mt-3">
-					<button type="button" class="btn btn-primary" onclick="goToResults()">
-						visualizza grafici
-					</button>
-					<button type="button" class="btn btn-primary" onclick="violinPlot()">
-						visualizza violin
-					</button>
+			</div>
+		</div>
+		<div class="border-bottom py-4">
+			<h2 class="text-blue text-uppercase">Input data</h2>
+			<p>Selezionare il data source e l'episodio</p>
+			<p>Seleziona il data source</p>
+			<div class="row">
+				<div class="col-xl-4 col-md-6 col-12">
+					<div class="form-check">
+						<input class="form-check-input" type="radio" name="dataSource" id="dataSourceManual" value="manually" checked>
+						<label class="form-check-label" for="dataSourceManual">
+							Insert data maunaully
+						</label>
+					</div>
+				</div>
+				<div class="col-xl-4 col-md-6 col-12">
+					<div class="form-check">
+						<input class="form-check-input" type="radio" name="dataSource" id="dataSourcePatient" value="patientEpisode">
+						<label class="form-check-label" for="dataSourcePatient">
+							Select patient episode
+						</label>
+					</div>
 				</div>
 			</div>
+			<div class="" id="manuallyForm">Inserisci manuale</div>
+			<div id="episodeForm">Inserisci episodio</div>
+		</div>
+		<div class="col-12 text-end mt-3">
+			<button type="button" class="btn btn-primary" onclick="goToResults()">
+				visualizza grafici
+			</button>
+			<button type="button" class="btn btn-primary" onclick="violinPlot()">
+				visualizza violin
+			</button>
 		</div>
 	</form>
 </div>

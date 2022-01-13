@@ -11,15 +11,35 @@ function goToNextStep(step) {
     nextStep.classList.add('visible');
     console.log(obj);
 }
+const radioButtons = document.querySelector('input[name="dataSource"]');
+radioButtons.addEventListener('change',function(e){
+    if(this.checked){
+        if(this.value == 'manually'){
+            const manualStep = document.getElementById('manuallyForm');
+            manualStep.classList.add('visible');
+            const otherStep = document.getElementById('episodeForm');
+            if(otherStep.classList.contains('visible')){
+                otherStep.classList.remove('visible');
+            }
 
-function goToResults() {
-    const formData = document.getElementById('step1').elements;
-    for(var i = 0 ; i < formData.length ; i++){
-        var item = formData.item(i);
-        obj[item.name] = item.value;
+        } else if (this.value == 'patientEpisode'){
+            const episodeStep = document.getElementById('episodeForm');
+            episodeStep.classList.add('visible');
+            const otherStep = document.getElementById('manuallyForm');
+            if(otherStep.classList.contains('visible')){
+                otherStep.classList.remove('visible');
+            }
+        }
     }
-    const hideStep = document.getElementById('step1');
-        hideStep.classList.add('hidden');
+});
+function goToResults() {
+//    const formData = document.getElementById('step1').elements;
+//    for(var i = 0 ; i < formData.length ; i++){
+//        var item = formData.item(i);
+//        obj[item.name] = item.value;
+//    }
+//    const hideStep = document.getElementById('step1');
+//        hideStep.classList.add('hidden');
     /* passare obj se serve prendere l'oggetto che viene generato dal form per passarlo al backend
         {
             dataSource: "patientEpisode"
@@ -32,6 +52,10 @@ function goToResults() {
     */
     http.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
+        if(typeof this.responseText == 'string'){
+            alert(this.responseText);
+            return;
+        } else {
             var margin = {top: 10, right: 30, bottom: 30, left: 40},
                 width = 460 - margin.left - margin.right,
                 height = 400 - margin.top - margin.bottom;
@@ -84,7 +108,8 @@ function goToResults() {
                 .attr("height", function(d) { return height - y(d.length); })
                 .style("fill", "#69b3a2")
 
-          console.log(this.responseText);
+        }
+
         }
       };
     http.open('POST', 'http://127.0.0.1:5000/data/analysis', true);

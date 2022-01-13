@@ -43,6 +43,6 @@ h2 {
     font-size: 12px;
     font-weight: 700;
 }
-#step2, #step3 {
+#manualForm, #episodeForm {
     visibility: hidden;
 }
