@@ -6,7 +6,6 @@ from utils import preprocessing, predictions_hip_6months
 
 app = Flask(__name__)
 
-
 path = os.getcwd()
 UPLOAD_FOLDER = os.path.join(path, 'static')
 
@@ -14,19 +13,16 @@ UPLOAD_FOLDER = os.path.join(path, 'static')
 if not os.path.isdir(UPLOAD_FOLDER):
     os.mkdir(UPLOAD_FOLDER)
 
-
 ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
 
 
-
 # funzione per controllare che l'estensione del file sia accettabile
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -36,55 +32,58 @@ def input():
 
 @app.route('/data/analysis', methods=['POST'])
 def output():
-
     # data_folder = os.path.join(path, '..', 'data')
     # dataset = pd.read_excel(os.path.join(data_folder, 'data_reg_anca.xls'))
     # data_preprocessed = preprocessing(dataset)
-    if request.method == 'POST':
-        if request.form.get("submit_a"):
-            file = request.files['file']
-            if file.filename == '':
-                flash("you have to select a file!")
-                return 'File inserito correttamente'
-            if not allowed_file(file.filename):
-                flash('only xlsx or xls files are accepted')
-                return 'File inserito non valido'
 
-            # SALVO DATASET NELLA CARTELLA static E LO LEGGO
-            filename = secure_filename(file.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(filepath)
-            dataset = pd.read_excel(filepath)
-            data_preprocessed = preprocessing(dataset)
-            results = jsonify(predictions_hip_6months(data_preprocessed))
-            return results
-        elif request.form.get("submit_b"):
-            form = request.form
-            input_data = {
-                "Uid": form['uid'],#.id_paziente.data
-                "Sesso": form['sesso'], #.sesso.data
-                "Anni ricovero": form['anni_ricovero'],
-                "Data operazione": form['data_operazione'],
-                "Data dimissione": form['data_dimissione'],
-                "Nome evento": form['nome_evento'],
-                "Nome equipe": form['nome_equipe'],
-                "Procedura intervento": form['procedura_intervento'],
-                "HHS Function PreOp": form['anni_ricovero'],
-                "HHS Total PreOp": form['anni_ricovero'],
-                "VAS PAIN risp PreOp": form['anni_ricovero'],
-                "SF12 PhysicalScore PreOp": form['anni_ricovero'],
-                "SF12 MentalScore PreOp": form['anni_ricovero'],
-                "HOOSPS Total PreOp": form['anni_ricovero'],
-                "BMI altezza risp PreOp": form['anni_ricovero'],
-                "BMI peso risp PreOp": form['anni_ricovero'],
-                "BMI Total PreOp": form['anni_ricovero'],
-                }
-            input_data = pd.DataFrame.from_dict(input_data).T
-            data_preprocessed = preprocessing(input_data)
-            results = jsonify(predictions_hip_6months(data_preprocessed))
-            return results
-        else: return 'Dati non validi'
+    if "dataSource" in request.form and request.form.get("dataSource") == "manually":
+        file = request.files['file']
+        if file.filename == '':
+            flash("you have to select a file!")
+            return 'File inserito correttamente'
+        if not allowed_file(file.filename):
+            flash('only xlsx or xls files are accepted')
+            return 'File inserito non valido'
+
+        # SALVO DATASET NELLA CARTELLA static E LO LEGGO
+        # why u do that??
+        # filename = secure_filename(file.filename)
+        # filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        # file.save(filepath)
+        # pd.read_excel(file)
+        dataset = pd.read_excel(file)
+        data_preprocessed = preprocessing(dataset)
+        prediction = predictions_hip_6months(data_preprocessed)
+        results = jsonify(prediction)
+        return results
+    elif "dataSource" in request.form and request.form.get("dataSource") == 'patientEpisode':
+        form = request.form
+        input_data = {
+            "Uid": form['uid'],  # .id_paziente.data
+            "Sesso": form['sesso'],  # .sesso.data
+            "Anni ricovero": form['anni_ricovero'],
+            "Data operazione": form['data_operazione'],
+            "Data dimissione": form['data_dimissione'],
+            "Nome evento": form['nome_evento'],
+            "Nome equipe": form['nome_equipe'],
+            "Procedura intervento": form['procedura_intervento'],
+            "HHS Function PreOp": form['anni_ricovero'],
+            "HHS Total PreOp": form['anni_ricovero'],
+            "VAS PAIN risp PreOp": form['anni_ricovero'],
+            "SF12 PhysicalScore PreOp": form['anni_ricovero'],
+            "SF12 MentalScore PreOp": form['anni_ricovero'],
+            "HOOSPS Total PreOp": form['anni_ricovero'],
+            "BMI altezza risp PreOp": form['anni_ricovero'],
+            "BMI peso risp PreOp": form['anni_ricovero'],
+            "BMI Total PreOp": form['anni_ricovero'],
+        }
+        input_data = pd.DataFrame.from_dict(input_data).T
+        data_preprocessed = preprocessing(input_data)
+        results = jsonify(predictions_hip_6months(data_preprocessed))
+        return results
+    else:
+        return 'Dati non validi'
 
 
-if __name__ =="__main__":  
-    app.run(debug = True)  
+if __name__ == "__main__":
+    app.run(debug=True)

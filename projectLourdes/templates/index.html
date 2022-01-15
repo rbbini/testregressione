@@ -33,7 +33,7 @@
 		</div>
 	</div>
 
-	<form id="step1" name="step1" action="" method="POST">
+	<form id="step1">
 		<div class="row border-bottom py-4">
 			<h2 class="col-12 text-blue text-uppercase">Requirement selection</h2>
 			<p class="col-12">Selezionare la procedura, lo score e lo step per cui si vuole fare il confronto</p>
@@ -123,7 +123,8 @@
 					<input class="form-control" aria-label="insert file xsls or xls" id="file" name="file" type="file">
 				</div>
 				<div class="col-12 text-end mt-3">
-					<button type="submit" class="btn btn-primary" onclick="goToResults()" name="submit_a">
+<!--					<input type="submit" value="submit_a" />-->
+					<button type="button" class="btn btn-primary" onclick="goToResults()">
 						visualizza grafici
 					</button>
 				</div>
@@ -213,7 +214,8 @@
 					</div>
 				</div>
 				<div class="col-12 text-end mt-3">
-					<button type="submit" class="btn btn-primary" onclick="goToResults()" name="submit_b">
+<!--					<input type="submit" value="submit_b" />-->
+					<button type="button" class="btn btn-primary" onclick="goToResults()">
 						visualizza grafici
 					</button>
 				</div>
