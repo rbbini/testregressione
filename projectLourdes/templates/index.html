@@ -139,13 +139,13 @@
 						<label for="sex" class="form-label">Sesso</label>
 						<div class="d-flex" id="sex">
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="sesso" value="male" id="male">
+								<input class="form-check-input" type="radio" name="sesso" value="M" id="male">
 								<label class="form-check-label" for="male">
 									Maschio
 								</label>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" value="female" name="sesso" id="female">
+								<input class="form-check-input" type="radio" value="F" name="sesso" id="female">
 								<label class="form-check-label" for="female">
 									Femmina
 								</label>
@@ -166,11 +166,28 @@
 					</div>
 					<div class="form-group col-xl-4 col-md-6 col-12">
 						<label for="nome_evento" class="form-label">Nome evento</label>
-						<input class="form-control" aria-label="Nome evento" id="nome_evento" name="nome_evento" type="text">
+						<select class="form-select" aria-label="Nome evento" id="nome_evento" name="nome_evento">
+							<option value="bilaterale protesi primo intervento" selected>bilaterale protesi primo intervento</option>
+							<option value="destra protesi primo intervento" >destra protesi primo intervento</option>
+							<option value="destra revisione" >destra revisione</option>
+							<option value="sinistra protesi primo intervento">sinistra protesi primo intervento</option>
+							<option value="sinistra revisione">sinistra revisione</option>
+						</select>
 					</div>
 					<div class="form-group col-xl-4 col-md-6 col-12">
 						<label for="nome_equipe" class="form-label">Nome equipe</label>
-						<input class="form-control" aria-label="Nome equipe" id="nome_equipe" name="nome_equipe" type="text">
+						<select class="form-select" aria-label="Nome equipe" id="nome_equipe" name="nome_equipe">
+							<option value="36h orto - moroni" selected>36h orto - moroni</option>
+							<option value="36p orto - parente" >36p orto - parente</option>
+							<option value="casco" >casco</option>
+							<option value="centro di traumatologia dello sport">centro di traumatologia dello sport</option>
+							<option value="chirurgia anca i" >chirurgia anca i</option>
+							<option value="clinica ortopedica" >clinica ortopedica</option>
+							<option value="e.u.o.r.r." >e.u.o.r.r.</option>
+							<option value="gspine4">gspine4</option>
+							<option value="oraco" >oraco</option>
+							<option value="ot9 orto - ventura2" >ot9 orto - ventura2</option>
+						</select>
 					</div>
 					<div class="form-group col-xl-4 col-md-6 col-12">
 						<label for="procedura_intervento" class="form-label">Procedura intervento</label>
@@ -178,39 +195,39 @@
 					</div>
 					<div class="form-group col-xl-4 col-md-6 col-12">
 						<label for="HHS_FpreOp" class="form-label">HHS Function PreOp</label>
-						<input class="form-control" aria-label="HHS_FpreOp" id="HHS_FpreOp" name="HHS_FpreOp" type="text">
+						<input class="form-control" aria-label="HHS_FpreOp" id="HHS_FpreOp" name="HHS_FpreOp" type="number">
 					</div>
 					<div class="form-group col-xl-4 col-md-6 col-12">
 						<label for="HHS_TpreOp" class="form-label">HHS Total PreOp</label>
-						<input class="form-control" aria-label="UID" id="HHS_TpreOp" name="HHS_TpreOp" type="text">
+						<input class="form-control" aria-label="HHS_TpreOp" id="HHS_TpreOp" name="HHS_TpreOp" type="number">
 					</div>
 					<div class="form-group col-xl-4 col-md-6 col-12">
 						<label for="VAS_PAIN_PreOp" class="form-label">VAS PAIN risp PreOp</label>
-						<input class="form-control" aria-label="UID" id="VAS_PAIN_PreOp" name="VAS_PAIN_PreOp" type="text">
+						<input class="form-control" aria-label="VAS_PAIN_PreOp" id="VAS_PAIN_PreOp" name="VAS_PAIN_PreOp" type="number">
 					</div>
 					<div class="form-group col-xl-4 col-md-6 col-12">
 						<label for="physicalScore" class="form-label">SF12 PhysicalScore PreOp</label>
-						<input class="form-control" aria-label="physicalScore" id="physicalScore" name="physicalScore" type="text">
+						<input class="form-control" aria-label="physicalScore" id="physicalScore" name="physicalScore" type="number">
 					</div>
 					<div class="form-group col-xl-4 col-md-6 col-12">
 						<label for="mentalScore" class="form-label">SF12 MentalScore PreOp</label>
-						<input class="form-control" aria-label="mentalScore" id="mentalScore" name="mentalScore" type="text">
+						<input class="form-control" aria-label="mentalScore" id="mentalScore" name="mentalScore" type="number">
 					</div>
 					<div class="form-group col-xl-4 col-md-6 col-12">
 						<label for="HOOSPS" class="form-label">HOOSPS Total PreOp</label>
-						<input class="form-control" aria-label="HOOSPS" id="HOOSPS" name="HOOSPS" type="text">
+						<input class="form-control" aria-label="HOOSPS" id="HOOSPS" name="HOOSPS" type="number">
 					</div>
 					<div class="form-group col-xl-4 col-md-6 col-12">
 						<label for="bmi_altezza_preOp" class="form-label">BMI altezza risp PreOp</label>
-						<input class="form-control" aria-label="BMI altezza risp PreOp" id="bmi_altezza_preOp" name="bmi_altezza_preOp" type="text">
+						<input class="form-control" aria-label="BMI altezza risp PreOp" id="bmi_altezza_preOp" name="bmi_altezza_preOp" type="number">
 					</div>
 					<div class="form-group col-xl-4 col-md-6 col-12">
 						<label for="bmi_peso_preOp" class="form-label">BMI peso risp PreOp</label>
-						<input class="form-control" aria-label="BMI peso risp PreOp" id="bmi_peso_preOp" name="bmi_peso_preOp" type="text">
+						<input class="form-control" aria-label="BMI peso risp PreOp" id="bmi_peso_preOp" name="bmi_peso_preOp" type="number">
 					</div>
 					<div class="form-group col-xl-4 col-md-6 col-12">
 						<label for="bmi_total_preOp" class="form-label">BMI Total PreOp</label>
-						<input class="form-control" aria-label="BMI Total PreOp" id="bmi_total_preOp" name="bmi_total_preOp" type="text">
+						<input class="form-control" aria-label="BMI Total PreOp" id="bmi_total_preOp" name="bmi_total_preOp" type="number">
 					</div>
 				</div>
 				<div class="col-12 text-end mt-3">

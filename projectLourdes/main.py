@@ -1,11 +1,9 @@
 from flask import Flask, flash, request, render_template, jsonify
-from werkzeug.utils import secure_filename
 import os
 import pandas as pd
 from utils import preprocessing, predictions_hip_6months
 
 app = Flask(__name__)
-
 
 path = os.getcwd()
 UPLOAD_FOLDER = os.path.join(path, 'static')
@@ -14,12 +12,10 @@ UPLOAD_FOLDER = os.path.join(path, 'static')
 if not os.path.isdir(UPLOAD_FOLDER):
     os.mkdir(UPLOAD_FOLDER)
 
-
 ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
-
 
 
 # funzione per controllare che l'estensione del file sia accettabile
@@ -28,9 +24,8 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-
 @app.route('/', methods=['GET', 'POST'])
-def input():
+def home_page():
     return render_template('index.html')
 
 
