@@ -6,6 +6,7 @@ from utils import preprocessing, predictions_hip_6months
 
 app = Flask(__name__)
 
+
 path = os.getcwd()
 UPLOAD_FOLDER = os.path.join(path, 'static')
 
@@ -13,16 +14,19 @@ UPLOAD_FOLDER = os.path.join(path, 'static')
 if not os.path.isdir(UPLOAD_FOLDER):
     os.mkdir(UPLOAD_FOLDER)
 
+
 ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
 
 
+
 # funzione per controllare che l'estensione del file sia accettabile
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -53,9 +57,10 @@ def output():
         # pd.read_excel(file)
         dataset = pd.read_excel(file)
         data_preprocessed = preprocessing(dataset)
-        prediction = predictions_hip_6months(data_preprocessed)
-        results = jsonify(prediction)
-        return results
+        predictions, other = predictions_hip_6months(data_preprocessed)
+        results = jsonify(predictions)
+        other_data = jsonify(other)
+        return results, other_data
     elif "dataSource" in request.form and request.form.get("dataSource") == 'patientEpisode':
         form = request.form
         input_data = {
@@ -79,10 +84,12 @@ def output():
         }
         input_data = pd.DataFrame.from_dict(input_data).T
         data_preprocessed = preprocessing(input_data)
-        results = jsonify(predictions_hip_6months(data_preprocessed))
-        return results
+        predictions, other = predictions_hip_6months(data_preprocessed)
+        results = jsonify(predictions)
+        other_data = jsonify(other)
+        return results, other_data
     else:
-        return 'Dati non validi'
+        return flash('Dati non validi')
 
 
 if __name__ == "__main__":

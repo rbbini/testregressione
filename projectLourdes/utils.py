@@ -2,38 +2,30 @@ import pandas as pd
 import numpy as np
 import pickle
 import statistics
-import matplotlib.pyplot as plt 
-import seaborn as sns
-import xgboost
-from sklearn.model_selection import GroupShuffleSplit
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import ElasticNet
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import RepeatedKFold
-import os 
-import os.path
-from pathlib import Path
-import json
 
 
 data = pd.read_excel(r'C:\Users\Loredana\Documents\epimetheus-project\testregressione\data\data_reg_anca.xls')
+
+
+# dati che saranno ritornati in un json
+dbPath = os.path.abspath("data/db_anca.xls")
+db = pd.read_excel(dbPath)
+
+ageDB = db['Anni ricovero'].to_numpy()
+ageDB = ageDB.astype(int)
+
+DB_6months_p = db['SF12 MentalScore 6months']
+DB_6months_m = db['SF12 PhysicalScore 6months']
+
+medianP = statistics.median(DB_6months_p)
+medianM = statistics.median(DB_6months_m)
+
 
 columns_preop = ['Uid', 'Sesso', 'Anni ricovero', 'Data operazione', 'Data dimissione',
            'Nome evento', 'Nome equipe', 'Procedura intervento', 'HHS Function PreOp',	
            'HHS Total PreOp', 'VAS PAIN risp PreOp','SF12 PhysicalScore PreOp',	
            'SF12 MentalScore PreOp', 'HOOSPS Total PreOp', 'BMI altezza risp PreOp',
            'BMI peso risp PreOp','BMI Total PreOp']
-columns_3mon = ['Uid', 'Sesso', 'Anni ricovero', 'Data operazione', 'Data dimissione',
-           'Nome evento', 'Nome equipe', 'Procedura intervento', 'HHS Function 3months',	
-           'HHS Total 3months', 'VAS PAIN risp 3months','SF12 PhysicalScore 3months',	
-           'SF12 MentalScore 3months', 'HOOSPS Total 3months', 'BMI altezza risp 3months',
-           'BMI peso risp 3months','BMI Total 3months']
-columns_6mon = ['Uid', 'Sesso', 'Anni ricovero', 'Data operazione', 'Data dimissione',
-           'Nome evento', 'Nome equipe', 'Procedura intervento', 'HHS Function 6months',	
-           'HHS Total 6months', 'VAS PAIN risp 6months','SF12 PhysicalScore 6months',	
-           'SF12 MentalScore 6months', 'HOOSPS Total 6months', 'BMI altezza risp 6months',
-           'BMI peso risp 6months','BMI Total 6months']
-
 
 
 
@@ -52,6 +44,53 @@ def from_obj_to_num(x):
         res = x 
     return res 
 
+
+def check_gender(x):
+    if x.lower() == 'm':
+        gender = 0
+    elif x.lower() == 'f':
+        gender = 1
+    else:
+        gender = np.nan
+    return gender
+
+
+def check_equipe(df):
+    if not '36h orto - moroni' in df.columns:
+        df['36h orto - moroni'] = 0
+    if not '36p orto - parente' in df.columns:
+        df['36p orto - parente'] = 0
+    if not 'casco' in df.columns:
+        df['casco'] = 0
+    if not 'centro di traumatologia dello sport' in df.columns:
+        df['centro di traumatologia dello sport'] = 0
+    if not 'chirurgia anca i' in df.columns:
+        df['chirurgia anca i'] = 0
+    if not 'clinica ortopedica' in df.columns:
+        df['clinica ortopedica'] = 0
+    if not 'e.u.o.r.r.' in df.columns:
+        df['e.u.o.r.r.'] = 0
+    if not 'gspine4' in df.columns:
+        df['gspine4'] = 0
+    if not 'oraco' in df.columns:
+        df['oraco'] = 0
+    if not 'ot9 orto - ventura2' in df.columns:
+        df['ot9 orto - ventura2'] = 0
+    return df
+
+
+def check_event(df):
+    if not 'bilaterale protesi primo intervento' in df.columns:
+        df['bilaterale protesi primo intervento'] = 0
+    if not 'destra protesi primo intervento' in df.columns:
+        df['destra protesi primo intervento'] = 0
+    if not 'destra revisione' in df.columns:
+        df['destra revisione'] = 0
+    if not 'sinistra protesi primo intervento' in df.columns:
+        df['sinistra protesi primo intervento'] = 0
+    if not 'sinistra revisione' in df.columns:
+        df['sinistra revisione'] = 0
+    return df
 
 
 def preprocessing(data):
@@ -87,14 +126,14 @@ def preprocessing(data):
 
     with open('lista_nome_evento.pkl', 'rb') as f:
         lista_nome_evento = pickle.load(f)
-
+        
     def normalize_nomevento(x):
         if x in lista_nome_evento:
             nome_evento = x
         else:
             nome_evento = np.nan
         return nome_evento
-
+    
     data_preop['Nome evento'] = preproces_nomeevento(data_preop)
 
     data_preop['Nome evento'] = data_preop['Nome evento'].apply(normalize_nomevento)
@@ -124,41 +163,44 @@ def preprocessing(data):
     
     # dopo la colonna "Uid" (la prima) elimina tutte le colonne che non hanno nel nome "3months"/"6months"/"12months"
     #data_3month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='3months', axis=1)], axis = 1)
-
+    
     #data_6month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='6months', axis=1)], axis = 1)
-
+    
     #data_12month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='12months', axis=1)], axis = 1)
     
     
     return data_preop
-    
-    
-def predictions_hip_6months(data):  
+
+
+def predictions_hip_6months(data_to_pred):
     # drop dell'id perchè non riesce a convertirlo in float
-    data.drop('Uid', axis = 1, inplace = True)
+    data_to_pred.drop('Uid', axis = 1, inplace = True)
     
     with open("model_6months_phy.pkl", 'rb') as file:
         loaded_model = pickle.load(file)
-    predictionsP = loaded_model.predict(data)
+    predictionsP = loaded_model.predict(data_to_pred)
     with open("model_6months_men.pkl", 'rb') as file:
         loaded_model2 = pickle.load(file)
-    predictionsM = loaded_model2.predict(data)
+    predictionsM = loaded_model2.predict(data_to_pred)
     
-    age = data['Anni ricovero'].to_numpy()
+    age = data_to_pred['Anni ricovero'].to_numpy()
     age = age.astype(int)
 
-    estimation = {"SF12 PhysicalScore 6months": predictionsP,
-                  "SF12 MentalScore 6months": predictionsM,
-                  "age": age,
-                  "medianaP": statistics.median(predictionsP), # la mediana è sui valori giusti?
-                  "medianaM": statistics.median(predictionsM)
+    # stime fatte sui dati in input
+    estimation = {"SF12_PhysicalScore_6months": predictionsP, # score fisico dopo 6 mesi
+                  "SF12_MentalScore_6months": predictionsM, # score mentale dopo 6 mesi
+                  "age": age # eta'
     }
 
-    # "eta'": data[['Anni ricovero']]
-    # QUESTA RIGA RIPORTA I VALORI IN UN FORMATO DIVERSO RISPETTO A QUELLE SOPRA. CREA PROBLEMI?
-    # print(data['Anni ricovero'])
-    return estimation
-# return pd.DataFrame.from_dict(estimation, orient='columns').to_dict()
+    # dati dei pazienti nel nostro db (data_reg_anca.xls)
+    DBstuff = {"SF12_PhysicalScore_6months_DB": DB_6months_p, # score fisico dopo 6 mesi
+                  "SF12_MentalScore_6months_DB": DB_6months_m, # score mentale dopo 6 mesi
+                  "ageDB": ageDB, # eta'
+                  "medianaP": medianP, # mediana degli score fisici
+                  "medianaM": medianM # mediana degli score mentali
+    }      
+
+    return estimation, DBstuff
 
 
 #data_prepr = preprocessing(data)
@@ -170,7 +212,7 @@ def predictions_hip_6months(data):
 # -------------------- PER TESTING --------------------------------------------
 """
 data_prepr = preprocessing(data)
-e =predictions_hip_6months(data_prepr)
+e = predictions_hip_6months(data_prepr)
 print(e)
 input_data = {
     "Uid": 'IOG1RH100000001',#.id_paziente.data
