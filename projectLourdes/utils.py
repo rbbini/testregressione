@@ -2,26 +2,31 @@ import pandas as pd
 import numpy as np
 import pickle
 import statistics
+import os
 
 
 data = pd.read_excel(r'C:\Users\rober\Desktop\PROMS\data\data_reg_anca.xls')
+
+
+# dati che saranno ritornati in un json
+dbPath = os.path.abspath("data/db_anca.xls")
+db = pd.read_excel(dbPath)
+
+ageDB = db['Anni ricovero'].to_numpy()
+ageDB = ageDB.astype(int)
+
+DB_6months_p = db['SF12 MentalScore 6months']
+DB_6months_m = db['SF12 PhysicalScore 6months']
+
+medianP = statistics.median(DB_6months_p)
+medianM = statistics.median(DB_6months_m)
+
 
 columns_preop = ['Uid', 'Sesso', 'Anni ricovero', 'Data operazione', 'Data dimissione',
            'Nome evento', 'Nome equipe', 'Procedura intervento', 'HHS Function PreOp',	
            'HHS Total PreOp', 'VAS PAIN risp PreOp','SF12 PhysicalScore PreOp',	
            'SF12 MentalScore PreOp', 'HOOSPS Total PreOp', 'BMI altezza risp PreOp',
            'BMI peso risp PreOp','BMI Total PreOp']
-columns_3mon = ['Uid', 'Sesso', 'Anni ricovero', 'Data operazione', 'Data dimissione',
-           'Nome evento', 'Nome equipe', 'Procedura intervento', 'HHS Function 3months',	
-           'HHS Total 3months', 'VAS PAIN risp 3months','SF12 PhysicalScore 3months',	
-           'SF12 MentalScore 3months', 'HOOSPS Total 3months', 'BMI altezza risp 3months',
-           'BMI peso risp 3months','BMI Total 3months']
-columns_6mon = ['Uid', 'Sesso', 'Anni ricovero', 'Data operazione', 'Data dimissione',
-           'Nome evento', 'Nome equipe', 'Procedura intervento', 'HHS Function 6months',	
-           'HHS Total 6months', 'VAS PAIN risp 6months','SF12 PhysicalScore 6months',	
-           'SF12 MentalScore 6months', 'HOOSPS Total 6months', 'BMI altezza risp 6months',
-           'BMI peso risp 6months','BMI Total 6months']
-
 
 
 
@@ -147,52 +152,46 @@ def preprocessing(data):
 
     data_preop = pd.concat([data_preop.drop(['Nome equipe'], axis = 1), pd.get_dummies(data_preop['Nome equipe'])], axis = 1)
     
-    #data_preop.Sesso = pd.get_dummies(data_preop.Sesso, drop_first= True) #0 F 1 M
     data_preop['Sesso'] = data_preop['Sesso'].apply(check_gender)
     data_preop = check_equipe(data_preop)
     data_preop = check_event(data_preop)
     
-    columns_to_drop = ['Data operazione', 'Data dimissione', 'Procedura intervento', 'HHS Function PreOp', 'HHS Total PreOp']
+    columns_to_drop = ['Data operazione', 'Data dimissione', 'Procedura intervento', 'HHS Function PreOp', 'HHS Total PreOp']    
     
     data_preop.drop(columns_to_drop, axis  = 1, inplace = True)
     
-    
-    # dopo la colonna "Uid" (la prima) elimina tutte le colonne che non hanno nel nome "3months"/"6months"/"12months"
-    #data_3month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='3months', axis=1)], axis = 1)
-    
-    #data_6month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='6months', axis=1)], axis = 1)
-    
-    #data_12month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='12months', axis=1)], axis = 1)
-    
-    
     return data_preop
-    
-    
-def predictions_hip_6months(data):  
+
+
+def predictions_hip_6months(data_to_pred):
     # drop dell'id perchè non riesce a convertirlo in float
-    data.drop('Uid', axis = 1, inplace = True)
+    data_to_pred.drop('Uid', axis = 1, inplace = True)
     
     with open("model_6months_phy.pkl", 'rb') as file:
         loaded_model = pickle.load(file)
-    predictionsP = loaded_model.predict(data)
+    predictionsP = loaded_model.predict(data_to_pred)
     with open("model_6months_men.pkl", 'rb') as file:
         loaded_model2 = pickle.load(file)
-    predictionsM = loaded_model2.predict(data)
+    predictionsM = loaded_model2.predict(data_to_pred)
     
-    age = data['Anni ricovero'].to_numpy()
+    age = data_to_pred['Anni ricovero'].to_numpy()
     age = age.astype(int)           
-            
-    estimation = {"SF12 PhysicalScore 6months": predictionsP, 
-                  "SF12 MentalScore 6months": predictionsM,
-                  "age": age,
-                  "medianaP": statistics.median(predictionsP), # la mediana è sui valori giusti?
-                  "medianaM": statistics.median(predictionsM)
+    
+    # stime fatte sui dati in input 
+    estimation = {"SF12_PhysicalScore_6months": predictionsP, # score fisico dopo 6 mesi
+                  "SF12_MentalScore_6months": predictionsM, # score mentale dopo 6 mesi
+                  "age": age # eta' 
+    }
+    
+    # dati dei pazienti nel nostro db (data_reg_anca.xls)
+    DBstuff = {"SF12_PhysicalScore_6months_DB": DB_6months_p, # score fisico dopo 6 mesi
+                  "SF12_MentalScore_6months_DB": DB_6months_m, # score mentale dopo 6 mesi
+                  "ageDB": ageDB, # eta'
+                  "medianaP": medianP, # mediana degli score fisici
+                  "medianaM": medianM # mediana degli score mentali
     }      
 
-    # "eta'": data[['Anni ricovero']]
-    # QUESTA RIGA RIPORTA I VALORI IN UN FORMATO DIVERSO RISPETTO A QUELLE SOPRA. CREA PROBLEMI?
-    # print(data['Anni ricovero'])
-    return estimation
+    return estimation, DBstuff
 
 
 
@@ -202,7 +201,7 @@ def predictions_hip_6months(data):
 # -------------------- PER TESTING --------------------------------------------
 """
 data_prepr = preprocessing(data)
-e =predictions_hip_6months(data_prepr)
+e = predictions_hip_6months(data_prepr)
 print(e)
 input_data = {
     "Uid": 'IOG1RH100000001',#.id_paziente.data
