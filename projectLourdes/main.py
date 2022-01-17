@@ -1,4 +1,4 @@
-from flask import Flask, flash, request, render_template, jsonify
+from flask import Flask, flash, request, render_template, jsonify, abort
 from werkzeug.utils import secure_filename
 import os
 import pandas as pd
@@ -15,11 +15,12 @@ if not os.path.isdir(UPLOAD_FOLDER):
     os.mkdir(UPLOAD_FOLDER)
 
 
+SECRET_KEY = 'b\xfeT\x93\x1b\xe5\x9b\xe9\x9c\x1c@\xf6\xef\xbe\x81b\xc2\xd5(\xe9E\xab\xe8\xfe'
 ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
-
+app.config['SECRET_KEY'] = SECRET_KEY
 
 
 # funzione per controllare che l'estensione del file sia accettabile
@@ -30,7 +31,7 @@ def allowed_file(filename):
 
 
 @app.route('/', methods=['GET', 'POST'])
-def input():
+def home_page():
     return render_template('index.html')
 
 
@@ -46,11 +47,11 @@ def output():
             return render_template('index.html')
         
         # SALVO DATASET NELLA CARTELLA static E LO LEGGO
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
-        dataset = pd.read_excel(filepath)
+        #filename = secure_filename(file.filename)
+        #filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        #file.save(filepath)
         
+        dataset = pd.read_excel(file)
         data_preprocessed = preprocessing(dataset)
         predictions, other = predictions_hip_6months(data_preprocessed)
         results = jsonify(predictions)
@@ -80,14 +81,14 @@ def output():
             "BMI Total PreOp": form['anni_ricovero']
             }
         
-        input_data = pd.DataFrame.from_dict(input_data).T
+        input_data = pd.DataFrame.from_dict(input_data, orient = 'index').T
         data_preprocessed = preprocessing(input_data)
         predictions, other = predictions_hip_6months(data_preprocessed)
         results = jsonify(predictions)
         other_data = jsonify(other)
         return results, other_data
     else:    
-        return flash('Dati non validi')
+        abort(400)
 
 
 

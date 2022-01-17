@@ -5,8 +5,6 @@ import statistics
 import os
 
 
-data = pd.read_excel(r'C:\Users\rober\Desktop\PROMS\data\data_reg_anca.xls')
-
 
 # dati che saranno ritornati in un json
 dbPath = os.path.abspath("data/db_anca.xls")
@@ -14,9 +12,10 @@ db = pd.read_excel(dbPath)
 
 ageDB = db['Anni ricovero'].to_numpy()
 ageDB = ageDB.astype(int)
+ageDB = ageDB.tolist()
 
-DB_6months_p = db['SF12 MentalScore 6months']
-DB_6months_m = db['SF12 PhysicalScore 6months']
+DB_6months_p = db['SF12 MentalScore 6months'].tolist() 
+DB_6months_m = db['SF12 PhysicalScore 6months'].tolist() 
 
 medianP = statistics.median(DB_6months_p)
 medianM = statistics.median(DB_6months_m)
@@ -169,13 +168,14 @@ def predictions_hip_6months(data_to_pred):
     
     with open("model_6months_phy.pkl", 'rb') as file:
         loaded_model = pickle.load(file)
-    predictionsP = loaded_model.predict(data_to_pred)
+    predictionsP = loaded_model.predict(data_to_pred).tolist() 
     with open("model_6months_men.pkl", 'rb') as file:
         loaded_model2 = pickle.load(file)
-    predictionsM = loaded_model2.predict(data_to_pred)
+    predictionsM = loaded_model2.predict(data_to_pred).tolist() 
     
     age = data_to_pred['Anni ricovero'].to_numpy()
-    age = age.astype(int)           
+    age = age.astype(int)
+    age = age.tolist()       
     
     # stime fatte sui dati in input 
     estimation = {"SF12_PhysicalScore_6months": predictionsP, # score fisico dopo 6 mesi
@@ -200,6 +200,7 @@ def predictions_hip_6months(data_to_pred):
 
 # -------------------- PER TESTING --------------------------------------------
 """
+data = pd.read_excel(r'E:\Stage\epimetheus\app\data')
 data_prepr = preprocessing(data)
 e = predictions_hip_6months(data_prepr)
 print(e)
@@ -224,8 +225,8 @@ input_data = {
     }
 input_data = pd.DataFrame.from_dict(input_data, orient='index').T
 data_preprocessed = preprocessing(input_data)
-estimation = predictions_hip_6months(data_preprocessed)
-print(estimation)
+estimation, estim2 = predictions_hip_6months(data_preprocessed)
+#print(estimation)
 """
 
 
