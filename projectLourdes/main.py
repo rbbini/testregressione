@@ -6,7 +6,6 @@ from utils import preprocessing, predictions_hip_6months
 
 app = Flask(__name__)
 
-
 path = os.getcwd()
 UPLOAD_FOLDER = os.path.join(path, 'static')
 
@@ -14,20 +13,16 @@ UPLOAD_FOLDER = os.path.join(path, 'static')
 if not os.path.isdir(UPLOAD_FOLDER):
     os.mkdir(UPLOAD_FOLDER)
 
-
-SECRET_KEY = 'b\xfeT\x93\x1b\xe5\x9b\xe9\x9c\x1c@\xf6\xef\xbe\x81b\xc2\xd5(\xe9E\xab\xe8\xfe'
 ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
-app.config['SECRET_KEY'] = SECRET_KEY
 
 
 # funzione per controllare che l'estensione del file sia accettabile
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -54,14 +49,14 @@ def output():
         #filename = secure_filename(file.filename)
         #filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         #file.save(filepath)
-
+        
         dataset = pd.read_excel(file)
         data_preprocessed = preprocessing(dataset)
-        predictions, other = predictions_hip_6months(data_preprocessed)
+        predictions = predictions_hip_6months(data_preprocessed)
         results = jsonify(predictions)
         other_data = jsonify(other)
         
-        return results, other_data
+        return results
     
     elif "dataSource" in request.form and request.form.get("dataSource") == 'patientEpisode':
         form = request.form
@@ -84,14 +79,15 @@ def output():
             "BMI peso risp PreOp": form['bmi_peso_preOp'],
             "BMI Total PreOp": form['bmi_total_preOp']
             }
-        
+
         input_data = pd.DataFrame.from_dict(input_data, orient='index').T
         data_preprocessed = preprocessing(input_data)
         predictions = predictions_hip_6months(data_preprocessed)
         results = jsonify(predictions)
         return results
-    else:    
+    else:
         abort(400)
+
 
 
 if __name__ == "__main__":

@@ -1,8 +1,10 @@
-import pandas as pd
+import pandas as pd 
 import numpy as np
 import pickle
 import statistics
 import os
+
+
 
 # dati che saranno ritornati in un json
 dbPath = os.path.abspath("data/db_anca.xls")
@@ -12,17 +14,19 @@ ageDB = db['Anni ricovero'].to_numpy()
 ageDB = ageDB.astype(int)
 ageDB = ageDB.tolist()
 
-DB_6months_p = db['SF12 MentalScore 6months'].tolist()
-DB_6months_m = db['SF12 PhysicalScore 6months'].tolist()
+DB_6months_p = db['SF12 MentalScore 6months'].tolist() 
+DB_6months_m = db['SF12 PhysicalScore 6months'].tolist() 
 
 medianP = statistics.median(DB_6months_p)
 medianM = statistics.median(DB_6months_m)
+
 
 columns_preop = ['Uid', 'Sesso', 'Anni ricovero', 'Data operazione', 'Data dimissione',
                  'Nome evento', 'Nome equipe', 'Procedura intervento', 'HHS Function PreOp',
                  'HHS Total PreOp', 'VAS PAIN risp PreOp', 'SF12 PhysicalScore PreOp',
                  'SF12 MentalScore PreOp', 'HOOSPS Total PreOp', 'BMI altezza risp PreOp',
                  'BMI peso risp PreOp', 'BMI Total PreOp']
+
 
 
 def preproces_nomeevento(data_preop):
@@ -57,7 +61,7 @@ def check_equipe(df):
     if not '36p orto - parente' in df.columns:
         df['36p orto - parente'] = 0
     if not 'casco' in df.columns:
-        df['casco'] = 0
+        df['casco'] = 0   
     if not 'centro di traumatologia dello sport' in df.columns:
         df['centro di traumatologia dello sport'] = 0
     if not 'chirurgia anca i' in df.columns:
@@ -91,64 +95,66 @@ def check_event(df):
 
 def preprocessing(data):
     data = data.replace('#null', np.nan)
-
+    
     data = data.apply(from_obj_to_num)
 
-    # data = data[~data['SF12 MentalScore 6months'].isna()]
+    #data = data[~data['SF12 MentalScore 6months'].isna()]
 
-    # data = data[~data['SF12 PhysicalScore 6months'].isna()]
-
+    #data = data[~data['SF12 PhysicalScore 6months'].isna()]
+    
     data = data[~data['SF12 MentalScore PreOp'].isna()]
-
+    
     data = data[~data['SF12 PhysicalScore PreOp'].isna()]
-
+    
     data = data[~data['HOOSPS Total PreOp'].isna()]
-
+    
     data = data[~data['BMI altezza risp PreOp'].isna()]
-
+    
     data = data[~data['BMI peso risp PreOp'].isna()]
-
-    data['Data operazione'] = data['Data operazione'].str.replace('\s(00:00:00.0)', '', regex=True)
-
+    
+    data['Data operazione'] = data['Data operazione'].str.replace('\s(00:00:00.0)','', regex = True)
+    
     data['Data operazione'] = pd.to_datetime(data['Data operazione'])
-
+    
     data['Data operazione'] = data['Data operazione'].dt.strftime('%Y/%m/%d')
 
-    mask_date = data['Data operazione'] <= '2021/05/05'
+    #mask_date = data['Data operazione'] <= '2021/05/05'
 
-    data_clean = data.loc[mask_date, :]
+    #data_clean = data.loc[mask_date, :]
 
-    data_preop = data_clean.loc[:, columns_preop]
+    #data_preop = data_clean.loc[:, columns_preop]\
+
+    data_preop = data.loc[:, columns_preop]
 
     with open('lista_nome_evento.pkl', 'rb') as f:
         lista_nome_evento = pickle.load(f)
-
+        
     def normalize_nomevento(x):
         if x in lista_nome_evento:
             nome_evento = x
         else:
             nome_evento = np.nan
         return nome_evento
-
+    
     data_preop['Nome evento'] = preproces_nomeevento(data_preop)
 
     data_preop['Nome evento'] = data_preop['Nome evento'].apply(normalize_nomevento)
-
+    
     data_preop['Procedura intervento'] = data_preop['Procedura intervento'].str.lower()
-
+    
     data_preop['Procedura intervento'] = data_preop['Procedura intervento'].str.replace('sx', 'sinistra')
     data_preop['Procedura intervento'] = data_preop['Procedura intervento'].str.replace('dx', 'destra')
 
     data_preop['Nome equipe'] = data_preop['Nome equipe'].str.lower().str.replace(' +', ' ', regex=True)
 
     data_preop = data_preop[data_preop['Nome equipe'] != 'chirurgia del ginocchio i']
-
-    data_preop = pd.concat([data_preop.drop(['Nome evento'], axis=1), pd.get_dummies(data_preop['Nome evento'])],
-                           axis=1)
+    
+    data_preop = pd.concat([data_preop.drop(['Nome evento'], axis = 1), pd.get_dummies(data_preop['Nome evento'])], axis = 1)
 
     data_preop = pd.concat([data_preop.drop(['Nome equipe'], axis=1), pd.get_dummies(data_preop['Nome equipe'])],
                            axis=1)
 
+    # data_preop.Sesso = pd.get_dummies(data_preop.Sesso, drop_first= True) #0 F 1 M
     data_preop['Sesso'] = data_preop['Sesso'].apply(check_gender)
     data_preop = check_equipe(data_preop)
     data_preop = check_event(data_preop)
@@ -158,39 +164,69 @@ def preprocessing(data):
 
     data_preop.drop(columns_to_drop, axis=1, inplace=True)
 
+    # dopo la colonna "Uid" (la prima) elimina tutte le colonne che non hanno nel nome "3months"/"6months"/"12months"
+    # data_3month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='3months', axis=1)], axis = 1)
+
+    # data_6month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='6months', axis=1)], axis = 1)
+
+    # data_12month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='12months', axis=1)], axis = 1)
+
     return data_preop
 
 
 def predictions_hip_6months(data_to_pred):
     # drop dell'id perchè non riesce a convertirlo in float
-    data_to_pred.drop('Uid', axis=1, inplace=True)
-
+    data_to_pred.drop('Uid', axis = 1, inplace = True)
+    
     with open("model_6months_phy.pkl", 'rb') as file:
         loaded_model = pickle.load(file)
-    predictionsP = loaded_model.predict(data_to_pred).tolist()
+    predictionsP = loaded_model.predict(data_to_pred).tolist() 
     with open("model_6months_men.pkl", 'rb') as file:
         loaded_model2 = pickle.load(file)
-    predictionsM = loaded_model2.predict(data_to_pred).tolist()
-
+    predictionsM = loaded_model2.predict(data_to_pred).tolist() 
+    
     age = data_to_pred['Anni ricovero'].to_numpy()
     age = age.astype(int)
     age = age.tolist()
 
-    # stime fatte sui dati in input 
-    estimation = {"SF12_PhysicalScore_6months": predictionsP,  # score fisico dopo 6 mesi
-                  "SF12_MentalScore_6months": predictionsM,  # score mentale dopo 6 mesi
-                  "age": age  # eta'
+
+    estimation = {"SF12_PhysicalScore_6months": predictionsP, # previsione score fisico dopo 6 mesi
+                  "SF12_MentalScore_6months": predictionsM, # previsione score mentale dopo 6 mesi
+                  "age": age # eta'
                   }
 
-    # dati dei pazienti nel nostro db (data_reg_anca.xls)
-    DBstuff = {"SF12_PhysicalScore_6months_DB": DB_6months_p,  # score fisico dopo 6 mesi
-               "SF12_MentalScore_6months_DB": DB_6months_m,  # score mentale dopo 6 mesi
-               "ageDB": ageDB,  # eta'
-               "medianaP": medianP,  # mediana degli score fisici
-               "medianaM": medianM  # mediana degli score mentali
-               }
 
-    return estimation, DBstuff
+    # lista da convertire in json
+    to_json = [estimation]
+    # lista che avra' i dati dei pazienti nel DB
+    others = []
+
+
+    # ciclo da 0 a len(ageDB)-1 (anche len(DB_6months_m/p) sarebbe andato bene)
+    # prendo il valore in pos i e lo metto in un dict che poi appendo a others
+    for i in range(len(ageDB)):
+        dict = {
+            "SF12_PhysicalScore_6months": DB_6months_p[i],
+            "SF12_MentalScore_6months": DB_6months_m[i],
+            "age": ageDB[i]
+            }
+        others.append(dict)
+
+
+    other_patients = {"others": others}
+    to_json.append(other_patients)
+
+
+    median_data = {"medianaM": medianM,
+                   "medianaP": medianP}
+    to_json.append(median_data)
+
+
+    return to_json
+
+
+# data_prepr = preprocessing(data)
+# predictions_hip_6months(data_prepr)
 
 
 # -------------------- PER TESTING --------------------------------------------
