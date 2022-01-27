@@ -38,7 +38,6 @@ function goToResults() {
     const form = document.getElementById('step1')
     //const formPart = new URLE
     //const elements = form.elements;
-    debugger
     //for (var i = 0; i < elements.length; i++) {
     //    var item = elements.item(i);
     //    obj[item.name] = item.value;
@@ -66,50 +65,30 @@ function goToResults() {
                     .attr("transform",
                         "translate(" + margin.left + "," + margin.top + ")");
 
-                /* obj data
-                var data = [
-                    //paziente
-                    {
-                        "SF12_PhysicalScore_6months": 123,
-                        "SF12_MentalScore_6months": 13,
-                        "age": 123
-                    },
-                    //altri pazienti
-                    {
-                        "others": [{
-                            "SF12_PhysicalScore_6months": 123,
-                            "SF12_MentalScore_6months": 13,
-                            "age": 123
-                        }, {
-                            "SF12_PhysicalScore_6months": 123,
-                            "SF12_MentalScore_6months": 13,
-                            "age": 123
-                        }
-                        ]
-                    },
-                    //dati mediane
-                    {
-                        "medianaM": 48.2,
-                        "medianaP": 55.3
-                    }
-                ];
-                * */
-                var data = [
-                    {
-                        SF12_PhysicalScore_6months: 123
-                        SF12_MentalScore_6months: rawdata[0].SF12_MentalScore_6months[0],
-                        age: rawdata[0].age[0]
-                    }
-                ];
-                // for (var i = 0; i < rawdata[1].length; i++) {
-                //    var item = elements.item(i);
-                //    obj[item.name] = item.value;
-                // }
-                // var data = Object.values(rawdata['SF12_MentalScore_6months_DB']);
+                const scoreValue = document.getElementById('formScore').value;
+                let dataViz = Object.values(rawdata[1]['others']);
+                let patientData = rawdata[0];
+                let objToAnalyze = [];
+                objToAnalyze.push(patientData);
+                if(scoreValue == 'Phisycal'){
+                    const pre = patientData.SF12_PhysicalScore_6months[0] - 1;
+                    const post = patientData.SF12_PhysicalScore_6months[0] + 1;
+                    let objControl = dataViz.filter(({ SF12_PhysicalScore_6months }) => SF12_PhysicalScore_6months > pre && SF12_PhysicalScore_6months < post);
+                    objControl.sort(function (a, b) {
+                        return a.SF12_PhysicalScore_6months - b.SF12_PhysicalScore_6months;
+                    });
+                } else {
+                    const pre = patientData.SF12_MentalScore_6months[0] - 1;
+                    const post = patientData.SF12_MentalScore_6months[0] + 1;
+                    let objControl = dataViz.filter(({ SF12_MentalScore_6months }) => SF12_MentalScore_6months > pre && SF12_MentalScore_6months < post);
+                    objControl.sort(function (a, b) {
+                        return a.SF12_MentalScore_6months - b.SF12_MentalScore_6months;
+                    });
+                }
 //               violinPlot(data);
                     // Add X axis
                     var x = d3.scaleLinear()
-                        .domain([0, 4000])
+                        .domain([0, 100])
                         .range([ 0, width ]);
                     svg.append("g")
                         .attr("transform", "translate(0," + height + ")")
@@ -117,22 +96,43 @@ function goToResults() {
 
                     // Add Y axis
                     var y = d3.scaleLinear()
-                        .domain([0, 500000])
+                        .domain([0, 100])
                         .range([ height, 0]);
                     svg.append("g")
                         .call(d3.axisLeft(y));
 
                     // Add dots
+                if(scoreValue == 'Phisycal'){
                     svg.append('g')
                         .selectAll("dot")
-                        .data(data)
+                        .data(dataViz)
+                        .enter()
+                        .append("circle")
+                        .attr("cx", function (d) { return x(d.age); } )
+                        .attr("cy", function (d) { return y(d.SF12_PhysicalScore_6months); } )
+                        .attr("r", 1.5)
+                        .style("fill", "#69b3a2")
+
+                } else {
+                    svg.append('g')
+                        .selectAll("dot")
+                        .data(dataViz)
                         .enter()
                         .append("circle")
                         .attr("cx", function (d) { return x(d.age); } )
                         .attr("cy", function (d) { return y(d.SF12_MentalScore_6months); } )
                         .attr("r", 1.5)
                         .style("fill", "#69b3a2")
-
+                }
+                svg.append('g')
+                    .selectAll("dot")
+                    .data(patientData)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", function (d) { return x(d.age[0]); } )
+                    .attr("cy", function (d) { return y(d.SF12_PhysicalScore_6months[0]); } )
+                    .attr("r", 8)
+                    .style("fill", "#E52B50")
 
 
                 // // X axis: scale and draw:
