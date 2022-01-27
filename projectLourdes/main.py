@@ -74,23 +74,22 @@ def output():
             "Nome evento": form['nome_evento'],
             "Nome equipe": form['nome_equipe'],
             "Procedura intervento": form['procedura_intervento'],
-            "HHS Function PreOp": form['anni_ricovero'],
-            "HHS Total PreOp": form['anni_ricovero'],
-            "VAS PAIN risp PreOp": form['anni_ricovero'],
-            "SF12 PhysicalScore PreOp": form['anni_ricovero'],
-            "SF12 MentalScore PreOp": form['anni_ricovero'],
-            "HOOSPS Total PreOp": form['anni_ricovero'],
-            "BMI altezza risp PreOp": form['anni_ricovero'],
-            "BMI peso risp PreOp": form['anni_ricovero'],
-            "BMI Total PreOp": form['anni_ricovero']
+            "HHS Function PreOp": form['HHS_FpreOp'],
+            "HHS Total PreOp": form['HHS_TpreOp'],
+            "VAS PAIN risp PreOp": form['VAS_PAIN_PreOp'],
+            "SF12 PhysicalScore PreOp": form['physicalScore'],
+            "SF12 MentalScore PreOp": form['mentalScore'],
+            "HOOSPS Total PreOp": form['HOOSPS'],
+            "BMI altezza risp PreOp": form['bmi_altezza_preOp'],
+            "BMI peso risp PreOp": form['bmi_peso_preOp'],
+            "BMI Total PreOp": form['bmi_total_preOp']
             }
         
-        input_data = pd.DataFrame.from_dict(input_data, orient = 'index').T
+        input_data = pd.DataFrame.from_dict(input_data, orient='index').T
         data_preprocessed = preprocessing(input_data)
-        predictions, other = predictions_hip_6months(data_preprocessed)
+        predictions = predictions_hip_6months(data_preprocessed)
         results = jsonify(predictions)
-        other_data = jsonify(other)
-        return results, other_data
+        return results
     else:    
         abort(400)
 
