@@ -189,25 +189,39 @@ def predictions_hip_6months(data_to_pred):
     age = age.astype(int)
     age = age.tolist()
     
-    # stime fatte sui dati in input
-    estimation = {"SF12_PhysicalScore_6months": predictionsP,  # score fisico dopo 6 mesi
-                  "SF12_MentalScore_6months": predictionsM,  # score mentale dopo 6 mesi
-                  "age": age  # eta'
-                  }
     
-    # dati dei pazienti nel nostro db (data_reg_anca.xls)
-    DBstuff = {"SF12_PhysicalScore_6months_DB": DB_6months_p,  # score fisico dopo 6 mesi
-               "SF12_MentalScore_6months_DB": DB_6months_m,  # score mentale dopo 6 mesi
-               "ageDB": ageDB,  # eta'
-               "medianaP": medianP,  # mediana degli score fisici
-               "medianaM": medianM  # mediana degli score mentali
-               }
+    estimation = {"SF12_PhysicalScore_6months": predictionsP, # previsione score fisico dopo 6 mesi
+                  "SF12_MentalScore_6months": predictionsM, # previsione score mentale dopo 6 mesi
+                  "age": age # eta'
+                  }
 
-    to_json = {
-        "estimation" : estimation,
-        "DBstuff" : DBstuff
-        }
-
+    
+    # lista da convertire in json
+    to_json = [estimation]
+    # lista che avra' i dati dei pazienti nel DB
+    others = []
+    
+    
+    # ciclo da 0 a len(ageDB)-1 (anche len(DB_6months_m/p) sarebbe andato bene) 
+    # prendo il valore in pos i e lo metto in un dict che poi appendo a others
+    for i in range(len(ageDB)):
+        dict = {
+            "SF12_PhysicalScore_6months": DB_6months_p[i],
+            "SF12_MentalScore_6months": DB_6months_m[i],
+            "age": ageDB[i]
+            }
+        others.append(dict)
+    
+    
+    other_patients = {"others": others}
+    to_json.append(other_patients)
+    
+    
+    median_data = {"medianaM": medianM,
+                   "medianaP": medianP}
+    to_json.append(median_data)
+    
+    
     return to_json
 
 
