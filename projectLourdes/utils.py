@@ -3,6 +3,7 @@ import numpy as np
 import pickle
 import statistics
 import os
+from operator import itemgetter
 
 # data = pd.read_excel(r'C:\Users\Loredana\Documents\epimetheus-project\testregressione\data\data_reg_anca.xls')
 
@@ -92,6 +93,21 @@ def check_event(df):
     return df
 
 
+def most_similar_scores(all_scores, ages, input_score, input_age):
+    to_sort = []
+    sorted_scores = []
+    
+    for i in range(len(all_scores)):
+        to_sort.append((all_scores[i], abs(input_score[0] - all_scores[i]), ages[i], abs(input_age[0] - ages[i])))
+    
+    to_sort.sort(key=itemgetter(1, 3))
+    
+    for x in range(0, 5):
+        sorted_scores.append((to_sort[x][0], to_sort[x][2]))
+    
+    return sorted_scores
+
+
 def preprocessing(data):
     data = data.replace('#null', np.nan)
 
@@ -174,7 +190,7 @@ def preprocessing(data):
     return data_preop
 
 
-def predictions_hip_6months(data_to_pred):
+def predictions_hip_6months(data_to_pred, mode):
     # drop dell'id perchè non riesce a convertirlo in float
     data_to_pred.drop('Uid', axis=1, inplace=True)
 
@@ -187,7 +203,8 @@ def predictions_hip_6months(data_to_pred):
 
     age = data_to_pred['Anni ricovero'].to_numpy()
     age = age.astype(int)
-    age = age.tolist()
+    age = age.tolist() 
+
     
     
     estimation = {"SF12_PhysicalScore_6months": predictionsP, # previsione score fisico dopo 6 mesi
@@ -218,9 +235,30 @@ def predictions_hip_6months(data_to_pred):
     
     
     median_data = {"medianaM": medianM,
-                   "medianaP": medianP}
+                   "medianaP": medianP
+                   }
     to_json.append(median_data)
     
+    
+    if mode == "single_patient":
+        similar_scores = []
+        similar_p = most_similar_scores(DB_6months_p, ageDB, predictionsP, data_to_pred['Anni ricovero'])
+        for x in range(len(similar_p)):
+            similar_p_dict = {"SF12_PhysicalScore_6months": similar_p[x][0],
+                              "age": similar_p[x][1]
+                              }
+            similar_scores.append(similar_p_dict)
+
+        
+        similar_m = most_similar_scores(DB_6months_m, ageDB, predictionsM, data_to_pred['Anni ricovero'])
+        for x in range(len(similar_m)):
+            similar_m_dict = {"SF12_MentalScore_6months": similar_m[x][0],
+                              "age": similar_m[x][1]
+                              }
+            similar_scores.append(similar_m_dict)
+            
+        to_json.append(similar_scores)
+            
     
     return to_json
 
@@ -234,6 +272,7 @@ def predictions_hip_6months(data_to_pred):
 data_prepr = preprocessing(data)
 e = predictions_hip_6months(data_prepr)
 print(e)
+"""
 input_data = {
     "Uid": 'IOG1RH100000001',#.id_paziente.data
     "Sesso": 'M', #.sesso.data
@@ -255,6 +294,6 @@ input_data = {
     }
 input_data = pd.DataFrame.from_dict(input_data, orient='index').T
 data_preprocessed = preprocessing(input_data)
-estimation = predictions_hip_6months(data_preprocessed)
+estimation = predictions_hip_6months(data_preprocessed, "single_patient")
 print(estimation)
-"""
+

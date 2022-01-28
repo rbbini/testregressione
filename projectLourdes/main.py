@@ -52,7 +52,7 @@ def output():
         # pd.read_excel(file)
         dataset = pd.read_excel(file)
         data_preprocessed = preprocessing(dataset)
-        predictions = predictions_hip_6months(data_preprocessed)
+        predictions = predictions_hip_6months(data_preprocessed, "dataset")
         results = jsonify(predictions)
         
         return results
@@ -80,7 +80,7 @@ def output():
         }
         input_data = pd.DataFrame.from_dict(input_data, orient='index').T
         data_preprocessed = preprocessing(input_data)
-        predictions = predictions_hip_6months(data_preprocessed)
+        predictions = predictions_hip_6months(data_preprocessed, "single_patient")
         results = jsonify(predictions)
         
         return results
