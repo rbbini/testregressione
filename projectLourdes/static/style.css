@@ -2,11 +2,11 @@
 /* Variables section */
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,400&display=swap');
 :root {
-    --darker-color: #1A2541;
-    --primary-color: #054B86;
-    --azure-color: #0083C7;
-    --celeste-color: #71C3E8;
-    --light-color: #BCD9EB;
+    --darker-color: #005C9D;
+    --primary-color: #018ABE;
+    --azure-color: #02B9F3;
+    --celeste-color: #93E1ED;
+    --light-color: #E2F3FB;
     --black-color: #0B1632;
     --white-color: #F3F7FB;
 }
@@ -19,16 +19,20 @@ h2 {
     font-weight: 700;
 }
 .btn-blue {
+    background-color: rgba(var(--black-color), 0.3);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+.btn-blue.activeBtn {
     background-color: var(--primary-color);
+    color: var(--white-color);
+}
+.btn-blue.activeBtn:hover {
+    background-color: var(--azure-color);
     color: var(--white-color);
 }
 .text-blue {
     color: var(--primary-color);
-}
-.btn-blue:disabled {
-     background-color: rgba(var(--black-color), 0.3);
-     color: var(--primary-color);
-     border: 1px solid var(--primary-color);
 }
 .step > div {
     background-color: var(--white-color);
@@ -43,6 +47,34 @@ h2 {
     font-size: 12px;
     font-weight: 700;
 }
-#manuallyForm, #episodeForm, #subB, #subA {
-    visibility: hidden;
+#manuallyForm, #episodeForm, #subB, #subA, #step2, #step3 {
+    display: none;
 }
+
+.lineToNext {
+    content: '';
+    width: 40%;
+    margin: auto;
+    height: 4px;
+    background-color: var(--celeste-color);
+    position: relative;
+}
+/*.lineToNext::after {*/
+/*    content: '';*/
+/*    border: solid var(--celeste-color);*/
+/*    border-width: 0px 2px 2px 0;*/
+/*    display: inline-block;*/
+/*    padding: 3px;*/
+/*    transform: rotate(-45deg);*/
+/*    right: -1px;*/
+/*    position: absolute;*/
+/*    -webkit-transform: rotate(-45deg);*/
+/*    top: -3px;*/
+/*}*/
+.lineActive {
+    background-color: var(--darker-color);
+    animation: 3s linear 10s running slidein;
+}
+/*.lineActive.lineToNext::after {*/
+/*    border: solid var(--darker-color);*/
+/*}*/

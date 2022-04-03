@@ -3,14 +3,23 @@ let javascript_data = {};
 
 function goToNextStep(step) {
     const formData = document.getElementById('step' + step).elements;
-    for (var i = 0; i < formData.length; i++) {
-        var item = formData.item(i);
-        javascript_data[item.name] = item.value;
-    }
+    // for (var i = 0; i < formData.length; i++) {
+    //     var item = formData.item(i);
+    //     javascript_data[item.name] = item.value;
+    // }
     const next = Number(step) + 1;
-    const nextStep = document.getElementById('step' + next);
-    nextStep.classList.add('visible');
-    console.log(javascript_data);
+    if(next < 4){
+        const nextStep = document.getElementById('step' + next);
+        nextStep.classList.add('d-block');
+        const nextBtn = document.getElementById('btnStep' + next);
+        nextBtn.classList.add('activeBtn');
+        const nextLinea = document.getElementById('goStep' + next);
+        nextLinea.classList.add('lineActive');
+        if(step < 3){
+            const hideNext = document.getElementById('clicked' + step);
+            hideNext.classList.add('d-none');
+        }
+    }
 }
 
 const objFormSource = document.getElementById("objSource");
@@ -18,31 +27,34 @@ objFormSource.addEventListener('change', function (e) {
     const sourceValue = document.querySelector('input[name="dataSource"]:checked').value;
     if (sourceValue == 'manually') {
         const manualStep = document.getElementById('manuallyForm');
-        manualStep.classList.add('visible');
+        manualStep.classList.add('d-block');
         const otherStep = document.getElementById('episodeForm');
-        if (otherStep.classList.contains('visible')) {
-            otherStep.classList.remove('visible');
+        if (otherStep.classList.contains('d-block')) {
+            otherStep.classList.remove('d-block');
         }
 
     } else if (sourceValue == 'patientEpisode') {
         const episodeStep = document.getElementById('episodeForm');
-        episodeStep.classList.add('visible');
+        episodeStep.classList.add('d-block');
         const otherStep = document.getElementById('manuallyForm');
-        if (otherStep.classList.contains('visible')) {
-            otherStep.classList.remove('visible');
+        if (otherStep.classList.contains('d-block')) {
+            otherStep.classList.remove('d-block');
         }
     }
 });
 
+function validateForm(){
+
+}
+
 function goToResults() {
-    const form = document.getElementById('step1')
+    const form = document.getElementById('formSteps');
     //const formPart = new URLE
     //const elements = form.elements;
     //for (var i = 0; i < elements.length; i++) {
     //    var item = elements.item(i);
     //    obj[item.name] = item.value;
     //}
-
     const data = new FormData(form);
     http.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
@@ -171,10 +183,19 @@ function goToResults() {
 
             }
 
+        } else {
+            if(this.readyState == 4 ) {
+                transferFailed();
+            }
         }
     };
+    http.addEventListener("error", transferFailed);
     http.open('POST', 'http://127.0.0.1:5000/data/analysis');
     http.send(data);
+}
+
+function transferFailed(){
+    return alert("An error occurred while transferring the file.");
 }
 
 function violinPlot(data) {
