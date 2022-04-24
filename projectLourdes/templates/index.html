@@ -16,11 +16,6 @@
 			<nav class="navbar navbar-light bg-light shadow-sm">
 				<div class="container">
 					<span class="navbar-brand mb-0 h1">Epimetheus project</span>
-		<!--			<ul class="navbar-nav ml-auto my-2 my-lg-0 px-4 px-lg-0 navbar-nav-scroll">-->
-		<!--				<li class="nav-item mx-2 py-3 py-lg-0">-->
-		<!--					<a class="nav-link">Valuta</a>-->
-		<!--				</li>-->
-		<!--			</ul>-->
 				</div>
 			</nav>
 		</header>
@@ -32,6 +27,8 @@
 					<button class="btn btn-blue text-uppercase" id="btnStep2">2</button>
 					<div class="lineToNext" id="goStep3"></div>
 					<button class="btn btn-blue text-uppercase" id="btnStep3">3</button>
+					<div class="lineToNext" id="goStep4"></div>
+					<button class="btn btn-blue text-uppercase" id="btnStep4">4</button>
 				</div>
 			</div>
 
@@ -41,24 +38,26 @@
 		<!--			<p class="col-12">Selezionare la procedura, lo score e lo step per cui si vuole fare il confronto</p>-->
 					<p class="col-12">Select the procedure, the score and the step for which you want to make the comparison</p>
 					<div class="form-group col-xl-4 col-md-6 col-12">
-						<label for="formProcedure" class="form-label">Procedure</label>
-						<select class="form-select" aria-label="Select for procedure" id="formProcedure" name="procedure">
+						<label for="procedure" class="form-label">Procedure</label>
+						<select class="form-select" aria-label="Select for procedure" id="procedure" name="procedure" >
 							<option value="" selected>Select the procedure</option>
 							<option value="Anca">Anca</option>
 							<option value="Ginocchio" disabled>Ginocchio</option>
 						</select>
+						<small></small>
 					</div>
 					<div class="form-group col-xl-4 col-md-6 col-12">
-						<label for="formScore" class="form-label">Score</label>
-						<select class="form-select" aria-label="Select for score" id="formScore"  name="score">
+						<label for="score" class="form-label">Score</label>
+						<select class="form-select" aria-label="Select for score" id="score"  name="score">
 							<option value="" selected>Select the score</option>
 							<option value="Phisycal">Fisico</option>
 							<option value="Mental">Mentale</option>
 						</select>
+						<small></small>
 					</div>
 					<div class="form-group col-xl-4 col-md-6 col-12">
-						<label for="formStep" class="form-label">Step</label>
-						<select class="form-select" aria-label="Select for step" id="formStep" name="step">
+						<label for="step" class="form-label">Step</label>
+						<select class="form-select" aria-label="Select for step" id="step" name="step">
 							<option value="" selected>Select the step</option>
 							<option value="Pre" disabled>Preoperatorio</option>
 							<option value="3" disabled>3 Mesi</option>
@@ -66,6 +65,7 @@
 							<option value="12" disabled>12 Mesi</option>
 							<option value="24" disabled>24 Mesi</option>
 						</select>
+						<small></small>
 					</div>
 					<div class="col-12 text-end mt-3" id="clicked1">
 						<button type="button" class="btn btn-primary" onclick="goToNextStep(1)">
@@ -100,9 +100,12 @@
 								</label>
 							</div>
 						</div>
-						<div class="col-12 text-end mt-3" id="clicked2">
+						<div class="col-12 d-flex justify-content-between flex-row-reverse mt-3" id="clicked2">
 							<button type="button" class="btn btn-primary" onclick="goToNextStep(2)">
 								Next
+							</button>
+							<button type="button" class="btn btn-outline-primary" onClick="document.location.reload(true)">
+								Reset
 							</button>
 						</div>
 					</div>
@@ -110,7 +113,7 @@
 				<div class="border-bottom py-4" id="step3">
 					<h2 class="text-blue text-uppercase">Input data</h2>
 					<p>Select the data source</p>
-					<div class="row" id="objSource">
+					<div class="row mb-4" id="objSource">
 						<div class="col-xl-4 col-md-6 col-12">
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="dataSource" id="dataSourceManual" value="manually">
@@ -132,18 +135,20 @@
 						<div class="form-group col-xl-4 col-md-6 col-12">
 							<label for="file" class="form-label">Insert dataset</label>
 							<input class="form-control" aria-label="insert file xsls or xls" id="file" name="file" type="file" placeholder="no file selected">
+							<small></small>
 						</div>
 					</div>
 					<div id="episodeForm">
 						<div class="row">
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="uid" class="form-label">Uid</label>
-								<input class="form-control" aria-label="UID" id="uid" name="uid" type="text" required>
+								<input class="form-control" aria-label="UID" id="uid" name="uid" type="text" id="uid">
+								<small></small>
 							</div>
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="sex" class="form-label">Gender</label>
 								<div class="d-flex" id="sex">
-									<div class="form-check">
+									<div class="form-check me-3">
 										<input class="form-check-input" type="radio" name="sesso" value="M" id="male">
 										<label class="form-check-label" for="male">
 											Male
@@ -155,21 +160,25 @@
 											Female
 										</label>
 									</div>
+									<small></small>
 								</div>
 							</div>
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="anni_ricovero" class="form-label">Age patient</label>
 								<input class="form-control" aria-label="età" id="anni_ricovero" name="anni_ricovero" type="number">
+								<small></small>
 							</div>
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="data_operazione" class="form-label">Date of operation</label>
 								<input class="form-control" aria-label="Data operazione" id="data_operazione" name="data_operazione" type="date" max="2021-05-05">
+								<small></small>
 							</div>
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="data_dimissione" class="form-label">Date of dimission</label>
 								<input class="form-control" aria-label="Data dimissione" id="data_dimissione" name="data_dimissione" type="date" max="2021-05-05">
+								<small></small>
 							</div>
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="nome_evento" class="form-label">Name visit</label>
 								<select class="form-select" aria-label="Nome evento" id="nome_evento" name="nome_evento">
 									<option value="bilaterale protesi primo intervento" selected>bilaterale protesi primo intervento</option>
@@ -178,8 +187,9 @@
 									<option value="sinistra protesi primo intervento">sinistra protesi primo intervento</option>
 									<option value="sinistra revisione">sinistra revisione</option>
 								</select>
+								<small></small>
 							</div>
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="nome_equipe" class="form-label">Name equipe</label>
 								<select class="form-select" aria-label="Nome equipe" id="nome_equipe" name="nome_equipe">
 									<option value="36h orto - moroni" selected>36h orto - moroni</option>
@@ -193,52 +203,66 @@
 									<option value="oraco" >oraco</option>
 									<option value="ot9 orto - ventura2" >ot9 orto - ventura2</option>
 								</select>
+								<small></small>
 							</div>
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="procedura_intervento" class="form-label">Intervention procedure</label>
 								<input class="form-control" aria-label="procedura intervento" id="procedura_intervento" name="procedura_intervento" type="text">
+								<small></small>
 							</div>
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="HHS_FpreOp" class="form-label">HHS Function PreOp</label>
 								<input class="form-control" aria-label="HHS_FpreOp" id="HHS_FpreOp" name="HHS_FpreOp" type="number">
+								<small></small>
 							</div>
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="HHS_TpreOp" class="form-label">HHS Total PreOp</label>
 								<input class="form-control" aria-label="HHS_TpreOp" id="HHS_TpreOp" name="HHS_TpreOp" type="number">
+								<small></small>
 							</div>
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="VAS_PAIN_PreOp" class="form-label">VAS PAIN risp PreOp</label>
 								<input class="form-control" aria-label="VAS_PAIN_PreOp" id="VAS_PAIN_PreOp" name="VAS_PAIN_PreOp" type="number">
+								<small></small>
 							</div>
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="physicalScore" class="form-label">SF12 PhysicalScore PreOp</label>
 								<input class="form-control" aria-label="physicalScore" id="physicalScore" name="physicalScore" type="number">
+								<small></small>
 							</div>
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="mentalScore" class="form-label">SF12 MentalScore PreOp</label>
 								<input class="form-control" aria-label="mentalScore" id="mentalScore" name="mentalScore" type="number">
+								<small></small>
 							</div>
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="HOOSPS" class="form-label">HOOSPS Total PreOp</label>
-								<input class="form-control" aria-label="HOOSPS" id="HOOSPS" name="HOOSPS" type="number">
+								<input class="form-control" aria-label="mentalScore" id="HOOSPS" name="mentalScore" type="number">
+								<small></small>
 							</div>
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="bmi_altezza_preOp" class="form-label">BMI height risp PreOp</label>
 								<input class="form-control" aria-label="BMI altezza risp PreOp" id="bmi_altezza_preOp" name="bmi_altezza_preOp" type="number">
+								<small></small>
 							</div>
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="bmi_peso_preOp" class="form-label">BMI weight risp PreOp</label>
 								<input class="form-control" aria-label="BMI peso risp PreOp" id="bmi_peso_preOp" name="bmi_peso_preOp" type="number">
+								<small></small>
 							</div>
-							<div class="form-group col-xl-4 col-md-6 col-12">
+							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">
 								<label for="bmi_total_preOp" class="form-label">BMI Total PreOp</label>
 								<input class="form-control" aria-label="BMI Total PreOp" id="bmi_total_preOp" name="bmi_total_preOp" type="number">
+								<small></small>
 							</div>
 						</div>
 					</div>
-					<div class="col-12 text-end mt-3">
+					<div class="col-12 d-flex justify-content-between flex-row-reverse mt-3">
 						<button type="button" class="btn btn-primary" onclick="goToResults()">
 							Go to results
+						</button>
+						<button type="button" class="btn btn-outline-primary" onClick="document.location.reload(true)">
+							Reset
 						</button>
 					</div>
 				</div>

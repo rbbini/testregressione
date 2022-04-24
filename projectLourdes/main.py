@@ -30,6 +30,11 @@ def home_page():
     return render_template('index.html')
 
 
+@app.route('/results', methods=['GET', 'POST'])
+def results():
+    return render_template('results.html')
+
+
 @app.route('/data/analysis', methods=['POST'])
 def output():
     # data_folder = os.path.join(path, '..', 'data')

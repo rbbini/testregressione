@@ -9,6 +9,9 @@
     --light-color: #E2F3FB;
     --black-color: #0B1632;
     --white-color: #F3F7FB;
+    --grad-mig: #2CB7EA;
+    --grad-inv: #E3F4FC;
+    --grad-peg: #C02026;
 }
 body {
     font-family: 'Lato', sans-serif;
@@ -77,4 +80,97 @@ h2 {
 }
 /*.lineActive.lineToNext::after {*/
 /*    border: solid var(--darker-color);*/
+/*}*/
+
+.circular-graph {
+    width: 100px;
+    height: 100px;
+    background-image: conic-gradient(var(--grad-mig), #9AD9E6, var(--grad-inv), #F18250, var(--grad-peg));
+    border-radius: 50px;
+    padding: 10px;
+    transform: rotate(-45deg);
+}
+.content-wrapper {
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--white-color);
+    border-radius: 50%;
+    background-image: linear-gradient(135deg,var(--grad-mig), #9AD9E6, var(--grad-inv), #F18250, var(--grad-peg));
+    background-size: 600%;
+    background-position: 0% 50%;
+}
+
+.mig:before {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 8px;
+    width: 10px;
+    height: 10px;
+    background-color: var(--grad-mig);
+}
+.stab:before  {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 8px;
+    width: 10px;
+    height: 10px;
+    background-color: var(--grad-inv);
+}
+.peg:before  {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 8px;
+    width: 10px;
+    height: 10px;
+    background-color: var(--grad-peg);
+}
+path {
+    fill: transparent;
+}
+
+textPath {
+    font-size: 1.5rem;
+    font-family: 'Lato', sans-serif;
+    fill: var(--azure-color);
+}
+.improved {
+    top: 11px;
+    left: -113px;
+    width: 125px;
+    transform: scale(2.5);
+}
+.improved > svg {
+    transform: rotate(120deg);
+}
+.bar-el {
+    width: 50px;
+    height: 20px;
+}
+.bar-improved {
+    background-color: var(--grad-mig);
+}
+.bar-stable {
+    background-color: var(--grad-inv);
+}
+.bar-worsened {
+    background-color: var(--grad-peg);
+}
+#valueBar {
+    background-color: #BCD8E6;
+    width: 2px;
+    height: 20px;
+    left: 20px;
+}
+/*.stable {*/
+/*    top: -90px;*/
+/*    left: -150px;*/
+/*    transform: rotate(200deg);*/
+/*}*/
+/*.worsened {*/
+/*    top: -90px;*/
+/*    left: -150px;*/
+/*    transform: rotate(300deg);*/
 /*}*/
