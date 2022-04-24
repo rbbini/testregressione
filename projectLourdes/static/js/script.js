@@ -90,7 +90,7 @@ function validateForm(x){
     if (x == "") {
         // alert("Name must be filled out");
         return false;
-    } else {
+    } else{
         return true;
     }
 }
@@ -103,18 +103,42 @@ function goToResults() {
         let x = document.forms["formSteps"][dataStruct[i]].value;
         if(validateForm(x)) {
             valid = true;
-            // showSuccess(inputEl);
-        } else {
-            // showError(inputEl, 'Username cannot be blank.');
-
         }
     };
     if(valid) {
-        localStorage.setItem('dataEl', data);
-        window.location.href = 'results';
+        getRequest(data);
     } else {
         alert('check the values of fields');
     }
+}
+
+function transferFailed(){
+    return alert("An error occurred while transferring the file.");
+}
+
+function getRequest(data){
+    http.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var rawdata = JSON.parse(this.responseText);
+            if (typeof rawdata == 'string') {
+                alert(this.responseText);
+                return;
+            } else {
+                localStorage.setItem('dataEl', JSON.stringify(rawdata));
+                localstorage.setItem('score',JSON.stringify(document.getElementById('formScore').value))
+                window.location.href = 'results';
+            }
+
+        } else {
+            if(this.readyState == 4 ) {
+                transferFailed();
+            }
+        }
+    };
+    http.addEventListener("error", transferFailed);
+    http.open('POST', 'http://127.0.0.1:5000/data/analysis');
+    http.send(data);
+
 }
 
 function violinPlot(data) {
