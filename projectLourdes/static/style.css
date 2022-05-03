@@ -164,13 +164,25 @@ textPath {
     height: 20px;
     left: 20px;
 }
-/*.stable {*/
-/*    top: -90px;*/
-/*    left: -150px;*/
-/*    transform: rotate(200deg);*/
-/*}*/
-/*.worsened {*/
-/*    top: -90px;*/
-/*    left: -150px;*/
-/*    transform: rotate(300deg);*/
-/*}*/
+
+.tooltipInfo {
+    background-color: var(--light-color);
+    color: var(--darker-color);
+    font-size: 12px;
+    min-width: 250px;
+    display: none;
+}
+.tooltipInfo::before {
+    width: 0;
+    height: 0;
+    content: '';
+    position: absolute;
+    left: -10px;
+    bottom: 10px;
+    border-top: 5px solid transparent;
+    border-right: 10px solid var(--light-color);
+    border-bottom: 5px solid transparent;
+}
+.form-label:hover .tooltipInfo{
+    display: block;
+}

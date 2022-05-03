@@ -125,7 +125,7 @@ function getRequest(data){
                 return;
             } else {
                 localStorage.setItem('dataEl', JSON.stringify(rawdata));
-                localstorage.setItem('score',JSON.stringify(document.getElementById('formScore').value))
+                localStorage.setItem('score',JSON.stringify(document.getElementById('score').value))
                 window.location.href = 'results';
             }
 
