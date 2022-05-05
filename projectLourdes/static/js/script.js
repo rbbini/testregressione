@@ -124,8 +124,8 @@ function getRequest(data){
                 alert(this.responseText);
                 return;
             } else {
-                localStorage.setItem('dataEl', JSON.stringify(rawdata));
-                localStorage.setItem('score',JSON.stringify(document.getElementById('score').value))
+                sessionStorage.setItem('dataEl', JSON.stringify(rawdata));
+                sessionStorage.setItem('score',JSON.stringify(document.getElementById('score').value))
                 window.location.href = 'results';
             }
 

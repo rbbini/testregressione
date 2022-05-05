@@ -34,11 +34,11 @@ let datasetCustom = [
     {period: 'preOp', SF12_MentalScore_6Months: 24}
 ]
 function getResults() {
-    const data = JSON.parse(localStorage.getItem('dataEl'));
+    const data = JSON.parse(sessionStorage.getItem('dataEl'));
 
     /* scatter plot */
     let margin = {top: 10, right: 30, bottom: 100, left: 100},
-        width = 460 - margin.left - margin.right,
+        width = 400 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
@@ -50,7 +50,7 @@ function getResults() {
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
-    const scoreValue = localStorage.getItem('score');
+    const scoreValue = sessionStorage.getItem('score');
     let dataViz = data[3];
     let patientData = data[0];
     let objToAnalyze = [];
@@ -110,15 +110,81 @@ function getResults() {
             .style("fill", function (d) { return color(d.isTester) } )
     }
     violinPlots(datasetCustom, 'period', 'SF12_MentalScore_6Months');
+    plotWithBoxPlot(patientData);
 }
 
 function transferFailed(){
     return alert("An error occurred while transferring the file.");
 }
 
+function plotWithBoxPlot(dataset){
+    let newDataset = [];
+    newDataset.push(dataset);
+    let margin = {top: 10, right: 10, bottom: 40, left: 40},
+        width = 350 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    // append the svg object to the body of the page
+    let svg = d3.select("#plotWBox")
+        .append("svg")
+        .style("background-color", "transparent")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+    // Add X axis
+    var x = d3.scaleLinear()
+        .domain([0, 100])
+        .range([ 0, width ]);
+    svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+
+    // Add Y axis
+    var y = d3.scaleLinear()
+        .domain([0, 100])
+        .range([ height, 0]);
+    svg.append("g")
+        .call(d3.axisLeft(y));
+
+    svg.append('g')
+        .selectAll("dot")
+        .data(newDataset)
+        .enter()
+        .append("circle")
+        .attr("cx", function (d) { return x(d.SF12_MentalScore_6months[0]); } )
+        .attr("cy", function (d) { return y(d.SF12_PhysicalScore_6months[0]); } )
+        .attr("r", 3)
+        .style("fill", '#BADAE9' )
+
+    svg.append('g')
+        .selectAll("dot")
+        .data(newDataset)
+        .enter()
+        .append('circle')
+        .attr("cx", function (d) { return x(d.SF12_MentalScore_6months[0]); } )
+        .attr("cy", function (d) { return y(d.SF12_PhysicalScore_6months[0]); } )
+        .attr('r', 10)
+        .attr('stroke', '#BADAE9')
+        .attr('fill', 'none');
+
+// Add the path using this helper function
+    svg
+        .append("g")
+        .selectAll("dot")
+        .data(newDataset)
+        .enter()
+        .append("line")
+        .attr("x1", function(d){return(x(d.SF12_MentalScore_6months[0]))})
+        .attr("x2", function(d){return(x(d.SF12_MentalScore_6months[0]))})
+        .attr("y1", function(d){return(y(d.SF12_PhysicalScore_6months[0] + 10))})
+        .attr("y2", function(d){return(y(d.SF12_PhysicalScore_6months[0] - 10))})
+        .attr("stroke", "#BADAE9")
+        .style("width", 1)
+}
+
 function violinPlots(dataset, xGroup, yValue){
-    /*http://bl.ocks.org/asielen/d15a4f16fa618273e10f
-     woow http://bl.ocks.org/asielen/92929960988a8935d907e39e60ea8417*/
     var margin = {top: 10, right: 30, bottom: 30, left: 40},
         width = 460 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
@@ -131,8 +197,6 @@ function violinPlots(dataset, xGroup, yValue){
         .append("g")
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
-
-// Read the data and compute summary statistics for each specie
 
         // Build and Show the Y scale
         var y = d3.scaleLinear()
@@ -196,24 +260,13 @@ function violinPlots(dataset, xGroup, yValue){
              .curve(d3.curveCatmullRom)    // This makes the line smoother to give the violin appearance. Try d3.curveStep to see the difference
          )
 
-    /* box plot in absolute
-
-// append the svg object to the body of the page
-    var svgBox = d3.select("#boxPlot1")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform",
-            "translate(" + margin.left + "," + margin.top + ")"); */
-
         // Compute quartiles, median, inter quantile range min and max --> these info are then used to draw the box.
         var sumstatBox = d3.nest() // nest function allows to group the calculation per level of a factor
             .key(function(d) { return d.period;})
             .rollup(function(d) {
                 q1 = d3.quantile(d.map(function(g) { return g.SF12_MentalScore_6Months;}).sort(d3.ascending),.25)
                 median = d3.quantile(d.map(function(g) { return g.SF12_MentalScore_6Months;}).sort(d3.ascending),.5)
-                patient = JSON.parse(localStorage.getItem('dataEl'))[0].SF12_PhysicalScore_6months[0]
+                patient = JSON.parse(sessionStorage.getItem('dataEl'))[0].SF12_PhysicalScore_6months[0]
                 q3 = d3.quantile(d.map(function(g) { return g.SF12_MentalScore_6Months;}).sort(d3.ascending),.75)
                 interQuantileRange = q3 - q1
                 min = q1 - 1.5 * interQuantileRange
@@ -303,7 +356,6 @@ function violinPlots(dataset, xGroup, yValue){
             .attr("stroke", "#CFE6F3")
             .style("width", 20)
 
-    console.log(sumstatBox)
     // Draw the whiskers at the min for this series
         svg.selectAll("indPoints")
             .data(sumstatBox)

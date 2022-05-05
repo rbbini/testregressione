@@ -34,7 +34,7 @@
 			</div>
 			<div class="row">
 				<div class="col-12 border-bottom py-3">
-					<a href="/"><i class="fa-solid fa-chevron-left"></i> Go back to compilation</a>
+					<a href="/" class="text-decoration-none fw-bold text-blue">< Go back to compilation</a>
 				</div>
 				<h1 class="text-blue mt-3 fs-3 col-12">Results</h1>
 <!--				<div class="head-form pt-4 d-flex justify-content-between align-items-start col-lg-8 col-12 mx-auto">-->
@@ -79,7 +79,7 @@
 <!--								</svg>-->
 							</div>
 							<div class="text-end pt-3 border-top mt-5">
-								<button class="btn btn-blue outline">Evaluate prediction</button>
+								<button class="btn btn-blue outline" type="button" data-toggle="modal" data-target="#evalModal" onclick="evalPred('bar')">Evaluate prediction</button>
 							</div>
 
 						</div>
@@ -107,26 +107,34 @@
 						<div class="border border-blue rounded p-3 h-100">
 							<div class="chart-wrapper" id="violinPlot1"></div>
 							<div class="text-end">
-								<button class="btn btn-blue outline">Evaluate prediction</button>
+								<button class="btn btn-blue outline" type="button" data-toggle="modal" data-target="#evalModal" onclick="evalPred('bar')">Evaluate prediction</button>
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-4 col-md-6 col-12 mb-3">
+					<div class="col-lg-4 col-md-12 mb-3">
 						<div class="border border-blue rounded p-3">
-							<!--<p>classificatori</p>-->
-							<button class="btn btn-blue outline">Evaluate prediction</button>
+							<div class="chart-wrapper position-relative" id="plotWBox">
+								<div class="position-absolute"></div>
+							</div>
+							<div class="text-end">
+								<button class="btn btn-blue outline" type="button" data-toggle="modal" data-target="#evalModal" onclick="evalPred('bar')">Evaluate prediction</button>
+							</div>
 						</div>
 					</div>
 					<div class="col-lg-8 col-12 mb-3">
 						<div class="border border-blue rounded p-3">
 							<div class="chart-wrapper" id="scatterPlot1"></div>
-							<button class="btn btn-blue outline">Evaluate prediction</button>
+							<div class="text-end">
+								<button class="btn btn-blue outline" type="button" data-toggle="modal" data-target="#evalModal" onclick="evalPred('bar')">Evaluate prediction</button>
+							</div>
 						</div>
 					</div>
 					<div class="col-12 mb-3">
 						<div class="border border-blue rounded p-3">
 <!--							<p>Immagine con filtri</p>-->
-							<button class="btn btn-blue outline">Evaluate prediction</button>
+							<div class="text-end">
+								<button class="btn btn-blue outline" type="button" data-toggle="modal" data-target="#evalModal" onclick="evalPred('bar')">Evaluate prediction</button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -139,7 +147,7 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title" id="evalModalLabel">Evaluate prediction</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="evalPred('')">
+						<button type="button" class="btn btn-link text-blue text-decoration-none" data-dismiss="modal" aria-label="Close" onclick="evalPred('')">
 							<span aria-hidden="true">&times;</span>
 						</button>
 					</div>
