@@ -140,7 +140,15 @@ function getRequest(data){
     http.send(data);
 
 }
-
+function setbmi(){
+    let resultBMI = 0;
+    const weight = parseInt(document.getElementById("bmi_peso_preOp").value);
+    const height = parseInt(document.getElementById("bmi_altezza_preOp").value);
+    if(weight && height){
+        resultBMI = (weight / Math.pow( (height/100), 2 )).toFixed(1);
+        document.getElementById("bmi_total_preOp").setAttribute('value', resultBMI);
+    }
+}
 function violinPlot(data) {
 
     // set the dimensions and margins of the graph
