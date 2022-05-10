@@ -1,26 +1,51 @@
 var http = new XMLHttpRequest();
 let javascript_data = {};
 let valid = false;
-const dataStruct = [
-    'procedure',
+const dataStructAnca = [
     'score',
-    'step',
-    'uid',
+    'sesso',
     'anni_ricovero',
-    'data_operazione',
-    'data_dimissione',
-    'nome_evento',
-    'nome_equipe',
-    'procedura_intervento',
-    'HHS_FpreOp',
-    'HHS_TpreOp',
-    'VAS_PAIN_PreOp',
-    'physicalScore',
-    'mentalScore',
-    'HOOSPS',
-    'bmi_altezza_preOp',
-    'bmi_peso_preOp',
-    'bmi_total_preOp'
+    'classe_asa',
+    'VAS_Total_PreOp',
+    'SF12_PhysicalScore_PreOp',
+    'SF12_MentalScore_PreOp',
+    'BMI_altezza_PreOp',
+    'BMI_peso_PreOp',
+    'SF12_autovalsalute_risp_0',
+    'SF12_scale_risp_0',
+    'SF12_ultimomeseresa_risp_0',
+    'SF12_ultimomeselimite_risp_0',
+    'SF12_ultimomeseemo_risp_0',
+    'SF12_ultimomeseostacolo_risp_0',
+    'SF12_ultimomesesereno_risp_0',
+    'SF12_ultimomeseenergia_risp_0',
+    'SF12_ultimomesetriste_risp_0',
+    'SF12_ultimomesesociale_risp_0',
+    'zona_operazione'
+
+];
+
+const dataStructSpine = [
+    'score',
+    'nome_operazione',
+    'sesso',
+    'anni_ricovero',
+    'ODI_Total_PreOp',
+    'Vas_Back_PreOp',
+    'Vas_Leg_PreOp',
+    'SF36_GeneralHealth_PreOp',
+    'SF36_PhysicalFunctioning_PreOp',
+    'SF36_RoleLimitPhysical_PreOp',
+    'SF36_RoleLimitEmotional_PreOp',
+    'SF36_SocialFunctioning_PreOp',
+    'SF36_Pain_PreOp',
+    'SF36_EnergyFatigue_PreOp',
+    'SF36_EmotionalWellBeing_PreOp',
+    'SF36_MentalScore_PreOp',
+    'SF36_PhysicalScore_PreOp',
+    'FABQ_Work_PreOp',
+    'classe_asa_1',
+    'MORBIDITY'
 ];
 
 function goToNextStep(step) {
@@ -36,6 +61,37 @@ function goToNextStep(step) {
         if(step < 3){
             const hideNext = document.getElementById('clicked' + step);
             hideNext.classList.add('d-none');
+        }
+    }
+}
+
+function controlProcedure(){
+    const procedureValue = document.getElementById('zona_operazione').value;
+    let scoreSelect = document.getElementById('score');
+    if(scoreSelect.options.length > 2){
+        scoreSelect.remove(2);
+    }
+    if(procedureValue == 2){
+        let opt = document.createElement('option');
+        opt.value = 'ODI';
+        opt.innerHTML = 'ODI';
+        scoreSelect.appendChild(opt);
+        for (let i=1; i<6; i++) {
+            document.getElementById('isSpine' + i).classList.remove('d-none');
+        }
+        for (let i=1; i<5; i++) {
+            document.getElementById('isAnca' + i).classList.add('d-none');
+        }
+    } else {
+        let opt = document.createElement('option');
+        opt.value = 'Mental';
+        opt.innerHTML = 'Mental';
+        scoreSelect.appendChild(opt);
+        for (let i=1; i<6; i++) {
+            document.getElementById('isSpine' + i).classList.add('d-none');
+        }
+        for (let i=1; i<5; i++) {
+            document.getElementById('isAnca' + i).classList.remove('d-none');
         }
     }
 }
@@ -98,13 +154,24 @@ function validateForm(x){
 function goToResults() {
     const form = document.getElementById('formSteps');
     const data = new FormData(form);
-    for (let i= 0; i < dataStruct.length; i++){
-        const inputEl = document.querySelector('#' + dataStruct[i]);
-        let x = document.forms["formSteps"][dataStruct[i]].value;
-        if(validateForm(x)) {
-            valid = true;
-        }
-    };
+    const procedureValue = document.getElementById('zona_operazione').value;
+    if(procedureValue == 2){
+        for (let i= 0; i < dataStructSpine.length; i++){
+            const inputEl = document.querySelector('#' + dataStructSpine[i]);
+            let x = document.forms["formSteps"][dataStructSpine[i]].value;
+            if(validateForm(x)) {
+                valid = true;
+            }
+        };
+    } else  {
+        for (let i= 0; i < dataStructAnca.length; i++){
+            const inputEl = document.querySelector('#' + dataStructAnca[i]);
+            let x = document.forms["formSteps"][dataStructAnca[i]].value;
+            if(validateForm(x)) {
+                valid = true;
+            }
+        };
+    }
     if(valid) {
         getRequest(data);
     } else {
