@@ -48,6 +48,10 @@ const dataStructSpine = [
     'MORBIDITY'
 ];
 
+document.addEventListener('DOMContentLoaded', function() {
+    controlProcedure();
+}, false);
+
 function goToNextStep(step) {
     const formData = document.getElementById('step' + step).elements;
     const next = Number(step) + 1;
