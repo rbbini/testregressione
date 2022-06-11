@@ -2,7 +2,8 @@ from flask import Flask, flash, request, render_template, jsonify, abort
 from werkzeug.utils import secure_filename
 import os
 import pandas as pd
-from utils import preprocessing, predictions_hip_6months
+from pyearth import Earth
+from utils import preprocessing, predictions_hip_6months, predictions_hipAndKneeR, predictions_hipAndKneeC, predictions_SpineR, predictions_SpineC, predictions_SpineOdi, predictions_SpineCOdi 
 
 app = Flask(__name__)
 
@@ -56,43 +57,183 @@ def output():
         #file.save(filepath)
         
         dataset = pd.read_excel(file)
-        data_preprocessed = preprocessing(dataset)
-        predictions = predictions_hip_6months(data_preprocessed, "dataset")
-        results = jsonify(predictions)
-        other_data = jsonify(other)
         
-        return results
+    
+        # predizioni:
+        #   zona_operazione ==  0 o 1 -> anca/ginocchio
+        #   zona_operazione ==  2 -> colonna spinale
+        if request.form.get("zona_operazione") == 0 or request.form.get("zona_operazione") == 1:
+            # predizioni sia del physical che del mental score
+            predictionsR = predictions_hipAndKneeR(dataset, "dataset")
+            predictionsC = predictions_hipAndKneeC(dataset, "dataset")
+        elif request.form.get("zona_operazione") == 2: 
+############# DA UNIRE LE PREDIZIONI DI PHYSICAL E ODI IN UNA SOLA FUNZIONE/METODO NELL'UTILS
+############# POI TOGLIERE L'IF/ELSE request.form.get("score") == E LASCIARE SOLO UN CALCOLO DELLE PREDICTIONS
+            if request.form.get("score") == "Phisycal":
+                predictionsR = predictions_SpineR(dataset, "dataset")
+                predictionsC = predictions_SpineC(dataset, "dataset")
+                predictionsRO = predictions_SpineOdi(dataset, "dataset")
+                predictionsCO = predictions_SpineCOdi(dataset, "dataset")
+
+        #data_preprocessed = preprocessing(dataset)
+        #predictions = predictions_hip_6months(data_preprocessed, "dataset")
+        #results = jsonify(predictions)
+        #other_data = jsonify(other)
+        
+        results = {
+            "predictionsR": predictionsR,
+            "predictionsC": predictionsC,
+            "predictionsRO": predictionsRO,
+            "predictionsCO": predictionsCO
+            }
+        json_results = jsonify(results)
+        return json_results
+    
+    
     
     elif "dataSource" in request.form and request.form.get("dataSource") == 'patientEpisode':
         form = request.form
-        input_data = {
-            "Uid": form['uid'],  # .id_paziente.data
-            "Sesso": form['sesso'],  # .sesso.data
+        
+        # knee-hip regressivo
+        
+        if request.form.get("zona_operazione") == 0 or request.form.get("zona_operazione") == 1 :
+        
+        
+            input_data = {
+            "sesso": form ['sesso'],
             "Anni ricovero": form['anni_ricovero'],
-            "Data operazione": form['data_operazione'],
-            "Data dimissione": form['data_dimissione'],
-            "Nome evento": form['nome_evento'],
-            "Nome equipe": form['nome_equipe'],
-            "Procedura intervento": form['procedura_intervento'],
-            "HHS Function PreOp": form['HHS_FpreOp'],
-            "HHS Total PreOp": form['HHS_TpreOp'],
-            "VAS PAIN risp PreOp": form['VAS_PAIN_PreOp'],
-            "SF12 PhysicalScore PreOp": form['physicalScore'],
-            "SF12 MentalScore PreOp": form['mentalScore'],
-            "HOOSPS Total PreOp": form['HOOSPS'],
-            "BMI altezza risp PreOp": form['bmi_altezza_preOp'],
-            "BMI peso risp PreOp": form['bmi_peso_preOp'],
-            "BMI Total PreOp": form['bmi_total_preOp']
+            "classeasa": form['classe_asa'],
+            "vastotalpreop": form['VAS_Total_PreOp'],
+            "SF12physicalscorepreop": form['physicalScore'],
+            "SF12_MentalScore_PreOp": form['mentalScore'],
+            "bmialtezzapreop": form['BMI_altezza_PreOp'],
+            "bmipesopreop": form['BMI_peso_PreOp'],
+            "SF12autovalsaluterisp0": form['SF12_autovalsalute_risp_0'],
+            "SF12scalerisp0": form['SF12_scale_risp_0'],
+            "sf12ultimomeseresarisp0": form['SF12_ultimomeseresa_risp_0'],
+            "sf12ultimomeselimiterisp0": form['SF12_ultimomeselimite_risp_0'],
+            "sf12ultimomeseemorisp0": form['SF12_ultimomeseemo_risp_0'],
+            "sf12ultimomeseostacolorisp0": form['SF12_ultimomeseostacolo_risp_0'],
+            "sf12ultimomeseserenorisp0": form['SF12_ultimomesesereno_risp_0'],
+            "sf12ultimomeseneergiarisp0": form['SF12_ultimomeseenergia_risp_0'],
+            "sf12ultimomesetristerisp0": form['SF12_ultimomesetriste_risp_0'],
+            "sf12ultimomesesocialerisp0": form['SF12_ultimomesesociale_risp_0'],
+            "zonaoperazione": form['zona_operazione']
             }
 
+
+
+
         input_data = pd.DataFrame.from_dict(input_data, orient='index').T
-        data_preprocessed = preprocessing(input_data)
-        predictions = predictions_hip_6months(data_preprocessed, "single_patient")
-        results = jsonify(predictions)
-        return results
+        predictionsR = predictions_hipAndKneeR(dataset, "single_patient")
+    
+        
+        predictionsC = predictions_hipAndKneeC(dataset, "single_patient")
+        
+           
+        results = {
+            "predictionsR": predictionsR,
+            "predictionsC": predictionsC
+           
+            }
+        json_results = jsonify(results)
+        return json_results
+        
+
+         # input_data = pd.DataFrame.from_dict(input_data, orient='index').T
+          #data_preprocessed = preprocessing(input_data)
+          #predictions = predictions_hip_6months(data_preprocessed, "single_patient")
+          #results = jsonify(predictions)
+          #return results
+
+        
+        #regre+classi spine
+
+    elif request.form.get("zona_operazione") == 2 : 
+        
+        if request.form.get("score") == "Phisycal" :
+                
+                input_data = {
+                    
+                "nomeoperazione": form['nome_operazione'],
+                "Sesso": form['sesso'],  # .sesso.data
+                "Anni ricovero": form['anni_ricovero'],
+                #non separo i valori perché non sono sicuro quali siano di phy/odi pd
+                "odi_total_preop": form['ODI_Total_PreOp'],
+                "vas back preop": form['Vas_Back_PreOp'],
+                "vas leg preop": form['Vas_Leg_PreOp'],
+                "SF36generalpreop": form ['SF36_GeneralHealth_PreOp'],
+                "SF36physicalfunctionpreop": form['SF36_PhysicalFunctioning_PreOp'],
+                "SF36rolelimitphysicalpreop": form['SF36_RoleLimitPhysical_PreOp'],
+                "SF36rolelimitemotionalpreop": form['SF36_RoleLimitEmotional_PreOp'],
+                "SF36socialfunctioningpreop" : form['SF36_SocialFunctioning_PreOp'],
+                "SF36painpreop": form['SF36_Pain_PreOp'],
+                "SF36energyfatiguepreop": form['SF36_EnergyFatigue_PreOp'],
+                "SF36emotionalwellbeingpreop": form['SF36_EmotionalWellBeing_PreOp'],
+                "SF36mentalscorepreop": form['SF36_MentalScore_PreOp'],
+                "SF36physicalscore": form['SF36_PhysicalScore_PreOp'],
+                "fabqworkpreop": form['FABQ_Work_PreOp'],
+                "classeasa1": form['classe_asa_1']
+              
+
+                }
+
+    
+                input_dataC = {
+                    
+                    "nomeoperazione": form['nome_operazione'],
+                    "Sesso": form['sesso'],  # .sesso.data
+                    "Anni ricovero": form['anni_ricovero'],
+                    #non separo i valori perché non sono sicuro quali siano di phy/odi pd
+                    "odi_total_preop": form['ODI_Total_PreOp'],
+                    "vas back preop": form['Vas_Back_PreOp'],
+                    "vas leg preop": form['Vas_Leg_PreOp'],
+                    "SF36generalpreop": form ['SF36_GeneralHealth_PreOp'],
+                    "SF36physicalfunctionpreop": form['SF36_PhysicalFunctioning_PreOp'],
+                    "SF36rolelimitphysicalpreop": form['SF36_RoleLimitPhysical_PreOp'],
+                    "SF36rolelimitemotionalpreop": form['SF36_RoleLimitEmotional_PreOp'],
+                    "SF36socialfunctioningpreop" : form['SF36_SocialFunctioning_PreOp'],
+                    "SF36painpreop": form['SF36_Pain_PreOp'],
+                    "SF36energyfatiguepreop": form['SF36_EnergyFatigue_PreOp'],
+                    "SF36emotionalwellbeingpreop": form['SF36_EmotionalWellBeing_PreOp'],
+                    "SF36mentalscorepreop": form['SF36_MentalScore_PreOp'],
+                    "SF36physicalscore": form['SF36_PhysicalScore_PreOp'],
+                    "fabqworkpreop": form['FABQ_Work_PreOp'],
+                    "classeasa1": form['classe_asa_1'],
+                    "morbidity": form['MORBIDITY']
+                    
+                    
+                    }
+
+
+
+
+        input_data = pd.DataFrame.from_dict(input_data, orient='index').T
+        input_dataC = pd.DataFrame.from_dict(input_dataC, orient='index').T
+        #per ora manca lo step del preprocess, dopo la modifica nel caso lo addiamo
+        
+        predictionsR = predictions_SpineR(dataset, "single_patient")
+        predictionsC = predictions_SpineC(dataset, "single_patient")
+        predictionsRO = predictions_SpineOdi(dataset, "single_patient")
+        predictionsCO = predictions_SpineCOdi(dataset, "single_patient")
+        
+        results = {
+            "predictionsR": predictionsR,
+            "predictionsC": predictionsC,
+            "predictionsRO": predictionsRO,
+            "predictionsCO": predictionsCO
+            }
+        
+        json_results = jsonify(results)
+        return json_results
+
+       # input_data = pd.DataFrame.from_dict(input_data, orient='index').T
+        #data_preprocessed = preprocessing(input_data)
+        #predictions = predictions_hip_6months(data_preprocessed, "single_patient")
+        #results = jsonify(predictions)
+        #return results
     else:
         abort(400)
-
 
 
 if __name__ == "__main__":
