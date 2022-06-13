@@ -9,7 +9,7 @@ from flask import Flask, flash, request, render_template, jsonify, abort
 from werkzeug.utils import secure_filename
 import os
 import pandas as pd
-from pyearth import Earth
+#from pyearth import Earth
 from utilsindent import (
     preprocessing,
     predictions_hip_6months,
@@ -142,9 +142,9 @@ def output():
             }
 
         input_data = pd.DataFrame.from_dict(input_data, orient="index").T
-        predictionsR = predictions_hipAndKneeR(dataset, "single_patient")
+        predictionsR = predictions_hipAndKneeR(input_data, "single_patient")
 
-        predictionsC = predictions_hipAndKneeC(dataset, "single_patient")
+        predictionsC = predictions_hipAndKneeC(input_data, "single_patient")
 
         results = {"predictionsR": predictionsR, "predictionsC": predictionsC}
         json_results = jsonify(results)
@@ -161,6 +161,8 @@ def output():
     elif request.form.get("zona_operazione") == 2:
 
         if request.form.get("score") == "Phisycal":
+
+            form = request.form
 
             input_data = {
                 "nomeoperazione": form["nome_operazione"],
@@ -211,10 +213,10 @@ def output():
         input_dataC = pd.DataFrame.from_dict(input_dataC, orient="index").T
         # per ora manca lo step del preprocess, dopo la modifica nel caso lo addiamo
 
-        predictionsR = predictions_SpineR(dataset, "single_patient")
-        predictionsC = predictions_SpineC(dataset, "single_patient")
-        predictionsRO = predictions_SpineOdi(dataset, "single_patient")
-        predictionsCO = predictions_SpineCOdi(dataset, "single_patient")
+        predictionsR = predictions_SpineR(input_data, "single_patient")
+        predictionsC = predictions_SpineC(input_dataC, "single_patient")
+        predictionsRO = predictions_SpineOdi(input_data, "single_patient")
+        predictionsCO = predictions_SpineCOdi(input_dataC, "single_patient")
 
         results = {
             "predictionsR": predictionsR,

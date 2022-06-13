@@ -10,7 +10,7 @@ import numpy as np
 import pickle
 import statistics
 import os
-from pyearth import Earth
+#from pyearth import Earth
 from operator import itemgetter
 
 dataz = pd.read_excel(r'C:\Users\andre\Desktop\testregressione-waterboiufinaloz\projectLourdes\testinonino.xls')
