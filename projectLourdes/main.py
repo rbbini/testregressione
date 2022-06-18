@@ -89,8 +89,6 @@ def output():
         json_results = jsonify(results)
         return json_results
 
-
-
     elif "dataSource" in request.form and request.form.get("dataSource") == 'patientEpisode':
         form = request.form
 
@@ -119,18 +117,18 @@ def output():
                 "zonaoperazione": form['zona_operazione']
             }
 
-        input_data = pd.DataFrame.from_dict(input_data, orient='index').T
-        predictionsR = predictions_hipAndKneeR(input_data, "single_patient")
+            input_data = pd.DataFrame.from_dict(input_data, orient='index').T
+            predictionsR = predictions_hipAndKneeR(input_data, "single_patient")
 
-        predictionsC = predictions_hipAndKneeC(input_data, "single_patient")
+            predictionsC = predictions_hipAndKneeC(input_data, "single_patient")
 
-        results = {
-            "predictionsR": predictionsR,
-            "predictionsC": predictionsC
+            results = {
+                "predictionsR": predictionsR,
+                "predictionsC": predictionsC
 
-        }
-        json_results = jsonify(results)
-        return json_results
+            }
+            json_results = jsonify(results)
+            return json_results
 
         # input_data = pd.DataFrame.from_dict(input_data, orient='index').T
         # data_preprocessed = preprocessing(input_data)
@@ -140,78 +138,81 @@ def output():
 
         # regre+classi spine
 
-    elif request.form.get("zona_operazione") == 2:
-        form = request.form
+        elif request.form.get("zona_operazione") == '2':
+            form = request.form
 
-        if request.form.get("score") == "Phisycal":
-            input_data = {
+            if request.form.get("score") == "Phisycal":
+                input_data = {
 
-                "nomeoperazione": form['nome_operazione'],
-                "Sesso": form['sesso'],  # .sesso.data
-                "Anni ricovero": form['anni_ricovero'],
-                # non separo i valori perché non sono sicuro quali siano di phy/odi pd
-                "odi_total_preop": form['ODI_Total_PreOp'],
-                "vas back preop": form['Vas_Back_PreOp'],
-                "vas leg preop": form['Vas_Leg_PreOp'],
-                "SF36generalpreop": form['SF36_GeneralHealth_PreOp'],
-                "SF36physicalfunctionpreop": form['SF36_PhysicalFunctioning_PreOp'],
-                "SF36rolelimitphysicalpreop": form['SF36_RoleLimitPhysical_PreOp'],
-                "SF36rolelimitemotionalpreop": form['SF36_RoleLimitEmotional_PreOp'],
-                "SF36socialfunctioningpreop": form['SF36_SocialFunctioning_PreOp'],
-                "SF36painpreop": form['SF36_Pain_PreOp'],
-                "SF36energyfatiguepreop": form['SF36_EnergyFatigue_PreOp'],
-                "SF36emotionalwellbeingpreop": form['SF36_EmotionalWellBeing_PreOp'],
-                "SF36mentalscorepreop": form['SF36_MentalScore_PreOp'],
-                "SF36physicalscore": form['SF36_PhysicalScore_PreOp'],
-                "fabqworkpreop": form['FABQ_Work_PreOp'],
-                "classeasa1": form['classe_asa_1']
+                    "nomeoperazione": form['nome_operazione'],
+                    "Sesso": form['sesso'],  # .sesso.data
+                    "Anni ricovero": form['anni_ricovero'],
+                    # non separo i valori perché non sono sicuro quali siano di phy/odi pd
+                    "odi_total_preop": form['ODI_Total_PreOp'],
+                    "vas back preop": form['Vas_Back_PreOp'],
+                    "vas leg preop": form['Vas_Leg_PreOp'],
+                    "SF36generalpreop": form['SF36_GeneralHealth_PreOp'],
+                    "SF36physicalfunctionpreop": form['SF36_PhysicalFunctioning_PreOp'],
+                    "SF36rolelimitphysicalpreop": form['SF36_RoleLimitPhysical_PreOp'],
+                    "SF36rolelimitemotionalpreop": form['SF36_RoleLimitEmotional_PreOp'],
+                    "SF36socialfunctioningpreop": form['SF36_SocialFunctioning_PreOp'],
+                    "SF36painpreop": form['SF36_Pain_PreOp'],
+                    "SF36energyfatiguepreop": form['SF36_EnergyFatigue_PreOp'],
+                    "SF36emotionalwellbeingpreop": form['SF36_EmotionalWellBeing_PreOp'],
+                    "SF36mentalscorepreop": form['SF36_MentalScore_PreOp'],
+                    "SF36physicalscore": form['SF36_PhysicalScore_PreOp'],
+                    "fabqworkpreop": form['FABQ_Work_PreOp'],
+                    "classeasa1": form['classe_asa_1']
 
-            }
+                }
 
-            input_dataC = {
+                input_dataC = {
 
-                "nomeoperazione": form['nome_operazione'],
-                "Sesso": form['sesso'],  # .sesso.data
-                "Anni ricovero": form['anni_ricovero'],
-                # non separo i valori perché non sono sicuro quali siano di phy/odi pd
-                "odi_total_preop": form['ODI_Total_PreOp'],
-                "vas back preop": form['Vas_Back_PreOp'],
-                "vas leg preop": form['Vas_Leg_PreOp'],
-                "SF36generalpreop": form['SF36_GeneralHealth_PreOp'],
-                "SF36physicalfunctionpreop": form['SF36_PhysicalFunctioning_PreOp'],
-                "SF36rolelimitphysicalpreop": form['SF36_RoleLimitPhysical_PreOp'],
-                "SF36rolelimitemotionalpreop": form['SF36_RoleLimitEmotional_PreOp'],
-                "SF36socialfunctioningpreop": form['SF36_SocialFunctioning_PreOp'],
-                "SF36painpreop": form['SF36_Pain_PreOp'],
-                "SF36energyfatiguepreop": form['SF36_EnergyFatigue_PreOp'],
-                "SF36emotionalwellbeingpreop": form['SF36_EmotionalWellBeing_PreOp'],
-                "SF36mentalscorepreop": form['SF36_MentalScore_PreOp'],
-                "SF36physicalscore": form['SF36_PhysicalScore_PreOp'],
-                "fabqworkpreop": form['FABQ_Work_PreOp'],
-                "classeasa1": form['classe_asa_1'],
-                "morbidity": form['MORBIDITY']
+                    "nomeoperazione": form['nome_operazione'],
+                    "Sesso": form['sesso'],  # .sesso.data
+                    "Anni ricovero": form['anni_ricovero'],
+                    # non separo i valori perché non sono sicuro quali siano di phy/odi pd
+                    "odi_total_preop": form['ODI_Total_PreOp'],
+                    "vas back preop": form['Vas_Back_PreOp'],
+                    "vas leg preop": form['Vas_Leg_PreOp'],
+                    "SF36generalpreop": form['SF36_GeneralHealth_PreOp'],
+                    "SF36physicalfunctionpreop": form['SF36_PhysicalFunctioning_PreOp'],
+                    "SF36rolelimitphysicalpreop": form['SF36_RoleLimitPhysical_PreOp'],
+                    "SF36rolelimitemotionalpreop": form['SF36_RoleLimitEmotional_PreOp'],
+                    "SF36socialfunctioningpreop": form['SF36_SocialFunctioning_PreOp'],
+                    "SF36painpreop": form['SF36_Pain_PreOp'],
+                    "SF36energyfatiguepreop": form['SF36_EnergyFatigue_PreOp'],
+                    "SF36emotionalwellbeingpreop": form['SF36_EmotionalWellBeing_PreOp'],
+                    "SF36mentalscorepreop": form['SF36_MentalScore_PreOp'],
+                    "SF36physicalscore": form['SF36_PhysicalScore_PreOp'],
+                    "fabqworkpreop": form['FABQ_Work_PreOp'],
+                    "classeasa1": form['classe_asa_1'],
+                    "morbidity": form['MORBIDITY']
 
-            }
+                }
 
-        input_data = pd.DataFrame.from_dict(input_data, orient='index').T
-        input_dataC = pd.DataFrame.from_dict(input_dataC, orient='index').T
-        # per ora manca lo step del preprocess, dopo la modifica nel caso lo addiamo
+                input_data = pd.DataFrame.from_dict(input_data, orient='index').T
+                input_dataC = pd.DataFrame.from_dict(input_dataC, orient='index').T
+                # per ora manca lo step del preprocess, dopo la modifica nel caso lo addiamo
 
-        predictionsR = predictions_SpineR(input_data, "single_patient")
-        predictionsC = predictions_SpineC(input_dataC, "single_patient")
-        predictionsRO = predictions_SpineOdi(input_data, "single_patient")
-        predictionsCO = predictions_SpineCOdi(input_dataC, "single_patient")
+                predictionsR = predictions_SpineR(input_data, "single_patient")
+                predictionsC = predictions_SpineC(input_dataC, "single_patient")
+                predictionsRO = predictions_SpineOdi(input_data, "single_patient")
+                predictionsCO = predictions_SpineCOdi(input_dataC, "single_patient")
 
-        results = {
-            "predictionsR": predictionsR,
-            "predictionsC": predictionsC,
-            "predictionsRO": predictionsRO,
-            "predictionsCO": predictionsCO
-        }
+                results = {
+                    "predictionsR": predictionsR,
+                    "predictionsC": predictionsC,
+                    "predictionsRO": predictionsRO,
+                    "predictionsCO": predictionsCO
+                }
 
-        json_results = jsonify(results)
-        return json_results
-
+                json_results = jsonify(results)
+                return json_results
+            else:
+                abort(400)
+        else:
+            abort(400)
     # input_data = pd.DataFrame.from_dict(input_data, orient='index').T
     # data_preprocessed = preprocessing(input_data)
     # predictions = predictions_hip_6months(data_preprocessed, "single_patient")
