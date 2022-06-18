@@ -3,7 +3,7 @@ import numpy as np
 import pickle
 import statistics
 import os
-from pyearth import Earth
+# from pyearth import Earth
 from operator import itemgetter
 
 # data = pd.read_excel(r'C:\Users\Loredana\Documents\epimetheus-project\testregressione\data\data_reg_anca.xls')
@@ -134,12 +134,12 @@ def preprocessing(data):
 
     data['Data operazione'] = data['Data operazione'].dt.strftime('%Y/%m/%d')
 
-    #mask_date = data['Data operazione'] <= '2021/05/05'
+    # mask_date = data['Data operazione'] <= '2021/05/05'
 
-    #data_clean = data.loc[mask_date, :]
+    # data_clean = data.loc[mask_date, :]
 
-    #data_preop = data_clean.loc[:, columns_preop]\
-    
+    # data_preop = data_clean.loc[:, columns_preop]\
+
     data_preop = data.loc[:, columns_preop]
 
     with open('lista_nome_evento.pkl', 'rb') as f:
@@ -190,9 +190,9 @@ def preprocessing(data):
 
     return data_preop
 
+    # modifiche da fare - creare diversi prediction per gino/anca(insieme) regressive+classificatory - spine (regre classi odi e basico)
+    # separazione regre+classi tra phy/mental +++
 
-    #modifiche da fare - creare diversi prediction per gino/anca(insieme) regressive+classificatory - spine (regre classi odi e basico)
-    #separazione regre+classi tra phy/mental +++
 
 def predictions_hip_6months(data_to_pred, mode):
     # drop dell'id perchè non riesce a convertirlo in float
@@ -209,21 +209,18 @@ def predictions_hip_6months(data_to_pred, mode):
     age = age.astype(int)
     age = age.tolist()
 
-    
-    #possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
-    
-    estimation = {"SF12_PhysicalScore_6months": predictionsP, # previsione score fisico dopo 6 mesi
-                  "SF12_MentalScore_6months": predictionsM, # previsione score mentale dopo 6 mesi
-                  "age": age # eta'
+    # possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
+
+    estimation = {"SF12_PhysicalScore_6months": predictionsP,  # previsione score fisico dopo 6 mesi
+                  "SF12_MentalScore_6months": predictionsM,  # previsione score mentale dopo 6 mesi
+                  "age": age  # eta'
                   }
 
-    
     # lista da convertire in json
     to_json = [estimation]
     # lista che avra' i dati dei pazienti nel DB
     others = []
-    
-    
+
     # ciclo da 0 a len(ageDB)-1 (anche len(DB_6months_m/p) sarebbe andato bene) 
     # prendo il valore in pos i e lo metto in un dict che poi appendo a others
     for i in range(len(ageDB)):
@@ -231,18 +228,15 @@ def predictions_hip_6months(data_to_pred, mode):
             "SF12_PhysicalScore_6months": DB_6months_p[i],
             "SF12_MentalScore_6months": DB_6months_m[i],
             "age": ageDB[i]
-            }
+        }
         others.append(dict)
-    
-    
+
     other_patients = {"others": others}
     to_json.append(other_patients)
-    
-    
+
     median_data = {"medianaM": medianM,
                    "medianaP": medianP}
     to_json.append(median_data)
-    
 
     if mode == "single_patient":
         similar_scores = []
@@ -253,7 +247,6 @@ def predictions_hip_6months(data_to_pred, mode):
                               }
             similar_scores.append(similar_p_dict)
 
-
         similar_m = most_similar_scores(DB_6months_m, ageDB, predictionsM, data_to_pred['Anni ricovero'])
         for x in range(len(similar_m)):
             similar_m_dict = {"SF12_MentalScore_6months": similar_m[x][0],
@@ -263,15 +256,13 @@ def predictions_hip_6months(data_to_pred, mode):
 
         to_json.append(similar_scores)
 
-
     return to_json
 
+    # regressiboy anca e gino
 
-    #regressiboy anca e gino
-
-    def predictions_hipAndKneeR(data_to_pred, mode):
+def predictions_hipAndKneeR(data_to_pred, mode):
     # drop dell'id perchè non riesce a convertirlo in float
-        data_to_pred.drop('Uid', axis=1, inplace=True)
+    #data_to_pred.drop('Uid', axis=1, inplace=True)
 
     with open("model_regression_physical.pkl", 'rb') as file:
         loaded_model = pickle.load(file)
@@ -284,34 +275,25 @@ def predictions_hip_6months(data_to_pred, mode):
     age = age.astype(int)
     age = age.tolist()
 
-    
+    # possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
 
-    
-    #possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
-    
-    estimation = {"SF12_PhysicalScore_6months": predictionsPhakR, # previsione score fisico dopo 6 mesi
-                  "SF12_MentalScore_6months": predictionsMhakR, # previsione score mentale dopo 6 mesi
-                  "age": age # eta'
+    estimation = {"SF12_PhysicalScore_6months": predictionsPhakR,  # previsione score fisico dopo 6 mesi
+                  "SF12_MentalScore_6months": predictionsMhakR,  # previsione score mentale dopo 6 mesi
+                  "age": age  # eta'
                   }
 
-    
     # lista da convertire in json
     to_json = [estimation]
     # lista che avra' i dati dei pazienti nel DB
     others = []
-    
+
     ###da controllare con rob!?!
-     
-    
-    
-    
-    
-    #classificatoz
-    
-    
-    def predictions_hipAndKneeC(data_to_pred, mode):
+
+    # classificatoz
+
+def predictions_hipAndKneeC(data_to_pred, mode):
     # drop dell'id perchè non riesce a convertirlo in float
-        data_to_pred.drop('Uid', axis=1, inplace=True)
+    #data_to_pred.drop('Uid', axis=1, inplace=True)
 
     with open("model_classification_physical.pkl", 'rb') as file:
         loaded_model = pickle.load(file)
@@ -324,24 +306,20 @@ def predictions_hip_6months(data_to_pred, mode):
     age = age.astype(int)
     age = age.tolist()
 
-    
+    # possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
 
-    
-    #possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
-    
-    estimation = {"SF12_PhysicalScore_6months": predictionsPhakC, # previsione score fisico dopo 6 mesi
-                  "SF12_MentalScore_6months": predictionsMhakC, # previsione score mentale dopo 6 mesi
-                  "age": age # eta'
+    estimation = {"SF12_PhysicalScore_6months": predictionsPhakC,  # previsione score fisico dopo 6 mesi
+                  "SF12_MentalScore_6months": predictionsMhakC,  # previsione score mentale dopo 6 mesi
+                  "age": age  # eta'
                   }
 
-    
     # lista da convertire in json
     to_json = [estimation]
     # lista che avra' i dati dei pazienti nel DB
     others = []
-    
+
     ###da controllare con rob!?!
-      
+
     # ciclo da 0 a len(ageDB)-1 (anche len(DB_6months_m/p) sarebbe andato bene) 
     # prendo il valore in pos i e lo metto in un dict che poi appendo a others
     for i in range(len(ageDB)):
@@ -349,30 +327,26 @@ def predictions_hip_6months(data_to_pred, mode):
             "SF12_PhysicalScore_6months": DB_6months_p[i],
             "SF12_MentalScore_6months": DB_6months_m[i],
             "age": ageDB[i]
-            }
+        }
         others.append(dict)
-    
-    
+
     other_patients = {"others": others}
     to_json.append(other_patients)
-    
-    
+
     median_data = {"medianaM": medianM,
                    "medianaP": medianP}
     to_json.append(median_data)
-    
 
     if mode == "single_patient":
         similar_scores = []
-        similar_p = most_similar_scores(DB_6months_p, ageDB, predictionsP, data_to_pred['Anni ricovero'])
+        similar_p = most_similar_scores(DB_6months_p, ageDB, predictionsPhakC, data_to_pred['Anni ricovero'])
         for x in range(len(similar_p)):
             similar_p_dict = {"SF12_PhysicalScore_6months": similar_p[x][0],
                               "age": similar_p[x][1]
                               }
             similar_scores.append(similar_p_dict)
 
-
-        similar_m = most_similar_scores(DB_6months_m, ageDB, predictionsM, data_to_pred['Anni ricovero'])
+        similar_m = most_similar_scores(DB_6months_m, ageDB, predictionsMhakC, data_to_pred['Anni ricovero'])
         for x in range(len(similar_m)):
             similar_m_dict = {"SF12_MentalScore_6months": similar_m[x][0],
                               "age": similar_m[x][1]
@@ -381,43 +355,35 @@ def predictions_hip_6months(data_to_pred, mode):
 
         to_json.append(similar_scores)
 
-
     return to_json
-    
-    
-    
-    
-    #regressiboy per spine
-    
-    def predictions_SpineR(data_to_pred, mode):
+
+    # regressiboy per spine
+
+def predictions_SpineR(data_to_pred, mode):
     # drop dell'id perchè non riesce a convertirlo in float
-        data_to_pred.drop('Uid', axis=1, inplace=True)
+    #data_to_pred.drop('Uid', axis=1, inplace=True)
 
     with open("model_regression_physical_spine.pkl", 'rb') as file:
         loaded_model = pickle.load(file)
     predictionsPineRr = loaded_model.predict(data_to_pred.values).tolist()
-    
+
     age = data_to_pred['Anni ricovero'].to_numpy()
     age = age.astype(int)
     age = age.tolist()
 
-    
+    # possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
 
-    
-    #possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
-    
-    estimation = {"SF12_PhysicalScore_6months": predictionsPineRr, # previsione score fisico dopo 6 mesi
-                  "age": age # eta'
+    estimation = {"SF12_PhysicalScore_6months": predictionsPineRr,  # previsione score fisico dopo 6 mesi
+                  "age": age  # eta'
                   }
 
-    
     # lista da convertire in json
     to_json = [estimation]
     # lista che avra' i dati dei pazienti nel DB
     others = []
-    
+
     ###da controllare con rob!?!
-      
+
     # ciclo da 0 a len(ageDB)-1 (anche len(DB_6months_m/p) sarebbe andato bene) 
     # prendo il valore in pos i e lo metto in un dict che poi appendo a others
     for i in range(len(ageDB)):
@@ -425,75 +391,63 @@ def predictions_hip_6months(data_to_pred, mode):
             "SF12_PhysicalScore_6months": DB_6months_p[i],
             "SF12_MentalScore_6months": DB_6months_m[i],
             "age": ageDB[i]
-            }
+        }
         others.append(dict)
-    
-    
+
     other_patients = {"others": others}
     to_json.append(other_patients)
-    
-    
+
     median_data = {"medianaM": medianM,
                    "medianaP": medianP}
     to_json.append(median_data)
-    
 
     if mode == "single_patient":
         similar_scores = []
-        similar_p = most_similar_scores(DB_6months_p, ageDB, predictionsP, data_to_pred['Anni ricovero'])
+        similar_p = most_similar_scores(DB_6months_p, ageDB, predictionsPineRr, data_to_pred['Anni ricovero'])
         for x in range(len(similar_p)):
             similar_p_dict = {"SF12_PhysicalScore_6months": similar_p[x][0],
                               "age": similar_p[x][1]
                               }
             similar_scores.append(similar_p_dict)
-
-
+        """
         similar_m = most_similar_scores(DB_6months_m, ageDB, predictionsM, data_to_pred['Anni ricovero'])
         for x in range(len(similar_m)):
             similar_m_dict = {"SF12_MentalScore_6months": similar_m[x][0],
                               "age": similar_m[x][1]
                               }
             similar_scores.append(similar_m_dict)
-
+        """
         to_json.append(similar_scores)
 
-
     return to_json
-    
-    
-    
-    #odi-bro  regressivo con spine
-    
-    
-    def predictions_SpineOdi(data_to_pred, mode):
+
+    # odi-bro  regressivo con spine
+
+def predictions_SpineOdi(data_to_pred, mode):
     # drop dell'id perchè non riesce a convertirlo in float
-        data_to_pred.drop('Uid', axis=1, inplace=True)
+    #data_to_pred.drop('Uid', axis=1, inplace=True)
 
     with open("model_regression_odi_spine.pkl", 'rb') as file:
         loaded_model = pickle.load(file)
     predictionsPineOdiR = loaded_model.predict(data_to_pred.values).tolist()
-    
+
     age = data_to_pred['Anni ricovero'].to_numpy()
     age = age.astype(int)
     age = age.tolist()
 
-    
+    # possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
 
-    
-    #possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
-    
-    estimation = {"SF12_PhysicalScore_6months": predictionsPineOdiR, # previsione score fisico dopo 6 mesi
-                  "age": age # eta'
+    estimation = {"SF12_PhysicalScore_6months": predictionsPineOdiR,  # previsione score fisico dopo 6 mesi
+                  "age": age  # eta'
                   }
 
-    
     # lista da convertire in json
     to_json = [estimation]
     # lista che avra' i dati dei pazienti nel DB
     others = []
-    
+
     ###da controllare con rob!?!
-      
+
     # ciclo da 0 a len(ageDB)-1 (anche len(DB_6months_m/p) sarebbe andato bene) 
     # prendo il valore in pos i e lo metto in un dict che poi appendo a others
     for i in range(len(ageDB)):
@@ -501,74 +455,64 @@ def predictions_hip_6months(data_to_pred, mode):
             "SF12_PhysicalScore_6months": DB_6months_p[i],
             "SF12_MentalScore_6months": DB_6months_m[i],
             "age": ageDB[i]
-            }
+        }
         others.append(dict)
-    
-    
+
     other_patients = {"others": others}
     to_json.append(other_patients)
-    
-    
+
     median_data = {"medianaM": medianM,
                    "medianaP": medianP}
     to_json.append(median_data)
-    
 
     if mode == "single_patient":
         similar_scores = []
-        similar_p = most_similar_scores(DB_6months_p, ageDB, predictionsP, data_to_pred['Anni ricovero'])
+        similar_p = most_similar_scores(DB_6months_p, ageDB, predictionsPineOdiR, data_to_pred['Anni ricovero'])
         for x in range(len(similar_p)):
             similar_p_dict = {"SF12_PhysicalScore_6months": similar_p[x][0],
                               "age": similar_p[x][1]
                               }
             similar_scores.append(similar_p_dict)
-
-
+        """
         similar_m = most_similar_scores(DB_6months_m, ageDB, predictionsM, data_to_pred['Anni ricovero'])
         for x in range(len(similar_m)):
             similar_m_dict = {"SF12_MentalScore_6months": similar_m[x][0],
                               "age": similar_m[x][1]
                               }
             similar_scores.append(similar_m_dict)
-
+        """
         to_json.append(similar_scores)
 
-
     return to_json
-    
-    #da continuare con rob, porcod
-    #classi spine 
-    
-    
-    def predictions_SpineC(data_to_pred, mode):
+
+    # da continuare con rob, porcod
+    # classi spine
+
+def predictions_SpineC(data_to_pred, mode):
     # drop dell'id perchè non riesce a convertirlo in float
-        data_to_pred.drop('Uid', axis=1, inplace=True)
+    #data_to_pred.drop('Uid', axis=1, inplace=True)
 
     with open("model_classification_physical_spine.pkl", 'rb') as file:
         loaded_model = pickle.load(file)
     predictionsPineC = loaded_model.predict(data_to_pred.values).tolist()
-    
+
     age = data_to_pred['Anni ricovero'].to_numpy()
     age = age.astype(int)
     age = age.tolist()
 
-    
+    # possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
 
-    
-    #possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
-    
-    estimation = {"SF12_PhysicalScore_6months": predictionsPineC, # previsione score fisico dopo 6 mesi
-                  "age": age # eta'
+    estimation = {"SF12_PhysicalScore_6months": predictionsPineC,  # previsione score fisico dopo 6 mesi
+                  "age": age  # eta'
                   }
 
-    
     # lista da convertire in json
     to_json = [estimation]
     # lista che avra' i dati dei pazienti nel DB
     others = []
-    
+
     ###da controllare con rob!?!
-      
+
     # ciclo da 0 a len(ageDB)-1 (anche len(DB_6months_m/p) sarebbe andato bene) 
     # prendo il valore in pos i e lo metto in un dict che poi appendo a others
     for i in range(len(ageDB)):
@@ -576,73 +520,61 @@ def predictions_hip_6months(data_to_pred, mode):
             "SF12_PhysicalScore_6months": DB_6months_p[i],
             "SF12_MentalScore_6months": DB_6months_m[i],
             "age": ageDB[i]
-            }
+        }
         others.append(dict)
-    
-    
+
     other_patients = {"others": others}
     to_json.append(other_patients)
-    
-    
+
     median_data = {"medianaM": medianM,
                    "medianaP": medianP}
     to_json.append(median_data)
-    
 
     if mode == "single_patient":
         similar_scores = []
-        similar_p = most_similar_scores(DB_6months_p, ageDB, predictionsP, data_to_pred['Anni ricovero'])
+        similar_p = most_similar_scores(DB_6months_p, ageDB, predictionsPineC, data_to_pred['Anni ricovero'])
         for x in range(len(similar_p)):
             similar_p_dict = {"SF12_PhysicalScore_6months": similar_p[x][0],
                               "age": similar_p[x][1]
                               }
             similar_scores.append(similar_p_dict)
-
-
+        """
         similar_m = most_similar_scores(DB_6months_m, ageDB, predictionsM, data_to_pred['Anni ricovero'])
         for x in range(len(similar_m)):
             similar_m_dict = {"SF12_MentalScore_6months": similar_m[x][0],
                               "age": similar_m[x][1]
                               }
             similar_scores.append(similar_m_dict)
-
+        """
         to_json.append(similar_scores)
 
-
     return to_json
-    
-    
-   
 
-    def predictions_SpineCOdi(data_to_pred, mode):
+def predictions_SpineCOdi(data_to_pred, mode):
     # drop dell'id perchè non riesce a convertirlo in float
-        data_to_pred.drop('Uid', axis=1, inplace=True)
+    #data_to_pred.drop('Uid', axis=1, inplace=True)
 
     with open("model_classification_odi_spine.pkl", 'rb') as file:
         loaded_model = pickle.load(file)
     predictionsPineCodi = loaded_model.predict(data_to_pred.values).tolist()
-    
+
     age = data_to_pred['Anni ricovero'].to_numpy()
     age = age.astype(int)
     age = age.tolist()
 
-    
+    # possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
 
-    
-    #possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
-    
-    estimation = {"SF12_PhysicalScore_6months": predictionsPineCodi, # previsione score fisico dopo 6 mesi
-                  "age": age # eta'
+    estimation = {"SF12_PhysicalScore_6months": predictionsPineCodi,  # previsione score fisico dopo 6 mesi
+                  "age": age  # eta'
                   }
 
-    
     # lista da convertire in json
     to_json = [estimation]
     # lista che avra' i dati dei pazienti nel DB
     others = []
-    
+
     ###da controllare con rob!?!
-      
+
     # ciclo da 0 a len(ageDB)-1 (anche len(DB_6months_m/p) sarebbe andato bene) 
     # prendo il valore in pos i e lo metto in un dict che poi appendo a others
     for i in range(len(ageDB)):
@@ -650,58 +582,38 @@ def predictions_hip_6months(data_to_pred, mode):
             "SF12_PhysicalScore_6months": DB_6months_p[i],
             "SF12_MentalScore_6months": DB_6months_m[i],
             "age": ageDB[i]
-            }
+        }
         others.append(dict)
-    
-    
+
     other_patients = {"others": others}
     to_json.append(other_patients)
-    
-    
+
     median_data = {"medianaM": medianM,
                    "medianaP": medianP}
     to_json.append(median_data)
-    
 
     if mode == "single_patient":
         similar_scores = []
-        similar_p = most_similar_scores(DB_6months_p, ageDB, predictionsP, data_to_pred['Anni ricovero'])
+        similar_p = most_similar_scores(DB_6months_p, ageDB, predictionsPineCodi, data_to_pred['Anni ricovero'])
         for x in range(len(similar_p)):
             similar_p_dict = {"SF12_PhysicalScore_6months": similar_p[x][0],
                               "age": similar_p[x][1]
                               }
             similar_scores.append(similar_p_dict)
-
-
+        """
         similar_m = most_similar_scores(DB_6months_m, ageDB, predictionsM, data_to_pred['Anni ricovero'])
         for x in range(len(similar_m)):
             similar_m_dict = {"SF12_MentalScore_6months": similar_m[x][0],
                               "age": similar_m[x][1]
                               }
             similar_scores.append(similar_m_dict)
-
+        """
         to_json.append(similar_scores)
-
 
     return to_json
 
 
-#da modificare la parte del single patient - with rob
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
+# da modificare la parte del single patient - with rob
 
 
 # data_prepr = preprocessing(data)
@@ -740,7 +652,7 @@ estimation = predictions_hip_6months(data_preprocessed, "single_patient")
 print(estimation)
 
 """
-input_data = {
+"""input_data = {
     "sesso": 'M',
     "Anni ricovero": '10',
     "classeasa": '1',
@@ -752,7 +664,7 @@ input_data = {
     "SF12autovalsaluterisp0": '5',
     "SF12scalerisp0": '8',
     "sf12ultimomeseresarisp0": '5',
-    "sf12ultimomeselimiterisp0":'5',
+    "sf12ultimomeselimiterisp0": '5',
     "sf12ultimomeseemorisp0": '5',
     "sf12ultimomeseostacolorisp0": '5',
     "sf12ultimomeseserenorisp0": '5',
@@ -760,11 +672,9 @@ input_data = {
     "sf12ultimomesetristerisp0": '5',
     "sf12ultimomesesocialerisp0": '5',
     "zonaoperazione": '0'
-    }
-
+}
 
 input_data = pd.DataFrame.from_dict(input_data, orient='index').T
 estimation = predictions_hipAndKneeR(input_data, "single_patient")
 print(estimation)
-
-
+"""

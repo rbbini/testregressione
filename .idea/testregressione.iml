@@ -11,6 +11,9 @@
     <orderEntry type="library" name="bootstrap" level="application" />
     <orderEntry type="library" name="d3.v4" level="application" />
   </component>
+  <component name="PyDocumentationSettings">
+    <option name="renderExternalDocumentation" value="true" />
+  </component>
   <component name="TestRunnerService">
     <option name="PROJECT_TEST_RUNNER" value="pytest" />
   </component>

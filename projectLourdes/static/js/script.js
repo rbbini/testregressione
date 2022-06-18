@@ -7,8 +7,6 @@ const dataStructAnca = [
     'anni_ricovero',
     'classe_asa',
     'VAS_Total_PreOp',
-    'SF12_PhysicalScore_PreOp',
-    'SF12_MentalScore_PreOp',
     'BMI_altezza_PreOp',
     'BMI_peso_PreOp',
     'SF12_autovalsalute_risp_0',
