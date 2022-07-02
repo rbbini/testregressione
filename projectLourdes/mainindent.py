@@ -121,24 +121,24 @@ def output():
 
             input_data = {
                 "sesso": form["sesso"],
-                "Anni ricovero": form["anni_ricovero"],
-                "classeasa": form["classe_asa"],
-                "vastotalpreop": form["VAS_Total_PreOp"],
-                "SF12physicalscorepreop": form["physicalScore"],
+                "anni_ricovero": form["anni_ricovero"],
+                "classe_asa": form["classe_asa"],
+                "VAS_Total_PreOp": form["VAS_Total_PreOp"],
+                "SF12_PhysicalScore_PreOp": form["physicalScore"],
                 "SF12_MentalScore_PreOp": form["mentalScore"],
-                "bmialtezzapreop": form["BMI_altezza_PreOp"],
-                "bmipesopreop": form["BMI_peso_PreOp"],
-                "SF12autovalsaluterisp0": form["SF12_autovalsalute_risp_0"],
-                "SF12scalerisp0": form["SF12_scale_risp_0"],
-                "sf12ultimomeseresarisp0": form["SF12_ultimomeseresa_risp_0"],
-                "sf12ultimomeselimiterisp0": form["SF12_ultimomeselimite_risp_0"],
-                "sf12ultimomeseemorisp0": form["SF12_ultimomeseemo_risp_0"],
-                "sf12ultimomeseostacolorisp0": form["SF12_ultimomeseostacolo_risp_0"],
-                "sf12ultimomeseserenorisp0": form["SF12_ultimomesesereno_risp_0"],
-                "sf12ultimomeseneergiarisp0": form["SF12_ultimomeseenergia_risp_0"],
-                "sf12ultimomesetristerisp0": form["SF12_ultimomesetriste_risp_0"],
-                "sf12ultimomesesocialerisp0": form["SF12_ultimomesesociale_risp_0"],
-                "zonaoperazione": form["zona_operazione"],
+                "BMI_altezza_PreOp'": form["bmi_altezza_preOp"],
+                "BMI_peso_PreOp": form["BMI_peso_PreOp"],
+                "SF12_autovalsalute_risp_0": form["SF12_autovalsalute_risp_0"],
+                "SF12_scale_risp_0": form["SF12_scale_risp_0"],
+                "SF12_ultimomeseresa_risp_0": form["SF12_ultimomeseresa_risp_0"],
+                "SF12_ultimomeselimite_risp_0": form["SF12_ultimomeselimite_risp_0"],
+                "SF12_ultimomeseemo_risp_0": form["SF12_ultimomeseemo_risp_0"],
+                "SF12_ultimomeseostacolo_risp_0": form["SF12_ultimomeseostacolo_risp_0"],
+                "SF12_ultimomesesereno_risp_0": form["SF12_ultimomesesereno_risp_0"],
+                "SF12_ultimomeseenergia_risp_0": form["SF12_ultimomeseenergia_risp_0"],
+                "SF12_ultimomesetriste_risp_0": form["SF12_ultimomesetriste_risp_0"],
+                "SF12_ultimomesesociale_risp_0": form["SF12_ultimomesesociale_risp_0"],
+                "zona_operazione": form["zona_operazione"],
             }
 
         input_data = pd.DataFrame.from_dict(input_data, orient="index").T
@@ -164,49 +164,69 @@ def output():
 
             form = request.form
 
+            #if request.form.get("nome_operazione") ==  :
+
             input_data = {
-                "nomeoperazione": form["nome_operazione"],
-                "Sesso": form["sesso"],  # .sesso.data
-                "Anni ricovero": form["anni_ricovero"],
+
+                "Artrodesi cervicale": "0",
+                "Artrodesi lombare": "0",
+                "Cifoplastiche": "0",
+                "Decompressione lombare": "0",
+                "Deformita degenerativa": "0",
+                "Deformita idiopatica" : "0",
+                "Ernia cervicale": "0",
+                "Ernia lombare": "0",
+                "Tumore vertebrale": "0",
+                "sesso": form["sesso"],  # .sesso.data
+                "anni ricovero": form["anni_ricovero"],
                 # non separo i valori perché non sono sicuro quali siano di phy/odi pd
-                "odi_total_preop": form["ODI_Total_PreOp"],
-                "vas back preop": form["Vas_Back_PreOp"],
-                "vas leg preop": form["Vas_Leg_PreOp"],
-                "SF36generalpreop": form["SF36_GeneralHealth_PreOp"],
-                "SF36physicalfunctionpreop": form["SF36_PhysicalFunctioning_PreOp"],
-                "SF36rolelimitphysicalpreop": form["SF36_RoleLimitPhysical_PreOp"],
-                "SF36rolelimitemotionalpreop": form["SF36_RoleLimitEmotional_PreOp"],
-                "SF36socialfunctioningpreop": form["SF36_SocialFunctioning_PreOp"],
-                "SF36painpreop": form["SF36_Pain_PreOp"],
+                "ODI_Total_PreOp": form["ODI_Total_PreOp"],
+                "Vas_Back_PreOp": form["Vas_Back_PreOp"],
+                "Vas_Leg_PreOp": form["Vas_Leg_PreOp"],
+                "SF36_GeneralHealth_PreOp": form["SF36_GeneralHealth_PreOp"],
+                "SF36_PhysicalFunctioning_PreOp": form["SF36_PhysicalFunctioning_PreOp"],
+                "SF36_RoleLimitPhysical_PreOp": form["SF36_RoleLimitPhysical_PreOp"],
+                "SF36_RoleLimitEmotional_PreOp": form["SF36_RoleLimitEmotional_PreOp"],
+                "SF36_SocialFunctioning_PreOp": form["SF36_SocialFunctioning_PreOp"],
+                "SF36_Pain_PreOp": form["SF36_Pain_PreOp"],
                 "SF36energyfatiguepreop": form["SF36_EnergyFatigue_PreOp"],
-                "SF36emotionalwellbeingpreop": form["SF36_EmotionalWellBeing_PreOp"],
-                "SF36mentalscorepreop": form["SF36_MentalScore_PreOp"],
-                "SF36physicalscore": form["SF36_PhysicalScore_PreOp"],
+                "SF36_EmotionalWellBeing_PreOp": form["SF36_EmotionalWellBeing_PreOp"],
+                "SF36_MentalScore_PreOp": form["SF36_MentalScore_PreOp"],
+                "SF36_PhysicalScore_PreOp": form["SF36_PhysicalScore_PreOp"],
                 "fabqworkpreop": form["FABQ_Work_PreOp"],
-                "classeasa1": form["classe_asa_1"],
+                "classe_asa_1": form["classe_asa_1"],
             }
 
             input_dataC = {
-                "nomeoperazione": form["nome_operazione"],
-                "Sesso": form["sesso"],  # .sesso.data
-                "Anni ricovero": form["anni_ricovero"],
+               # "nomeoperazione": form["nome_operazione"],
+                "Artrodesi cervicale": "0",
+                "Artrodesi lombare": "0",
+                "Cifoplastiche": "0",
+                "Decompressione lombare": "0",
+                "Deformita degenerativa": "0",
+                "Deformita idiopatica" : "0",
+                "Ernia cervicale": "0",
+                "Ernia lombare": "0",
+                "Tumore vertebrale": "0",
+                "sesso": form["sesso"],  # .sesso.data
+                "anni ricovero": form["anni_ricovero"],
                 # non separo i valori perché non sono sicuro quali siano di phy/odi pd
-                "odi_total_preop": form["ODI_Total_PreOp"],
-                "vas back preop": form["Vas_Back_PreOp"],
-                "vas leg preop": form["Vas_Leg_PreOp"],
-                "SF36generalpreop": form["SF36_GeneralHealth_PreOp"],
-                "SF36physicalfunctionpreop": form["SF36_PhysicalFunctioning_PreOp"],
-                "SF36rolelimitphysicalpreop": form["SF36_RoleLimitPhysical_PreOp"],
-                "SF36rolelimitemotionalpreop": form["SF36_RoleLimitEmotional_PreOp"],
-                "SF36socialfunctioningpreop": form["SF36_SocialFunctioning_PreOp"],
-                "SF36painpreop": form["SF36_Pain_PreOp"],
+                "ODI_Total_PreOp": form["ODI_Total_PreOp"],
+                "Vas_Back_PreOp": form["Vas_Back_PreOp"],
+                "Vas_Leg_PreOp": form["Vas_Leg_PreOp"],
+                "SF36_GeneralHealth_PreOp": form["SF36_GeneralHealth_PreOp"],
+                "SF36_PhysicalFunctioning_PreOp": form["SF36_PhysicalFunctioning_PreOp"],
+                "SF36_RoleLimitPhysical_PreOp": form["SF36_RoleLimitPhysical_PreOp"],
+                "SF36_RoleLimitEmotional_PreOp": form["SF36_RoleLimitEmotional_PreOp"],
+                "SF36_SocialFunctioning_PreOp": form["SF36_SocialFunctioning_PreOp"],
+                "SF36_Pain_PreOp": form["SF36_Pain_PreOp"],
                 "SF36energyfatiguepreop": form["SF36_EnergyFatigue_PreOp"],
-                "SF36emotionalwellbeingpreop": form["SF36_EmotionalWellBeing_PreOp"],
-                "SF36mentalscorepreop": form["SF36_MentalScore_PreOp"],
-                "SF36physicalscore": form["SF36_PhysicalScore_PreOp"],
+                "SF36_EmotionalWellBeing_PreOp": form["SF36_EmotionalWellBeing_PreOp"],
+                "SF36_MentalScore_PreOp": form["SF36_MentalScore_PreOp"],
+                "SF36_PhysicalScore_PreOp": form["SF36_PhysicalScore_PreOp"],
                 "fabqworkpreop": form["FABQ_Work_PreOp"],
-                "classeasa1": form["classe_asa_1"],
-                "morbidity": form["MORBIDITY"],
+                "classe_asa_1": form["classe_asa_1"],
+                "MORBIDITY": form["MORBIDITY"],
             }
 
         input_data = pd.DataFrame.from_dict(input_data, orient="index").T
@@ -237,5 +257,53 @@ def output():
         abort(400)
 
 
+
+
+"""
+input_dataC = {
+                "artrodesicervicale": "0",
+                "artrodesilombare": "1",
+                "cifoplastiche": "0",
+                "decompressionelombare": "0",
+                "deformitadegenerativa": "0",
+                "deformitaidiopatica" : "0",
+                "erniacervicale": "0",
+                "ernialombare": "0",
+                "tumorevertebrale": "0",
+                "Sesso": "1",  # .sesso.data
+                "Anni ricovero": "4",
+                # non separo i valori perché non sono sicuro quali siano di phy/odi pd
+                "odi_total_preop": "3",
+                "vas back preop": "3",
+                "vas leg preop":"3",
+                "SF36generalpreop": "3",
+                "SF36physicalfunctionpreop": "3",
+                "SF36rolelimitphysicalpreop": "3",
+                "SF36rolelimitemotionalpreop": "3",
+                "SF36socialfunctioningpreop": "3",
+                "SF36painpreop": "3",
+                "SF36energyfatiguepreop": "3",
+                "SF36emotionalwellbeingpreop": "3",
+                "SF36mentalscorepreop": "3",
+                "SF36physicalscore": "3",
+                "fabqworkpreop": "3",
+                "classeasa1": "3",
+                "morbidity": "3",
+            }
+
+input_dataC = pd.DataFrame.from_dict(input_dataC, orient="index").T
+predictionsCO = predictions_SpineCOdi(input_dataC, "single_patient")
+print(predictionsCO)
+
+
+
+"""
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+
+
