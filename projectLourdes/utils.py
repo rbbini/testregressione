@@ -1,3 +1,4 @@
+import joblib
 import pandas as pd
 import numpy as np
 import pickle
@@ -143,7 +144,7 @@ def preprocessing(data):
     data_preop = data.loc[:, columns_preop]
 
     with open('lista_nome_evento.pkl', 'rb') as f:
-        lista_nome_evento = pickle.load(f)
+        lista_nome_evento = joblib.load(f)
 
     def normalize_nomevento(x):
         if x in lista_nome_evento:
@@ -199,10 +200,10 @@ def predictions_hip_6months(data_to_pred, mode):
     data_to_pred.drop('Uid', axis=1, inplace=True)
 
     with open("model_6months_phy.pkl", 'rb') as file:
-        loaded_model = pickle.load(file)
+        loaded_model = joblib.load(file)
     predictionsP = loaded_model.predict(data_to_pred).tolist()
     with open("model_6months_men.pkl", 'rb') as file:
-        loaded_model2 = pickle.load(file)
+        loaded_model2 = joblib.load(file)
     predictionsM = loaded_model2.predict(data_to_pred).tolist()
 
     age = data_to_pred['Anni ricovero'].to_numpy()
@@ -265,10 +266,10 @@ def predictions_hipAndKneeR(data_to_pred, mode):
     #data_to_pred.drop('Uid', axis=1, inplace=True)
 
     with open("model_regression_physical.pkl", 'rb') as file:
-        loaded_model = pickle.load(file)
+        loaded_model = joblib.load(file)
     predictionsPhakR = loaded_model.predict(data_to_pred.values).tolist()
     with open("model_regression_mental.pkl", 'rb') as file:
-        loaded_model2 = pickle.load(file)
+        loaded_model2 = joblib.load(file)
     predictionsMhakR = loaded_model2.predict(data_to_pred.values).tolist()
 
     age = data_to_pred['Anni ricovero'].to_numpy()
@@ -296,10 +297,10 @@ def predictions_hipAndKneeC(data_to_pred, mode):
     #data_to_pred.drop('Uid', axis=1, inplace=True)
 
     with open("model_classification_physical.pkl", 'rb') as file:
-        loaded_model = pickle.load(file)
+        loaded_model = joblib.load(file)
     predictionsPhakC = loaded_model.predict(data_to_pred.values).tolist()
     with open("model_classification_mental.pkl", 'rb') as file:
-        loaded_model2 = pickle.load(file)
+        loaded_model2 = joblib.load(file)
     predictionsMhakC = loaded_model2.predict(data_to_pred.values).tolist()
 
     age = data_to_pred['Anni ricovero'].to_numpy()
@@ -364,7 +365,7 @@ def predictions_SpineR(data_to_pred, mode):
     #data_to_pred.drop('Uid', axis=1, inplace=True)
 
     with open("model_regression_physical_spine.pkl", 'rb') as file:
-        loaded_model = pickle.load(file)
+        loaded_model = joblib.load(file)
     predictionsPineRr = loaded_model.predict(data_to_pred.values).tolist()
 
     age = data_to_pred['Anni ricovero'].to_numpy()
@@ -428,7 +429,7 @@ def predictions_SpineOdi(data_to_pred, mode):
     #data_to_pred.drop('Uid', axis=1, inplace=True)
 
     with open("model_regression_odi_spine.pkl", 'rb') as file:
-        loaded_model = pickle.load(file)
+        loaded_model = joblib.load(file)
     predictionsPineOdiR = loaded_model.predict(data_to_pred.values).tolist()
 
     age = data_to_pred['Anni ricovero'].to_numpy()
@@ -493,7 +494,7 @@ def predictions_SpineC(data_to_pred, mode):
     #data_to_pred.drop('Uid', axis=1, inplace=True)
 
     with open("model_classification_physical_spine.pkl", 'rb') as file:
-        loaded_model = pickle.load(file)
+        loaded_model = joblib.load(file)
     predictionsPineC = loaded_model.predict(data_to_pred.values).tolist()
 
     age = data_to_pred['Anni ricovero'].to_numpy()
@@ -555,7 +556,7 @@ def predictions_SpineCOdi(data_to_pred, mode):
     #data_to_pred.drop('Uid', axis=1, inplace=True)
 
     with open("model_classification_odi_spine.pkl", 'rb') as file:
-        loaded_model = pickle.load(file)
+        loaded_model = joblib.load(file)
     predictionsPineCodi = loaded_model.predict(data_to_pred.values).tolist()
 
     age = data_to_pred['Anni ricovero'].to_numpy()
