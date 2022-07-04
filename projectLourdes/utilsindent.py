@@ -10,6 +10,7 @@ import numpy as np
 import pickle
 import statistics
 import os
+import joblib
 #from pyearth import Earth
 from operator import itemgetter
 
@@ -330,13 +331,13 @@ def predictions_hipAndKneeR(data_to_pred, mode):
     #data_to_pred.drop("Uid", axis=1, inplace=True)
 
     with open("model_regression_physical.pkl", "rb") as file:
-        loaded_model = pickle.load(file)
-        predictionsPhakR = loaded_model.predict(data_to_pred.values).tolist()
+        loaded_model = joblib.load(file)
+        predictionsPhakR = loaded_model.predict(data_to_pred).tolist()
     with open("model_regression_mental.pkl", "rb") as file:
-        loaded_model2 = pickle.load(file)
-        predictionsMhakR = loaded_model2.predict(data_to_pred.values).tolist()
+        loaded_model2 = joblib.load(file)
+        predictionsMhakR = loaded_model2.predict(data_to_pred).tolist()
 
-        age = data_to_pred["Anni ricovero"].to_numpy()
+        age = data_to_pred["anni_ricovero"].to_numpy()
         age = age.astype(int)
         age = age.tolist()
 
@@ -364,13 +365,13 @@ def predictions_hipAndKneeC(data_to_pred, mode):
     #data_to_pred.drop("Uid", axis=1, inplace=True)
 
     with open("model_classification_physical.pkl", "rb") as file:
-        loaded_model = pickle.load(file)
-    predictionsPhakC = loaded_model.predict(data_to_pred.values).tolist()
+        loaded_model = joblib.load(file)
+    predictionsPhakC = loaded_model.predict(data_to_pred).tolist()
     with open("model_classification_mental.pkl", "rb") as file:
-        loaded_model2 = pickle.load(file)
+        loaded_model2 = joblib.load(file)
     predictionsMhakC = loaded_model2.predict(data_to_pred.values).tolist()
 
-    age = data_to_pred["Anni ricovero"].to_numpy()
+    age = data_to_pred["anni_ricovero"].to_numpy()
     age = age.astype(int)
     age = age.tolist()
 
@@ -398,10 +399,10 @@ def predictions_SpineR(data_to_pred, mode):
    # data_to_pred.drop("Uid", axis=1, inplace=True)
 
     with open("model_regression_physical_spine.pkl", "rb") as file:
-        loaded_model = pickle.load(file)
+        loaded_model = joblib.load(file)
         predictionsPineRr = loaded_model.predict(data_to_pred.values).tolist()
     
-    age = data_to_pred["Anni ricovero"].to_numpy()
+    age = data_to_pred["anni_ricovero"].to_numpy()
     age = age.astype(int)
     age = age.tolist()
     
@@ -429,7 +430,7 @@ def predictions_SpineOdi(data_to_pred, mode):
     #data_to_pred.drop("Uid", axis=1, inplace=True)
 
     with open("model_regression_odi_spine.pkl", "rb") as file:
-        loaded_model = pickle.load(file)
+        loaded_model = joblib.load(file)
     predictionsPineOdiR = loaded_model.predict(data_to_pred.values).tolist()
     
     age = data_to_pred["Anni ricovero"].to_numpy()
@@ -460,17 +461,17 @@ def predictions_SpineC(data_to_pred, mode):
     #data_to_pred.drop("Uid", axis=1, inplace=True)
 
     with open("model_classification_physical_spine.pkl", "rb") as file:
-        loaded_model = pickle.load(file)
-    predictionsPineC = loaded_model.predict(data_to_pred.values).tolist()
+        loaded_model = joblib.load(file)
+    predictionsPineC = loaded_model.predict(data_to_pred).tolist()
     
-    age = data_to_pred["Anni ricovero"].to_numpy()
+    age = data_to_pred["anni_ricovero"].to_numpy()
     age = age.astype(int)
     age = age.tolist()
     
     # possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
     
     estimation = {
-        "SF12_PhysicalScore_6months": predictionsPineC,  # previsione score fisico dopo 6 mesi
+        "prediction spine classificatory": predictionsPineC,  # previsione score fisico dopo 6 mesi
         "age": age,  # eta'
     }
     
@@ -488,17 +489,17 @@ def predictions_SpineCOdi(data_to_pred, mode):
     #data_to_pred.drop("Uid", axis=1, inplace=True)
 
     with open("model_classification_odi_spine.pkl", "rb") as file:
-        loaded_model = pickle.load(file)
-    predictionsPineCodi = loaded_model.predict(data_to_pred.values).tolist()
+        loaded_model = joblib.load(file)
+    predictionsPineCodi = loaded_model.predict(data_to_pred).tolist()
     
-    age = data_to_pred["Anni ricovero"].to_numpy()
+    age = data_to_pred["anni_ricovero"].to_numpy()
     age = age.astype(int)
     age = age.tolist()
     
     # possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
     
     estimation = {
-        "SF12_PhysicalScore_6months": predictionsPineCodi,  # previsione score fisico dopo 6 mesi
+        "classification odi": predictionsPineCodi,  # previsione score fisico dopo 6 mesi
         "age": age,  # eta'
     }
     
@@ -550,37 +551,74 @@ data_preprocessed = preprocessing(input_data)
 estimation = predictions_hip_6months(data_preprocessed, "single_patient")
 print(estimation)
 
-
+""""""
 input_data = {
-    "sesso": "M",
-    "Anni ricovero": "10",
-    "classeasa": "1",
-    "vastotalpreop": "2",
-    "SF12physicalscorepreop": "5",
-    "SF12_MentalScore_PreOp": "2",
-    "bmialtezzapreop": "180",
-    "bmipesopreop": "80",
-    "SF12autovalsaluterisp0": "5",
-    "SF12scalerisp0": "8",
-    "sf12ultimomeseresarisp0": "5",
-    "sf12ultimomeselimiterisp0": "5",
-    "sf12ultimomeseemorisp0": "5",
-    "sf12ultimomeseostacolorisp0": "5",
-    "sf12ultimomeseserenorisp0": "5",
-    "sf12ultimomeseneergiarisp0": "5",
-    "sf12ultimomesetristerisp0": "5",
-    "sf12ultimomesesocialerisp0": "5",
-    "zonaoperazione": "0",
-}
+                "sesso": "1",
+                "anni_ricovero": "3",
+                "classe_asa": "3",
+                "VAS_Total_PreOp": "3",
+                "SF12_PhysicalScore_PreOp": "3",
+                "SF12_MentalScore_PreOp": "3",
+                "BMI_altezza_PreOp'": "180",
+                "BMI_peso_PreOp": "3",
+                "SF12_autovalsalute_risp_0": "3",
+                "SF12_scale_risp_0": "3",
+                "SF12_ultimomeseresa_risp_0": "3",
+                "SF12_ultimomeselimite_risp_0": "3",
+                "SF12_ultimomeseemo_risp_0": "3",
+                "SF12_ultimomeseostacolo_risp_0": "3",
+                "SF12_ultimomesesereno_risp_0": "3",
+                "SF12_ultimomeseenergia_risp_0": "3",
+                "SF12_ultimomesetriste_risp_0": "3",
+                "SF12_ultimomesesociale_risp_0": "3",
+                "zona_operazione": "0",
+            }
 
 
 input_data = pd.DataFrame.from_dict(input_data, orient="index").T
 estimation = predictions_hipAndKneeC(input_data, "single_patient")
 print(estimation)
+
+
 """
+#predictions_hipAndKneeR(dataz, "dataset")
+input_data = {
+                "Artrodesi cervicale": "0",
+                "Artrodesi lombare": "1",
+                "Cifoplastiche": "0",
+                "Decompressione lombare": "0",
+                "Deformita degenerativa": "0",
+                "Deformita idiopatica" : "0",
+                "Ernia cervicale": "0",
+                "Ernia lombare": "0",
+                "Tumore vertebrale": "0",
+                "sesso": "1",  # .sesso.data
+                "anni_ricovero": "4",
+                # non separo i valori perché non sono sicuro quali siano di phy/odi pd
+                "ODI_Total_PreOp": "3",
+                "Vas_Back_PreOp": "3",
+                "Vas_Leg_PreOp":"3",
+                "SF36_GeneralHealth_PreOp": "3",
+                "SF36_PhysicalFunctioning_PreOp": "3",
+                "SF36_RoleLimitPhysical_PreOp": "3",
+                "SF36_RoleLimitEmotional_PreOp": "3",
+                "SF36_SocialFunctioning_PreOp": "3",
+                "SF36_Pain_PreOp": "3",
+                "SF36_EnergyFatigue_PreOp": "3",
+                "SF36_EmotionalWellBeing_PreOp": "3",
+                "SF36_MentalScore_PreOp": "3",
+                "SF36_PhysicalScore_PreOp": "3",
+                "FABQ_Work_PreOp": "3",
+                "classe_asa_1": "3",
+                #"MORBIDITY": "3",
+            }
 
-predictions_hipAndKneeR(dataz, "dataset")
+input_data = pd.DataFrame.from_dict(input_data, orient="index").T
+predictionsRO = predictions_SpineR(input_data, "single_patient")
+print(predictionsRO)
 
+#predictionsCO = predictions_SpineC(input_data, "dataset")
+#print(predictionsCO)
 
 
 
