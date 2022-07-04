@@ -7,8 +7,8 @@ const dataStructAnca = [
     'anni_ricovero',
     'classe_asa',
     'VAS_Total_PreOp',
-    'BMI_altezza_PreOp',
-    'BMI_peso_PreOp',
+    'bmi_altezza_preOp',
+    'bmi_peso_preOp',
     'SF12_autovalsalute_risp_0',
     'SF12_scale_risp_0',
     'SF12_ultimomeseresa_risp_0',
@@ -175,6 +175,15 @@ function goToResults() {
         };
     }
     if(valid) {
+        if(procedureValue == 2) {
+            const operazioneTrue = document.getElementById('nome_operazione').value;
+            const arrayOperazione = ['Artrodesi_Cervicale', 'Artrodesi_Lombare', 'Cifoplastiche', 'Decompressione_Lombare', 'Deformita_Degenerativa', 'Deformita_Idiopatica', 'Ernia_Cervicale',
+                'Ernia_Lombare', 'Tumore_Vertebrale'];
+            for (var i = 0; i < arrayOperazione.length; i++) {
+                data.append(arrayOperazione[i], 0);
+            }
+            data.set(operazioneTrue, 1);
+        }
         getRequest(data);
     } else {
         alert('check the values of fields');

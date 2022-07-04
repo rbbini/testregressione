@@ -18,7 +18,7 @@ from utilsindent import (
     predictions_SpineR,
     predictions_SpineC,
     predictions_SpineOdi,
-    predictions_SpineCOdi,
+    predictions_SpineCOdi
 )
 
 app = Flask(__name__)
