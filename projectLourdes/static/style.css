@@ -37,6 +37,15 @@ h2 {
 .text-blue {
     color: var(--primary-color);
 }
+.text-darker-blue {
+    color: var(--darker-color);
+}
+.text-azure {
+    color: var(--azure-color);
+}
+.text-celeste {
+    color: var(--celeste-color);
+}
 .step > div {
     background-color: var(--white-color);
     border: 2px solid var(--darker-color);

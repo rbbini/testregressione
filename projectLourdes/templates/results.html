@@ -20,7 +20,7 @@
 				</div>
 			</nav>
 		</header>
-		<div class="container my-5">
+		<div id="results" class="container my-5">
 			<div class="row">
 				<div class="head-form pt-4 d-flex justify-content-between align-items-start col-lg-8 col-12 mx-auto">
 					<button class="btn btn-blue text-uppercase activeBtn" disabled>1</button>
@@ -140,9 +140,25 @@
 				</div>
 			</div>
 		</div>
-		<div id="my_dataviz"></div>
-		<div id="my_dataviz2"></div>
-		<div class="modal fade" id="evalModal" tabindex="-1" role="dialog" aria-labelledby="evalModalLabel" aria-hidden="true">
+		<div id="spinner" class="d-flex justify-content-center align-items-center my-5 py-4">
+			<strong class="text-darker-blue me-4">Loading results</strong>
+			<div class="spinner-grow text-darker-blue mx-2" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+			<div class="spinner-grow text-blue mx-2" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+			<div class="spinner-grow text-azure mx-2" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+			<div class="spinner-grow text-celeste mx-2" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+		</div>
+		<div>
+			<div id="my_dataviz"></div>
+			<div id="my_dataviz2"></div>
+			<div class="modal fade" id="evalModal" tabindex="-1" role="dialog" aria-labelledby="evalModalLabel" aria-hidden="true">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -247,6 +263,7 @@
 					</div>
 				</div>
 			</div>
+		</div>
 		</div>
 <!--		<script src="/static/js/distrochart.js" charset="utf-8"></script>-->
 		<script rel="script" src="/static/js/results.js"></script>

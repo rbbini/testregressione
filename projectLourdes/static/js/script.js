@@ -69,6 +69,7 @@ function goToNextStep(step) {
 
 function controlProcedure(){
     const procedureValue = document.getElementById('zona_operazione').value;
+    sessionStorage.setItem('zona_operazione', procedureValue);
     let scoreSelect = document.getElementById('score');
     if(scoreSelect.options.length > 2){
         scoreSelect.remove(2);

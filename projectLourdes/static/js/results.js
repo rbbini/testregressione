@@ -3,6 +3,8 @@ var http = new XMLHttpRequest();
 let javascript_data = {};
 
 window.addEventListener('load', function () {
+    let dashboard = document.getElementById('results');
+    dashboard.classList.add('d-none');
     getResults();
 })
 let datasetCustom = [
@@ -50,7 +52,13 @@ function getResults() {
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
+    /* aggiungere un controllo che fa visualizzare elementi nella tabella se zonaOp è settato a 2 (spine) o 0 e 1 (knee e hip)
+    * così da gestire i dati che vengono visualizzati in tabella per i diversi tipi di classificazione
+    * Volendo si può gestire la visualizzazione o meno di tabelle distinte a seconda del caso anche in relazione allo scoreValue */
+    const zonaOp = sessionStorage.getItem('zona_operazione');
     const scoreValue = sessionStorage.getItem('score');
+    /* funzione separata per organizzare il codice */
+    controlloTabelle(zonaOp, scoreValue);
     let dataViz = data[3];
     let patientData = data[0];
     let objToAnalyze = [];
@@ -111,10 +119,37 @@ function getResults() {
     }
     violinPlots(datasetCustom, 'period', 'SF12_MentalScore_6Months');
     plotWithBoxPlot(patientData);
+    setTimeout(function() {
+        let dashboard = document.getElementById('results');
+        dashboard.classList.remove('d-none');
+        let spinner = document.getElementById('spinner');
+        spinner.classList.add('d-none');
+    }, 3000);
 }
 
 function transferFailed(){
     return alert("An error occurred while transferring the file.");
+}
+function controlloTabelle(zonaOp, scoreValue) {
+    if(zonaOp == 0 || zonaOp == 1){
+        if(scoreValue == 'Phisycal'){
+            /* inserire controllo su tabella per hip o knee physical */
+            /* Creare le tabelle nell'html con un id associato e richiamare quell'elemento con l'id nel js e poi usare
+            * classList.remove('d-none'); o classList.add('d-none');
+            * a seconda che si voglia far visualizzare o meno la tabella, la classe d-none applica un display:none all'elemento*/
+        } else {
+            /* inserire controllo su tabella per hip o knee mental */
+        }
+    } else if(zonaOp == 2){
+
+        if(scoreValue == 'Phisycal'){
+            /* inserire controllo su tabella per spine phisycal */
+        } else {
+            /* inserire controllo su tabella per spine ODI */
+        }
+    } else {
+        // transferFailed();
+    }
 }
 
 function plotWithBoxPlot(dataset){
