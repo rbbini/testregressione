@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import statistics
+import pickle
 import os
 import joblib
 from pyearth import Earth
@@ -80,6 +81,26 @@ def most_similar_scores(all_scores, ages, input_score, input_age):
 
     return sorted_scores
 
+def check_nomeoperazione(data_preop):
+    if 'Artrodesi cervicale' not in data_preop.columns:
+        data_preop['Artrodesi cervicale'] = 0
+    if 'Artrodesi lombare' not in data_preop.columns:
+        data_preop['Artrodesi lombare'] = 0
+    if 'Cifoplastiche' not in data_preop.columns:
+        data_preop['Cifoplastiche'] = 0
+    if 'Decompressione lombare' not in data_preop.columns:
+        data_preop['Decompressione lombare'] = 0
+    if 'Deformita degenerativa' not in data_preop.columns:
+        data_preop['Deformita degenerativa'] = 0
+    if 'Deformita idiopatica' not in data_preop.columns:
+        data_preop['Deformita idiopatica'] = 0
+    if 'Ernia cervicale' not in data_preop.columns:
+        data_preop['Ernia cervicale'] = 0
+    if 'Ernia lombare' not in data_preop.columns:
+        data_preop['Ernia lombare'] = 0
+    if 'Tumore vertebrale' not in data_preop.columns:
+        data_preop['Tumore vertebrale'] = 0  
+    return data_preop
 
 
 def preprocessSpine(data_preop):
@@ -467,18 +488,13 @@ def predictions_SpineOdi(data_to_pred):
     age = data_to_pred["anni_ricovero"].to_numpy()
     age = age.astype(int)
     age = age.tolist()
-    
-    # possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
-    
+
+    # ---------------- OGGETTO CON LA PREDIZIONE ----------------
     estimation = {
         "ODI_score": predictionsPineOdiR,  # previsione score ODI
         "age": age,  # eta'
     }
-    
-    # lista da convertire in json
-    to_json = [estimation]
-    # lista che avra' i dati dei pazienti nel DB
-    others = []
+  
     
     ###da controllare con rob!?!
     return to_json
