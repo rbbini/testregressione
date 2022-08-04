@@ -69,24 +69,28 @@ function createCounterfactual(counterfactData) {
             if(counterfactData.physical[i][0] == 'anni_ricovero'){
                 p.innerHTML = 'Età';
                 for (let j = 1; j < 12; j++) {
-                    let opt = document.createElement('option');
-                    opt.value = counterfactData.physical[i][j];
-                    opt.innerHTML = Math.round(counterfactData.physical[i][j]);
-                    if (j == 6) {
-                        opt.selected = "selected";
+                    if (counterfactData.physical[i][j] > 0){
+                        let opt = document.createElement('option');
+                        opt.value = counterfactData.physical[i][j];
+                        opt.innerHTML = Math.round(counterfactData.physical[i][j]);
+                        if (j == 6) {
+                            opt.selected = "selected";
+                        }
+                        select.appendChild(opt);
                     }
-                    select.appendChild(opt);
                 }
             } else {
                 p.innerHTML = counterfactData.physical[i][0].replace('_', " ");
                 for (let j = 1; j < 12; j++) {
-                    let opt = document.createElement('option');
-                    opt.value = counterfactData.physical[i][j];
-                    opt.innerHTML = counterfactData.physical[i][j].toFixed(2);
-                    if (j == 6) {
-                        opt.selected = "selected";
+                    if (counterfactData.physical[i][j] > 0){
+                        let opt = document.createElement('option');
+                        opt.value = counterfactData.physical[i][j];
+                        opt.innerHTML = counterfactData.physical[i][j].toFixed(2);
+                        if (j == 6) {
+                            opt.selected = "selected";
+                        }
+                        select.appendChild(opt);
                     }
-                    select.appendChild(opt);
                 }
             }
 
@@ -102,13 +106,15 @@ function createCounterfactual(counterfactData) {
             p.innerHTML = counterfactData.mental[i-5][0].replace('_'," ");
 
             for (let j = 1; j < 12; j++) {
-                let opt = document.createElement('option');
-                opt.value = counterfactData.mental[i-5][j];
-                opt.innerHTML = counterfactData.mental[i-5][j];
-                if (j == 6) {
-                    opt.selected = "selected";
+                if (counterfactData.physical[i-5][j] > 0){
+                    let opt = document.createElement('option');
+                    opt.value = counterfactData.mental[i-5][j];
+                    opt.innerHTML = counterfactData.mental[i-5][j];
+                    if (j == 6) {
+                        opt.selected = "selected";
+                    }
+                    select.appendChild(opt);
                 }
-                select.appendChild(opt);
             }
         }
     } else if(dataType == 'ODI'){
@@ -122,13 +128,15 @@ function createCounterfactual(counterfactData) {
             p.innerHTML = counterfactData.ODI[i-5][0].replace('_'," ");
 
             for (let j = 1; j < 12; j++) {
-                let opt = document.createElement('option');
-                opt.value = counterfactData.ODI[i-5][j];
-                opt.innerHTML = counterfactData.ODI[i-5][j];
-                if (j == 6) {
-                    opt.selected = "selected";
+                if (counterfactData.physical[i-5][j] > 0){
+                    let opt = document.createElement('option');
+                    opt.value = counterfactData.ODI[i-5][j];
+                    opt.innerHTML = counterfactData.ODI[i-5][j];
+                    if (j == 6) {
+                        opt.selected = "selected";
+                    }
+                    select.appendChild(opt);
                 }
-                select.appendChild(opt);
             }
         }
     }

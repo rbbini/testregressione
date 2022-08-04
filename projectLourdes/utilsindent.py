@@ -4,22 +4,29 @@ import statistics
 import pickle
 import os
 import joblib
-from pyearth import Earth
+#from pyearth import Earth
 from operator import itemgetter
 
-#dataz = pd.read_excel(r'E:\Stage\nuovo env\projectLourdes\testinonino.xls')
 
 
 # dati che saranno ritornati in un json
-dbPath = os.path.abspath("data/db_anca.xls")
-db = pd.read_excel(dbPath)
+dbPathR = os.path.abspath("data/db_anca.xls")
+db = pd.read_excel(dbPathR)
+
+dbPathC = os.path.abspath("data/classif_data.xlsx")
+dbC = pd.read_excel(dbPathC)
 
 ageDB = db["Anni ricovero"].to_numpy()
 ageDB = ageDB.astype(int)
 ageDB = ageDB.tolist()
 
-DB_6months_p = db["SF12 MentalScore 6months"].tolist()
-DB_6months_m = db["SF12 PhysicalScore 6months"].tolist()
+DB_preOp_m = db["SF12 MentalScore PreOp"].tolist()
+DB_preOp_p = db["SF12 PhysicalScore PreOp"].tolist()
+DB_6months_m = db["SF12 MentalScore 6months"].tolist()
+DB_6months_p = db["SF12 PhysicalScore 6months"].tolist()
+
+DB_preOp_c = dbC["preOp"].toList()
+DB_6months_c = dbC["6months"].tolist()
 
 medianP = statistics.median(DB_6months_p)
 medianM = statistics.median(DB_6months_m)
@@ -80,28 +87,6 @@ def most_similar_scores(all_scores, ages, input_score, input_age):
         sorted_scores.append((to_sort[x][0], to_sort[x][2]))
 
     return sorted_scores
-
-def check_nomeoperazione(data_preop):
-    if 'Artrodesi cervicale' not in data_preop.columns:
-        data_preop['Artrodesi cervicale'] = 0
-    if 'Artrodesi lombare' not in data_preop.columns:
-        data_preop['Artrodesi lombare'] = 0
-    if 'Cifoplastiche' not in data_preop.columns:
-        data_preop['Cifoplastiche'] = 0
-    if 'Decompressione lombare' not in data_preop.columns:
-        data_preop['Decompressione lombare'] = 0
-    if 'Deformita degenerativa' not in data_preop.columns:
-        data_preop['Deformita degenerativa'] = 0
-    if 'Deformita idiopatica' not in data_preop.columns:
-        data_preop['Deformita idiopatica'] = 0
-    if 'Ernia cervicale' not in data_preop.columns:
-        data_preop['Ernia cervicale'] = 0
-    if 'Ernia lombare' not in data_preop.columns:
-        data_preop['Ernia lombare'] = 0
-    if 'Tumore vertebrale' not in data_preop.columns:
-        data_preop['Tumore vertebrale'] = 0  
-    return data_preop
-
 
 def preprocessSpine(data_preop):
     data_preprocessed = pd.concat([data_preop.drop(['nome_operazione'], axis=1), pd.get_dummies(data_preop['nome_operazione'])],
@@ -334,11 +319,55 @@ def predictions_hipAndKneeR(data_to_pred, mode):
         "mental": [SF12_PhysicalScore_PreOp_counterfact, SF12_MentalScore_PreOp_counterfact]
     }
 
+
+    # -------------------- ALTRI PAZIENTI --------------------
+    others = []
+
+    # prendo il valore in pos i nell'array dei valori preOp e lo metto in un dict che poi appendo a others
+    # rifaccio la stessa cosa con i valori nell'array del post operatorio
+    for i in range(len(DB_preOp_c)):
+        dict = {
+            "period": "preOp",
+            "score": DB_preOp_c[i],
+        }
+        others.append(dict)
+        dict = {
+            "period": "6motnhs",
+            "score": DB_6months_c[i]
+        }
+        others.append(dict)
+    
+
+    # -------------------- PAZIENTI SIMILI --------------------
+    if mode == "single_patient":
+        similar_scores = []
+        similar_p = most_similar_scores(
+            DB_6months_p, ageDB, predictionsPhy, data_to_pred["anni_ricovero"]
+        )
+        for x in range(len(similar_p)):
+            similar_p_dict = {
+                "SF12_PhysicalScore_6months": similar_p[x][0],
+                "age": similar_p[x][1],
+            }
+            similar_scores.append(similar_p_dict)
+
+        similar_m = most_similar_scores(
+            DB_6months_m, ageDB, predictionsMen, data_to_pred["anni_ricovero"]
+        )
+        for x in range(len(similar_m)):
+            similar_m_dict = {
+                "SF12_MentalScore_6months": similar_m[x][0],
+                "age": similar_m[x][1],
+            }
+            similar_scores.append(similar_m_dict)
+
     
     # -------------------- OGGETTO FINALE DA RITORNARE --------------------
     to_json = {
         "counterfactual": counterfact, 
-        "predictions": predictions
+        "predictions": predictions,
+        "other_patients": others,
+        "similar_patients": similar_scores
     }
 
     return to_json
@@ -352,10 +381,10 @@ def predictions_hipAndKneeC(data_to_pred, mode):
 
     with open("model_classification_physical.pkl", "rb") as file:
         loaded_model = joblib.load(file)
-    predictionsPhy = loaded_model.predict(data_to_pred).tolist()
+    predictionsPhy = loaded_model.predict_proba(data_to_pred)[:,1].tolist()
     with open("model_classification_mental.pkl", "rb") as file:
         loaded_model2 = joblib.load(file)
-    predictionsMen = loaded_model2.predict(data_to_pred.values).tolist()
+    predictionsMen = loaded_model2.predict_proba(data_to_pred.values)[:,1].tolist()
 
     estimation = {
         "physical_classif_score": predictionsPhy,  # previsione score fisico dopo 6 mesi
@@ -466,10 +495,55 @@ def predictions_SpineR(data_to_pred, mode):
     }
 
 
+    # -------------------- ALTRI PAZIENTI --------------------
+    others = []
+
+    # prendo il valore in pos i nell'array dei valori preOp e lo metto in un dict che poi appendo a others
+    # rifaccio la stessa cosa con i valori nell'array del post operatorio
+    for i in range(len(DB_preOp_c)):
+        dict = {
+            "period": "preOp",
+            "score": DB_preOp_c[i],
+        }
+        others.append(dict)
+        dict = {
+            "period": "6motnhs",
+            "score": DB_6months_c[i]
+        }
+        others.append(dict)
+    
+
+    # -------------------- PAZIENTI SIMILI --------------------
+    if mode == "single_patient":
+        similar_scores = []
+        similar_p = most_similar_scores(
+            DB_6months_p, ageDB, predictionsPhy, data_to_pred["anni_ricovero"]
+        )
+        for x in range(len(similar_p)):
+            similar_p_dict = {
+                "Physical_score": similar_p[x][0],
+                "age": similar_p[x][1],
+            }
+            similar_scores.append(similar_p_dict)
+
+        similar_m = most_similar_scores(
+            DB_6months_m, ageDB, predictionsODI, data_to_pred["anni_ricovero"]
+        )
+        for x in range(len(similar_m)):
+            similar_m_dict = {
+                "ODI_score": similar_m[x][0],
+                "age": similar_m[x][1],
+            }
+            similar_scores.append(similar_m_dict)
+
+
+
     # -------------------- OGGETTO FINALE DA RITORNARE --------------------
     to_json = {
         "counterfactual": counterfact, 
-        "predictions": predictions
+        "predictions": predictions,
+        "other_patients": others,
+        "similar_patients": similar_scores
     }
 
     return to_json
@@ -508,10 +582,10 @@ def predictions_SpineC(data_to_pred, mode):
 
     with open("model_classification_physical_spine.pkl", "rb") as file:
         loaded_model = joblib.load(file)
-    predictionsPhy = loaded_model.predict(data_to_pred).tolist()
+    predictionsPhy = loaded_model.predict_proba(data_to_pred)[:,1].tolist()
     with open("model_classification_odi_spine.pkl", "rb") as file:
         loaded_model = joblib.load(file)
-    predictionsODI = loaded_model.predict(data_to_pred).tolist()
+    predictionsODI = loaded_model.predict_proba(data_to_pred)[:,1].tolist()
 
     estimation = {
         "physical_classif_score": predictionsPhy,  # previsione score classificatorio fisico
@@ -560,7 +634,7 @@ e = predictions_hip_6months(data_prepr)
 print(e)
 """
 
-"""
+
 input_data = {
                 "sesso": "1",
                 "anni_ricovero": "3",
@@ -586,8 +660,9 @@ input_data = {
 
 input_data = pd.DataFrame.from_dict(input_data, orient="index").T
 estimation = predictions_hipAndKneeR(input_data, "single_patient")
+estimation2 = predictions_hipAndKneeC(input_data, "single_patient")
 print(estimation)
-"""
+
 
 """
 input_data = {
