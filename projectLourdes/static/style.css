@@ -204,3 +204,7 @@ textPath {
     background: linear-gradient(130deg, var(--grad-mig) 33%, rgba(0, 0, 0, 0) 33%), linear-gradient(130deg, var(--grad-inv) 66%, var(--grad-peg) 66%);
     z-index: -1;
 }
+
+#isPhysicalParam, #isMentalParam, #isODIParam {
+    display: none;
+}

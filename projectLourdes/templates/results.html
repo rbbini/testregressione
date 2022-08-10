@@ -37,11 +37,43 @@
 					<a href="/" class="text-decoration-none fw-bold text-blue">< Go back to compilation</a>
 				</div>
 				<h1 class="text-blue mt-3 fs-3 col-12">Results</h1>
-<!--				<div class="head-form pt-4 d-flex justify-content-between align-items-start col-lg-8 col-12 mx-auto">-->
-<!--					<button class="btn btn-blue text-uppercase" disabled>Form data</button>-->
-<!--					<button class="btn btn-blue text-uppercase activeBtn">Results</button>-->
-<!--					<button class="btn btn-blue text-uppercase" disabled>Evaluate output</button>-->
-<!--				</div>-->
+			</div>
+			<h6>Editable parameters:</h6>
+			<div class="row" id="isPhysicalParam">
+				<div class="form-group col-xl-3 col-md-6 col-12">
+					<label for="counterfact0sel" id="counterfact0p" class="form-label text-uppercase"></label>
+					<select class="form-select" aria-label="Select for procedure" name="counterfact0sel" id="counterfact0sel" onchange="newResultsP()">
+					</select>
+				</div>
+				<div class="form-group col-xl-3 col-md-6 col-12">
+					<label for="counterfact1sel" id="counterfact1p" class="form-label text-uppercase"></label>
+					<select class="form-select" aria-label="Select for procedure" name="counterfact1sel" id="counterfact1sel" onchange="newResultsP()">
+					</select>
+				</div>
+			</div>
+			<div class="row" id="isMentalParam">
+				<div class="form-group col-xl-3 col-md-6 col-12">
+					<label for="counterfact5sel" id="counterfact5p" class="form-label text-uppercase"></label>
+					<select class="form-select" aria-label="Select for procedure" name="counterfact5sel" id="counterfact5sel" onchange="newResultsM()">
+					</select>
+				</div>
+				<div class="form-group col-xl-3 col-md-6 col-12">
+					<label for="counterfact6sel" id="counterfact6p" class="form-label text-uppercase"></label>
+					<select class="form-select" aria-label="Select for procedure" name="counterfact6sel" id="counterfact6sel" onchange="newResultsM()">
+					</select>
+				</div>
+			</div>
+			<div class="row" id="isODIParam">
+				<div class="form-group col-xl-3 col-md-6 col-12">
+					<label for="counterfact7sel" id="counterfact7p" class="form-label text-uppercase"></label>
+					<select class="form-select" aria-label="Select for procedure" name="counterfact7sel" id="counterfact7sel" onchange="newResultsM()">
+					</select>
+				</div>
+				<div class="form-group col-xl-3 col-md-6 col-12">
+					<label for="counterfact8sel" id="counterfact8p" class="form-label text-uppercase"></label>
+					<select class="form-select" aria-label="Select for procedure" name="counterfact8sel" id="counterfact8sel" onchange="newResultsM()">
+					</select>
+				</div>
 			</div>
 			<div id="stepViz">
 				<div class="row">

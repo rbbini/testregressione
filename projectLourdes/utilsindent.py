@@ -1,81 +1,62 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Jun  4 11:24:43 2022
-
-@author: andre
-"""
-
 import pandas as pd
 import numpy as np
-import pickle
 import statistics
+import pickle
 import os
 import joblib
 #from pyearth import Earth
 from operator import itemgetter
 
-dataz = pd.read_excel(r'C:\Users\andre\Desktop\testregressione-waterboiufinaloz\projectLourdes\testinonino.xls')
 
 
 # dati che saranno ritornati in un json
-dbPath = os.path.abspath("data/db_anca.xls")
-db = pd.read_excel(dbPath)
+dbPathR = os.path.abspath("data/db_anca.xls")
+db = pd.read_excel(dbPathR)
+
+dbPathC = os.path.abspath("data/classif_data.xlsx")
+dbC = pd.read_excel(dbPathC)
 
 ageDB = db["Anni ricovero"].to_numpy()
 ageDB = ageDB.astype(int)
 ageDB = ageDB.tolist()
 
-DB_6months_p = db["SF12 MentalScore 6months"].tolist()
-DB_6months_m = db["SF12 PhysicalScore 6months"].tolist()
+DB_preOp_m = db["SF12 MentalScore PreOp"].tolist()
+DB_preOp_p = db["SF12 PhysicalScore PreOp"].tolist()
+DB_6months_m = db["SF12 MentalScore 6months"].tolist()
+DB_6months_p = db["SF12 PhysicalScore 6months"].tolist()
+
+DB_preOp_c = dbC["preOp"].toList()
+DB_6months_c = dbC["6months"].tolist()
 
 medianP = statistics.median(DB_6months_p)
 medianM = statistics.median(DB_6months_m)
 
-columns_preop = [
-    "Uid",
-    "Sesso",
-    "Anni ricovero",
-    "Data operazione",
-    "Data dimissione",
-    "Nome evento",
-    "Nome equipe",
-    "Procedura intervento",
-    "HHS Function PreOp",
-    "HHS Total PreOp",
-    "VAS PAIN risp PreOp",
-    "SF12 PhysicalScore PreOp",
-    "SF12 MentalScore PreOp",
-    "HOOSPS Total PreOp",
-    "BMI altezza risp PreOp",
-    "BMI peso risp PreOp",
-    "BMI Total PreOp",
-]
 
 
-def preproces_nomeevento(data_preop):
-    data_preop["Nome evento"] = data_preop[
-        "Nome evento"
-    ].str.lower()  # replace('\s ', ' ').value_counts()
-    data_preop["Nome evento"] = data_preop["Nome evento"].str.replace(
-        "\n", "", regex=True
-    )
-    data_preop["Nome evento"] = data_preop["Nome evento"].str.replace(
-        "  ", " ", regex=True
-    )
-    data_preop["Nome evento"] = data_preop["Nome evento"].str.replace(
-        "([a-z] )(protesi)", r"\1 protesi", regex=True
-    )
-    return data_preop["Nome evento"]
+def check_nomeoperazione(data_preop):
+    if 'Artrodesi cervicale' not in data_preop.columns:
+        data_preop['Artrodesi cervicale'] = 0
+    if 'Artrodesi lombare' not in data_preop.columns:
+        data_preop['Artrodesi lombare'] = 0
+    if 'Cifoplastiche' not in data_preop.columns:
+        data_preop['Cifoplastiche'] = 0
+    if 'Decompressione lombare' not in data_preop.columns:
+        data_preop['Decompressione lombare'] = 0
+    if 'Deformita degenerativa' not in data_preop.columns:
+        data_preop['Deformita degenerativa'] = 0
+    if 'Deformita idiopatica' not in data_preop.columns:
+        data_preop['Deformita idiopatica'] = 0
+    if 'Ernia cervicale' not in data_preop.columns:
+        data_preop['Ernia cervicale'] = 0
+    if 'Ernia lombare' not in data_preop.columns:
+        data_preop['Ernia lombare'] = 0
+    if 'Tumore vertebrale' not in data_preop.columns:
+        data_preop['Tumore vertebrale'] = 0  
+    return data_preop
 
 
-def from_obj_to_num(x):
-    try:
-        res = x.astype(float)
-    except ValueError:
-        res = x
-    return res
-
-
+# per applicare il check del gender usare la seguente riga
+# data_preop["Sesso"] = data_preop["Sesso"].apply(check_gender)
 def check_gender(x):
     if x.lower() == "m":
         gender = 0
@@ -84,44 +65,6 @@ def check_gender(x):
     else:
         gender = np.nan
     return gender
-
-
-def check_equipe(df):
-    if "36h orto - moroni" not in df.columns:
-        df["36h orto - moroni"] = 0
-    if "36p orto - parente" not in df.columns:
-        df["36p orto - parente"] = 0
-    if "casco" not in df.columns:
-        df["casco"] = 0
-    if "centro di traumatologia dello sport" not in df.columns:
-        df["centro di traumatologia dello sport"] = 0
-    if "chirurgia anca i" not in df.columns:
-        df["chirurgia anca i"] = 0
-    if "clinica ortopedica" not in df.columns:
-        df["clinica ortopedica"] = 0
-    if "e.u.o.r.r." not in df.columns:
-        df["e.u.o.r.r."] = 0
-    if "gspine4" not in df.columns:
-        df["gspine4"] = 0
-    if "oraco" not in df.columns:
-        df["oraco"] = 0
-    if "ot9 orto - ventura2" not in df.columns:
-        df["ot9 orto - ventura2"] = 0
-    return df
-
-
-def check_event(df):
-    if "bilaterale protesi primo intervento" not in df.columns:
-        df["bilaterale protesi primo intervento"] = 0
-    if "destra protesi primo intervento" not in df.columns:
-        df["destra protesi primo intervento"] = 0
-    if "destra revisione" not in df.columns:
-        df["destra revisione"] = 0
-    if "sinistra protesi primo intervento" not in df.columns:
-        df["sinistra protesi primo intervento"] = 0
-    if "sinistra revisione" not in df.columns:
-        df["sinistra revisione"] = 0
-    return df
 
 
 def most_similar_scores(all_scores, ages, input_score, input_age):
@@ -145,115 +88,62 @@ def most_similar_scores(all_scores, ages, input_score, input_age):
 
     return sorted_scores
 
+def preprocessSpine(data_preop):
+    data_preprocessed = pd.concat([data_preop.drop(['nome_operazione'], axis=1), pd.get_dummies(data_preop['nome_operazione'])],
+                           axis=1)
 
-def preprocessing(data):
-    data = data.replace("#null", np.nan)
-
-    data = data.apply(from_obj_to_num)
-
-    # data = data[~data['SF12 MentalScore 6months'].isna()]
-
-    # data = data[~data['SF12 PhysicalScore 6months'].isna()]
-
-    data = data[~data["SF12 MentalScore PreOp"].isna()]
-
-    data = data[~data["SF12 PhysicalScore PreOp"].isna()]
-
-    data = data[~data["HOOSPS Total PreOp"].isna()]
-
-    data = data[~data["BMI altezza risp PreOp"].isna()]
-
-    data = data[~data["BMI peso risp PreOp"].isna()]
-
-    data["Data operazione"] = data["Data operazione"].str.replace(
-        "\s(00:00:00.0)", "", regex=True
-    )
-
-    data["Data operazione"] = pd.to_datetime(data["Data operazione"])
-
-    data["Data operazione"] = data["Data operazione"].dt.strftime("%Y/%m/%d")
-
-    # mask_date = data['Data operazione'] <= '2021/05/05'
-
-    # data_clean = data.loc[mask_date, :]
-
-    # data_preop = data_clean.loc[:, columns_preop]\
-
-    data_preop = data.loc[:, columns_preop]
-
-    with open("lista_nome_evento.pkl", "rb") as f:
-        lista_nome_evento = pickle.load(f)
-
-    def normalize_nomevento(x):
-        if x in lista_nome_evento:
-            nome_evento = x
-        else:
-            nome_evento = np.nan
-        return nome_evento
-
-    data_preop["Nome evento"] = preproces_nomeevento(data_preop)
-
-    data_preop["Nome evento"] = data_preop["Nome evento"].apply(normalize_nomevento)
-
-    data_preop["Procedura intervento"] = data_preop["Procedura intervento"].str.lower()
-
-    data_preop["Procedura intervento"] = data_preop["Procedura intervento"].str.replace(
-        "sx", "sinistra"
-    )
-    data_preop["Procedura intervento"] = data_preop["Procedura intervento"].str.replace(
-        "dx", "destra"
-    )
-
-    data_preop["Nome equipe"] = (
-        data_preop["Nome equipe"].str.lower().str.replace("  ", " ", regex=True)
-    )
-
-    data_preop = data_preop[data_preop["Nome equipe"] != "chirurgia del ginocchio i"]
-
-    data_preop = pd.concat(
-        [
-            data_preop.drop(["Nome evento"], axis=1),
-            pd.get_dummies(data_preop["Nome evento"]),
-        ],
-        axis=1,
-    )
-
-    data_preop = pd.concat(
-        [
-            data_preop.drop(["Nome equipe"], axis=1),
-            pd.get_dummies(data_preop["Nome equipe"]),
-        ],
-        axis=1,
-    )
-
-    # data_preop.Sesso = pd.get_dummies(data_preop.Sesso, drop_first= True) #0 F 1 M
-    data_preop["Sesso"] = data_preop["Sesso"].apply(check_gender)
-    data_preop = check_equipe(data_preop)
-    data_preop = check_event(data_preop)
-
-    columns_to_drop = [
-        "Data operazione",
-        "Data dimissione",
-        "Procedura intervento",
-        "HHS Function PreOp",
-        "HHS Total PreOp",
-    ]
-
-    data_preop.drop(columns_to_drop, axis=1, inplace=True)
-
-    # dopo la colonna "Uid" (la prima) elimina tutte le colonne che non hanno nel nome "3months"/"6months"/"12months"
-    # data_3month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='3months', axis=1)], axis = 1)
-
-    # data_6month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='6months', axis=1)], axis = 1)
-
-    # data_12month = pd.concat([data_clean[['Uid']], data_clean.filter(regex='12months', axis=1)], axis = 1)
-
-    return data_preop
-
-    # modifiche da fare - creare diversi prediction per gino/anca(insieme) regressive classificatory - spine (regre classi odi e basico)
-    # separazione regre classi tra phy/mental
+    data_preprocessed = check_nomeoperazione(data_preprocessed)
+    
+    return data_preprocessed
 
 
+# funzione per la predizione dei valori del controfattuale
+def pred_counterfact(data_to_pred, counterfact_values, counterfact_fields, model_name):
+    with open(model_name, "rb") as file:
+        loaded_model = joblib.load(file)
+    
+    pred = []
+    
+    field1 = counterfact_fields[0]
+    field2 = counterfact_fields[1]
+    field3 = counterfact_fields[2]
+    field4 = counterfact_fields[3]
+    field5 = counterfact_fields[4]
+    
+    # vado a creare un oggetto contenente la predizione per ogni combinazione di valori presenti 
+    # nei campi del controfattuale. Questo oggetto viene appeso all'array che verra' poi ritornato
+    for i in counterfact_values[0]:
+        for i2 in counterfact_values[1]:
+            # commentato per test
+            #for i3 in counterfact_values[2]:
+                #for i4 in counterfact_values[3]:
+                    #for i5 in counterfact_values[4]:
+            data_to_pred[field1] = i
+            data_to_pred[field2] = i2
+            # commentato per test
+            #data_to_pred[field3] = i3
+            #data_to_pred[field4] = i4
+            #data_to_pred[field5] = i5
+
+            prediction = loaded_model.predict(data_to_pred).tolist()
+
+            estimation = {
+				field1: i,
+				field2: i2,
+                # commentato per test
+                #field3: i3,
+                #field4: i4,
+                #field5: i5,
+				"prediction": prediction
+			}
+            pred.append(estimation)
+
+    return pred
+
+
+
+# tenere come esempio per gli "altri pazienti"
+"""
 def predictions_hip_6months(data_to_pred, mode):
     # drop dell'id perchè non riesce a convertirlo in float
     data_to_pred.drop("Uid", axis=1, inplace=True)
@@ -323,109 +213,345 @@ def predictions_hip_6months(data_to_pred, mode):
         to_json.append(similar_scores)
 
     return to_json
+"""
 
-    # regressiboy anca e gino
-
+# regressivo anca + ginocchio
 def predictions_hipAndKneeR(data_to_pred, mode):
     # drop dell'id perchè non riesce a convertirlo in float
     #data_to_pred.drop("Uid", axis=1, inplace=True)
 
     with open("model_regression_physical.pkl", "rb") as file:
         loaded_model = joblib.load(file)
-        predictionsPhakR = loaded_model.predict(data_to_pred).tolist()
+    predictionsPhy = loaded_model.predict(data_to_pred).tolist()
     with open("model_regression_mental.pkl", "rb") as file:
         loaded_model2 = joblib.load(file)
-        predictionsMhakR = loaded_model2.predict(data_to_pred).tolist()
+    predictionsMen = loaded_model2.predict(data_to_pred).tolist()
+    
+    # age della persona 
+    age = data_to_pred["anni_ricovero"].to_numpy()
+    age = age.astype(int)
+    age = age.tolist()
 
-        age = data_to_pred["anni_ricovero"].to_numpy()
-        age = age.astype(int)
-        age = age.tolist()
+    # ---------------- OGGETTO CON LA PREDIZIONE ----------------
+    estimation = {
+        "SF12_PhysicalScore_6months": predictionsPhy,  # previsione score fisico dopo 6 mesi  
+        "SF12_MentalScore_6months": predictionsMen,  # previsione score mentale dopo 6 mesi
+        "age": age
+    }
 
-# possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
 
-        estimation = {
-            "SF12_PhysicalScore_6months": predictionsPhakR,  # previsione score fisico dopo 6 mesi
-            "SF12_MentalScore_6months": predictionsMhakR,  # previsione score mentale dopo 6 mesi
-            "age": age,  # eta'
+    # ------------------- CONTROFATTUALE -----------------------
+    # campi controfattuale fisico e mentale
+    counterfactPhy = ["anni_ricovero", "SF12_PhysicalScore_PreOp", "SF12_MentalScore_PreOp", 
+                      "BMI_altezza_PreOp", "BMI_peso_PreOp"]
+    counterfactMen = ["SF12_PhysicalScore_PreOp", "SF12_MentalScore_PreOp", "BMI_altezza_PreOp", 
+                      "BMI_peso_PreOp", "SF12_ultimomesetriste_risp_0"]
+
+    # calcolo dei valori del controfattuale  
+    anni_ricovero = float(data_to_pred["anni_ricovero"])
+    anni_ricovero_counterfact = [anni_ricovero + 5.36, anni_ricovero + 4.29, anni_ricovero + 3.22, anni_ricovero + 2.14, 
+                                 anni_ricovero + 1.07, anni_ricovero, anni_ricovero - 1.07, anni_ricovero - 2.14, 
+                                 anni_ricovero - 3.22, anni_ricovero - 4.29, anni_ricovero - 5.36]
+    
+    SF12_PhysicalScore_PreOp = float(data_to_pred["SF12_PhysicalScore_PreOp"])
+    SF12_PhysicalScore_PreOp_counterfact = [SF12_PhysicalScore_PreOp + 3.94, SF12_PhysicalScore_PreOp + 3.15, 
+                                            SF12_PhysicalScore_PreOp + 2.36, SF12_PhysicalScore_PreOp + 1.58, 
+                                            SF12_PhysicalScore_PreOp + 0.788, SF12_PhysicalScore_PreOp, 
+                                            SF12_PhysicalScore_PreOp - 0.788, SF12_PhysicalScore_PreOp - 1.58, 
+                                            SF12_PhysicalScore_PreOp - 2.36, SF12_PhysicalScore_PreOp - 3.15, 
+                                            SF12_PhysicalScore_PreOp - 3.94]
+    
+    SF12_MentalScore_PreOp = float(data_to_pred["SF12_MentalScore_PreOp"])
+    SF12_MentalScore_PreOp_counterfact = [SF12_MentalScore_PreOp + 6.11, SF12_MentalScore_PreOp + 4.89,
+                                          SF12_MentalScore_PreOp + 3.66, SF12_MentalScore_PreOp + 2.44,
+                                          SF12_MentalScore_PreOp + 1.22, SF12_MentalScore_PreOp,
+                                          SF12_MentalScore_PreOp - 1.22, SF12_MentalScore_PreOp - 2.44,
+                                          SF12_MentalScore_PreOp - 3.66, SF12_MentalScore_PreOp - 4.89,
+                                          SF12_MentalScore_PreOp - 6.11]
+
+    BMI_altezza_PreOp = float(data_to_pred["BMI_altezza_PreOp"])
+    BMI_altezza_PreOp_counterfact = [BMI_altezza_PreOp + 4.68, BMI_altezza_PreOp + 3.75, BMI_altezza_PreOp + 2.81,
+                                     BMI_altezza_PreOp + 1.87, BMI_altezza_PreOp + 0.94, BMI_altezza_PreOp,
+                                     BMI_altezza_PreOp - 0.94, BMI_altezza_PreOp - 1.87, BMI_altezza_PreOp - 2.81,
+                                     BMI_altezza_PreOp - 3.75, BMI_altezza_PreOp - 4.68]
+
+    BMI_peso_PreOp = float(data_to_pred["BMI_peso_PreOp"])
+    BMI_peso_PreOp_counterfact = [BMI_peso_PreOp + 7.80, BMI_peso_PreOp + 6.24, BMI_peso_PreOp + 4.68, 
+                                     BMI_peso_PreOp + 3.12, BMI_peso_PreOp + 1.56, BMI_peso_PreOp, 
+                                     BMI_peso_PreOp - 1.56, BMI_peso_PreOp - 3.12, BMI_peso_PreOp - 4.68,
+                                     BMI_peso_PreOp - 6.24, BMI_peso_PreOp - 7.80]
+
+    SF12_ultimomesetriste_risp_0 = float(data_to_pred["SF12_ultimomesetriste_risp_0"])
+    SF12_ultimomesetriste_risp_0_counterfact = [SF12_ultimomesetriste_risp_0 + 0.66, SF12_ultimomesetriste_risp_0 + 0.53,
+                                                SF12_ultimomesetriste_risp_0 + 0.4, SF12_ultimomesetriste_risp_0 + 0.27,
+                                                SF12_ultimomesetriste_risp_0 + 0.13, SF12_ultimomesetriste_risp_0,
+                                                SF12_ultimomesetriste_risp_0 - 0.13, SF12_ultimomesetriste_risp_0 - 0.27,
+                                                SF12_ultimomesetriste_risp_0 - 0.4, SF12_ultimomesetriste_risp_0 - 0.53,
+                                                SF12_ultimomesetriste_risp_0 - 0.66]
+    
+    counterfact_values = [anni_ricovero_counterfact, SF12_PhysicalScore_PreOp_counterfact, SF12_MentalScore_PreOp_counterfact, 
+                          BMI_altezza_PreOp_counterfact, BMI_peso_PreOp_counterfact]
+    # ---------------- PREDIZIONI CONTROFATTUALE ----------------
+    # inserimento nell'array dei valori fisici del controfattuale
+    estimation_counterfact_phy = pred_counterfact(data_to_pred, counterfact_values, counterfactPhy, "model_regression_physical.pkl")
+    
+    # valori mentali del controfattuale
+    counterfact_values = [SF12_PhysicalScore_PreOp_counterfact, SF12_MentalScore_PreOp_counterfact, BMI_altezza_PreOp_counterfact, 
+                          BMI_altezza_PreOp_counterfact, SF12_ultimomesetriste_risp_0_counterfact]
+    estimation_counterfact_men = pred_counterfact(data_to_pred, counterfact_values, counterfactMen, "model_regression_mental.pkl")
+      
+    
+    # ---------------- ARRAY CON TUTTE LE PREDIZIONI ----------------
+    predictions = [estimation, estimation_counterfact_phy, estimation_counterfact_men]
+
+
+    # ---------------- OGGETTO PER LA CREAZIONE DELLA PARTE CONTROFATTUALE IN HTML ----------------
+    anni_ricovero_counterfact.insert(0, "anni_ricovero")
+    SF12_PhysicalScore_PreOp_counterfact.insert(0, "SF12_PhysicalScore_PreOp")
+    SF12_MentalScore_PreOp_counterfact.insert(0, "SF12_MentalScore_PreOp")
+    BMI_altezza_PreOp_counterfact.insert(0, "BMI_altezza_PreOp")
+    BMI_peso_PreOp_counterfact.insert(0, "BMI_peso_PreOp")
+    SF12_ultimomesetriste_risp_0_counterfact.insert(0, "SF12_ultimomesetriste_risp_0")
+
+    counterfact = {
+        "physical": [anni_ricovero_counterfact, SF12_PhysicalScore_PreOp_counterfact],
+        
+        "mental": [SF12_PhysicalScore_PreOp_counterfact, SF12_MentalScore_PreOp_counterfact]
+    }
+
+
+    # -------------------- ALTRI PAZIENTI --------------------
+    others = []
+
+    # prendo il valore in pos i nell'array dei valori preOp e lo metto in un dict che poi appendo a others
+    # rifaccio la stessa cosa con i valori nell'array del post operatorio
+    for i in range(len(DB_preOp_c)):
+        dict = {
+            "period": "preOp",
+            "score": DB_preOp_c[i],
         }
+        others.append(dict)
+        dict = {
+            "period": "6motnhs",
+            "score": DB_6months_c[i]
+        }
+        others.append(dict)
+    
 
-# lista da convertire in json
-        to_json = [estimation]
-        # lista che avra' i dati dei pazienti nel DB
-        others = []
+    # -------------------- PAZIENTI SIMILI --------------------
+    if mode == "single_patient":
+        similar_scores = []
+        similar_p = most_similar_scores(
+            DB_6months_p, ageDB, predictionsPhy, data_to_pred["anni_ricovero"]
+        )
+        for x in range(len(similar_p)):
+            similar_p_dict = {
+                "SF12_PhysicalScore_6months": similar_p[x][0],
+                "age": similar_p[x][1],
+            }
+            similar_scores.append(similar_p_dict)
 
-        return to_json
+        similar_m = most_similar_scores(
+            DB_6months_m, ageDB, predictionsMen, data_to_pred["anni_ricovero"]
+        )
+        for x in range(len(similar_m)):
+            similar_m_dict = {
+                "SF12_MentalScore_6months": similar_m[x][0],
+                "age": similar_m[x][1],
+            }
+            similar_scores.append(similar_m_dict)
 
-###da controllare con rob!?!
+    
+    # -------------------- OGGETTO FINALE DA RITORNARE --------------------
+    to_json = {
+        "counterfactual": counterfact, 
+        "predictions": predictions,
+        "other_patients": others,
+        "similar_patients": similar_scores
+    }
 
-# classificatoz
+    return to_json
 
+
+
+# classificatorio anca + ginocchio
 def predictions_hipAndKneeC(data_to_pred, mode):
     # drop dell'id perchè non riesce a convertirlo in float
     #data_to_pred.drop("Uid", axis=1, inplace=True)
 
     with open("model_classification_physical.pkl", "rb") as file:
         loaded_model = joblib.load(file)
-    predictionsPhakC = loaded_model.predict(data_to_pred).tolist()
+    predictionsPhy = loaded_model.predict_proba(data_to_pred)[:,1].tolist()
     with open("model_classification_mental.pkl", "rb") as file:
         loaded_model2 = joblib.load(file)
-    predictionsMhakC = loaded_model2.predict(data_to_pred.values).tolist()
-
-    age = data_to_pred["anni_ricovero"].to_numpy()
-    age = age.astype(int)
-    age = age.tolist()
-
-# possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
+    predictionsMen = loaded_model2.predict_proba(data_to_pred.values)[:,1].tolist()
 
     estimation = {
-        "SF12_PhysicalScore_6months": predictionsPhakC,  # previsione score fisico dopo 6 mesi
-        "SF12_MentalScore_6months": predictionsMhakC,  # previsione score mentale dopo 6 mesi
-        "age": age,  # eta'
+        "physical_classif_score": predictionsPhy,  # previsione score fisico dopo 6 mesi
+        "mental_classif_score": predictionsMen  # previsione score mentale dopo 6 mesi
     }
     
-    # lista da convertire in json
-    to_json = [estimation]
-    # lista che avra' i dati dei pazienti nel DB
-    others = []
-    
-    ###da controllare con rob!?!
-    return to_json
+    return estimation
 
     
-    # regressiboy per spine
 
+# regressivo spine
 def predictions_SpineR(data_to_pred, mode):
     # drop dell'id perchè non riesce a convertirlo in float
-   # data_to_pred.drop("Uid", axis=1, inplace=True)
+    # data_to_pred.drop("Uid", axis=1, inplace=True)
 
     with open("model_regression_physical_spine.pkl", "rb") as file:
         loaded_model = joblib.load(file)
-        predictionsPineRr = loaded_model.predict(data_to_pred.values).tolist()
-    
+    predictionsPhy = loaded_model.predict(data_to_pred.values).tolist()
+    with open("model_regression_odi_spine.pkl", "rb") as file:
+        loaded_model = joblib.load(file)
+    predictionsODI = loaded_model.predict(data_to_pred.values).tolist()
+
+    # age della persona 
     age = data_to_pred["anni_ricovero"].to_numpy()
     age = age.astype(int)
     age = age.tolist()
-    
-    # possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
-    
+
+    # ---------------- OGGETTO CON LA PREDIZIONE ----------------
     estimation = {
-        "SF12_PhysicalScore_6months": predictionsPineRr,  # previsione score fisico dopo 6 mesi
-        "age": age,  # eta'
+        "Physical_score": predictionsPhy,  # previsione score fisico
+        "ODI_score": predictionsODI,  # previsione score ODI
+        "age": age
     }
+
+
+    # ------------------- CONTROFATTUALE -----------------------
+    # campi controfattuale fisico e mentale
+    counterfactPhy = ["SF36_PhysicalFunctioning_PreOp", "SF36_GeneralHealth_PreOp", "anni_ricovero", 
+                      "ODI_Total_PreOp", "classe_asa_1"]
+    counterfactODI = ["ODI_Total_PreOp", "SF36_GeneralHealth_PreOp", "Vas_Back_PreOp", 
+                      "anni_ricovero", "sesso"]
     
-    # lista da convertire in json
-    to_json = [estimation]
-    # lista che avra' i dati dei pazienti nel DB
+    # calcolo dei valori del controfattuale  
+    SF36_PhysicalFunctioning_PreOp = float(data_to_pred["SF36_PhysicalFunctioning_PreOp"])
+    SF36_PhysicalFunctioning_PreOp_counterfact = [SF36_PhysicalFunctioning_PreOp + 13.56, SF36_PhysicalFunctioning_PreOp + 10.84, 
+                                                  SF36_PhysicalFunctioning_PreOp + 8.13, SF36_PhysicalFunctioning_PreOp + 5.42, 
+                                                  SF36_PhysicalFunctioning_PreOp + 2.71, SF36_PhysicalFunctioning_PreOp, 
+                                                  SF36_PhysicalFunctioning_PreOp - 2.71, SF36_PhysicalFunctioning_PreOp - 5.42,
+                                                  SF36_PhysicalFunctioning_PreOp - 8.13, SF36_PhysicalFunctioning_PreOp - 10.84,
+                                                  SF36_PhysicalFunctioning_PreOp - 13.56]
+
+    SF36_GeneralHealth_PreOp = float(data_to_pred["SF36_GeneralHealth_PreOp"])
+    SF36_GeneralHealth_PreOp_counterfact = [SF36_GeneralHealth_PreOp + 10.41, SF36_GeneralHealth_PreOp + 8.33,
+                                            SF36_GeneralHealth_PreOp + 6.24, SF36_GeneralHealth_PreOp + 4.16,
+                                            SF36_GeneralHealth_PreOp + 2.08, SF36_GeneralHealth_PreOp,
+                                            SF36_GeneralHealth_PreOp - 2.08, SF36_GeneralHealth_PreOp - 4.16,
+                                            SF36_GeneralHealth_PreOp - 6.24, SF36_GeneralHealth_PreOp - 8.33,
+                                            SF36_GeneralHealth_PreOp - 10.41]
+
+    anni_ricovero = float(data_to_pred["anni_ricovero"])
+    anni_ricovero_counterfact = [anni_ricovero + 8.89, anni_ricovero + 7.1, anni_ricovero + 5.33, anni_ricovero + 3.55, 
+                                 anni_ricovero + 1.78, anni_ricovero, anni_ricovero - 1.78, anni_ricovero - 3.55, 
+                                 anni_ricovero - 5.33, anni_ricovero - 7.1, anni_ricovero - 8.89]
+
+    ODI_Total_PreOp = float(data_to_pred["ODI_Total_PreOp"])
+    ODI_Total_PreOp_counterfact = [ODI_Total_PreOp + 10, ODI_Total_PreOp + 8, ODI_Total_PreOp + 6, ODI_Total_PreOp + 4,
+                                   ODI_Total_PreOp + 2, ODI_Total_PreOp, ODI_Total_PreOp - 2, ODI_Total_PreOp - 4,
+                                   ODI_Total_PreOp - 6, ODI_Total_PreOp - 8, ODI_Total_PreOp - 10]
+
+    classe_asa_1_counterfact = [1, 2, 3, 4]
+
+    Vas_Back_PreOp = float(data_to_pred["Vas_Back_PreOp"])
+    Vas_Back_PreOp_counterfact = [Vas_Back_PreOp + 1.52, Vas_Back_PreOp + 1.21, Vas_Back_PreOp + 0.91, Vas_Back_PreOp + 0.61,
+                                  Vas_Back_PreOp + 0.3, Vas_Back_PreOp, Vas_Back_PreOp - 0.3, Vas_Back_PreOp - 0.61,
+                                  Vas_Back_PreOp - 0.91, Vas_Back_PreOp - 1.21, Vas_Back_PreOp - 1.52]
+    
+    sesso_counterfact = [0, 1]
+
+    counterfact_values = [SF36_PhysicalFunctioning_PreOp_counterfact, SF36_GeneralHealth_PreOp_counterfact, anni_ricovero_counterfact,
+                          ODI_Total_PreOp_counterfact, classe_asa_1_counterfact]
+    # ---------------- PREDIZIONI CONTROFATTUALE ----------------
+    # inserimento nell'array dei valori fisici del controfattuale
+    estimation_counterfact_phy = pred_counterfact(data_to_pred, counterfact_values, counterfactPhy, "model_regression_physical_spine.pkl")
+
+    counterfact_values = [ODI_Total_PreOp_counterfact, SF36_GeneralHealth_PreOp_counterfact, Vas_Back_PreOp_counterfact, 
+                          anni_ricovero_counterfact, sesso_counterfact]
+    estimation_counterfact_ODI = pred_counterfact(data_to_pred, counterfact_values, counterfactODI, "model_regression_odi_spine.pkl")
+
+
+    # ---------------- ARRAY CON TUTTE LE PREDIZIONI ----------------
+    predictions = [estimation, estimation_counterfact_phy, estimation_counterfact_ODI]
+
+
+    # ---------------- OGGETTO PER LA CREAZIONE DELLA PARTE CONTROFATTUALE IN HTML ----------------
+    SF36_PhysicalFunctioning_PreOp_counterfact.insert(0, "SF36_PhysicalFunctioning_PreOp")
+    SF36_GeneralHealth_PreOp_counterfact.insert(0, "SF36_GeneralHealth_PreOp")
+    anni_ricovero_counterfact.insert(0, "anni_ricovero")
+    ODI_Total_PreOp_counterfact.insert(0, "ODI_Total_PreOp")
+    classe_asa_1_counterfact.insert(0, "classe_asa_1")
+    Vas_Back_PreOp_counterfact.insert(0, "Vas_Back_PreOp")
+    sesso_counterfact.insert(0, "sesso")
+
+
+    counterfact = {
+        "physical": [SF36_PhysicalFunctioning_PreOp_counterfact, SF36_GeneralHealth_PreOp_counterfact],
+        
+        "ODI": [ODI_Total_PreOp_counterfact, SF36_GeneralHealth_PreOp_counterfact]
+    }
+
+
+    # -------------------- ALTRI PAZIENTI --------------------
     others = []
 
-###da controllare con rob!?!
+    # prendo il valore in pos i nell'array dei valori preOp e lo metto in un dict che poi appendo a others
+    # rifaccio la stessa cosa con i valori nell'array del post operatorio
+    for i in range(len(DB_preOp_c)):
+        dict = {
+            "period": "preOp",
+            "score": DB_preOp_c[i],
+        }
+        others.append(dict)
+        dict = {
+            "period": "6motnhs",
+            "score": DB_6months_c[i]
+        }
+        others.append(dict)
+    
+
+    # -------------------- PAZIENTI SIMILI --------------------
+    if mode == "single_patient":
+        similar_scores = []
+        similar_p = most_similar_scores(
+            DB_6months_p, ageDB, predictionsPhy, data_to_pred["anni_ricovero"]
+        )
+        for x in range(len(similar_p)):
+            similar_p_dict = {
+                "Physical_score": similar_p[x][0],
+                "age": similar_p[x][1],
+            }
+            similar_scores.append(similar_p_dict)
+
+        similar_m = most_similar_scores(
+            DB_6months_m, ageDB, predictionsODI, data_to_pred["anni_ricovero"]
+        )
+        for x in range(len(similar_m)):
+            similar_m_dict = {
+                "ODI_score": similar_m[x][0],
+                "age": similar_m[x][1],
+            }
+            similar_scores.append(similar_m_dict)
+
+
+
+    # -------------------- OGGETTO FINALE DA RITORNARE --------------------
+    to_json = {
+        "counterfactual": counterfact, 
+        "predictions": predictions,
+        "other_patients": others,
+        "similar_patients": similar_scores
+    }
+
     return to_json
 
 
 
-# odi-bro  regressivo con spine
-
-def predictions_SpineOdi(data_to_pred, mode):
+"""
+def predictions_SpineOdi(data_to_pred):
     # drop dell'id perchè non riesce a convertirlo in float
     #data_to_pred.drop("Uid", axis=1, inplace=True)
 
@@ -433,57 +559,43 @@ def predictions_SpineOdi(data_to_pred, mode):
         loaded_model = joblib.load(file)
     predictionsPineOdiR = loaded_model.predict(data_to_pred.values).tolist()
     
-    age = data_to_pred["Anni ricovero"].to_numpy()
+    age = data_to_pred["anni_ricovero"].to_numpy()
     age = age.astype(int)
     age = age.tolist()
-    
-    # possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
-    
+
+    # ---------------- OGGETTO CON LA PREDIZIONE ----------------
     estimation = {
-        "SF12_PhysicalScore_6months": predictionsPineOdiR,  # previsione score fisico dopo 6 mesi
+        "ODI_score": predictionsPineOdiR,  # previsione score ODI
         "age": age,  # eta'
     }
-    
-    # lista da convertire in json
-    to_json = [estimation]
-    # lista che avra' i dati dei pazienti nel DB
-    others = []
+  
     
     ###da controllare con rob!?!
     return to_json
-
+"""
     
-    # da continuare con rob, porcod
-    # classi spine
 
+# classificatorio spine
 def predictions_SpineC(data_to_pred, mode):
     # drop dell'id perchè non riesce a convertirlo in float
     #data_to_pred.drop("Uid", axis=1, inplace=True)
 
     with open("model_classification_physical_spine.pkl", "rb") as file:
         loaded_model = joblib.load(file)
-    predictionsPineC = loaded_model.predict(data_to_pred).tolist()
-    
-    age = data_to_pred["anni_ricovero"].to_numpy()
-    age = age.astype(int)
-    age = age.tolist()
-    
-    # possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
-    
+    predictionsPhy = loaded_model.predict_proba(data_to_pred)[:,1].tolist()
+    with open("model_classification_odi_spine.pkl", "rb") as file:
+        loaded_model = joblib.load(file)
+    predictionsODI = loaded_model.predict_proba(data_to_pred)[:,1].tolist()
+
     estimation = {
-        "prediction spine classificatory": predictionsPineC,  # previsione score fisico dopo 6 mesi
-        "age": age,  # eta'
+        "physical_classif_score": predictionsPhy,  # previsione score classificatorio fisico
+        "ODI_classif_score": predictionsODI  # previsione score classificatorio ODI
     }
+  
     
-    # lista da convertire in json
-    to_json = [estimation]
-    # lista che avra' i dati dei pazienti nel DB
-    others = []
-    
-    ###da controllare con rob!?!
-    return to_json
+    return estimation
 
-
+"""
 def predictions_SpineCOdi(data_to_pred, mode):
     # drop dell'id perchè non riesce a convertirlo in float
     #data_to_pred.drop("Uid", axis=1, inplace=True)
@@ -499,7 +611,7 @@ def predictions_SpineCOdi(data_to_pred, mode):
     # possibile modifica di estimation, per tornare i dati del M o P regressive/class senza impazzire(?)
     
     estimation = {
-        "classification odi": predictionsPineCodi,  # previsione score fisico dopo 6 mesi
+        "spine_ODI_classif_score": predictionsPineCodi,  # previsione score classificatorio ODI
         "age": age,  # eta'
     }
     
@@ -508,16 +620,11 @@ def predictions_SpineCOdi(data_to_pred, mode):
     # lista che avra' i dati dei pazienti nel DB
     others = []
     
-    ###da controllare con rob!?!
     
     return to_json
+"""
 
 
-# da modificare la parte del single patient - with rob
-
-
-# data_prepr = preprocessing(data)
-# predictions_hip_6months(data_prepr)
 
 
 # -------------------- PER TESTING --------------------------------------------
@@ -526,32 +633,8 @@ data_prepr = preprocessing(data)
 e = predictions_hip_6months(data_prepr)
 print(e)
 """
-"""
-input_data = {
-    "Uid": 'IOG1RH100000001',#.id_paziente.data
-    "Sesso": 'M', #.sesso.data
-    "Anni ricovero": '10',
-    "Data operazione": '2013-01-07 00:00:00.0',
-    "Data dimissione": '2013-01-11 00:00:00.0',
-    "Nome evento": 'SINISTRA protesi primo intervento',
-    "Nome equipe": 'ORACO',
-    "Procedura intervento": 'PROTESI ANCA  SIN',
-    "HHS Function PreOp": '#null',
-    "HHS Total PreOp": '54999',
-    "VAS PAIN risp PreOp": '0',
-    "SF12 PhysicalScore PreOp": '29',
-    "SF12 MentalScore PreOp": '41.1',
-    "HOOSPS Total PreOp": '37.7',
-    "BMI altezza risp PreOp": '0',
-    "BMI peso risp PreOp": '0',
-    "BMI Total PreOp": '0'
-    }
-input_data = pd.DataFrame.from_dict(input_data, orient='index').T
-data_preprocessed = preprocessing(input_data)
-estimation = predictions_hip_6months(data_preprocessed, "single_patient")
-print(estimation)
 
-""""""
+
 input_data = {
                 "sesso": "1",
                 "anni_ricovero": "3",
@@ -559,7 +642,7 @@ input_data = {
                 "VAS_Total_PreOp": "3",
                 "SF12_PhysicalScore_PreOp": "3",
                 "SF12_MentalScore_PreOp": "3",
-                "BMI_altezza_PreOp'": "180",
+                "BMI_altezza_PreOp": "180",
                 "BMI_peso_PreOp": "3",
                 "SF12_autovalsalute_risp_0": "3",
                 "SF12_scale_risp_0": "3",
@@ -571,30 +654,42 @@ input_data = {
                 "SF12_ultimomeseenergia_risp_0": "3",
                 "SF12_ultimomesetriste_risp_0": "3",
                 "SF12_ultimomesesociale_risp_0": "3",
-                "zona_operazione": "0",
+                "zona_operazione": "0"
             }
 
 
 input_data = pd.DataFrame.from_dict(input_data, orient="index").T
-estimation = predictions_hipAndKneeC(input_data, "single_patient")
+estimation = predictions_hipAndKneeR(input_data, "single_patient")
+estimation2 = predictions_hipAndKneeC(input_data, "single_patient")
 print(estimation)
 
 
 """
-#predictions_hipAndKneeR(dataz, "dataset")
 input_data = {
-                "Artrodesi cervicale": "0",
-                "Artrodesi lombare": "1",
-                "Cifoplastiche": "0",
-                "Decompressione lombare": "0",
-                "Deformita degenerativa": "0",
-                "Deformita idiopatica" : "0",
-                "Ernia cervicale": "0",
-                "Ernia lombare": "0",
-                "Tumore vertebrale": "0",
-                "sesso": "1",  # .sesso.data
+                "nome_operazione": "Cifoplastiche",
+                "sesso": "F",
                 "anni_ricovero": "4",
-                # non separo i valori perché non sono sicuro quali siano di phy/odi pd
+                "ODI_Total_PreOp": "3",
+                "Vas_Back_PreOp": "3",
+                "Vas_Leg_PreOp":"3",
+                "SF36_GeneralHealth_PreOp": "3",
+                "SF36_PhysicalFunctioning_PreOp": "3",
+                "SF36_RoleLimitPhysical_PreOp": "3",
+                "SF36_RoleLimitEmotional_PreOp": "3",
+                "SF36_SocialFunctioning_PreOp": "3",
+                "SF36_Pain_PreOp": "3",
+                "SF36_EnergyFatigue_PreOp": "3",
+                "SF36_EmotionalWellBeing_PreOp": "3",
+                "SF36_MentalScore_PreOp": "3",
+                "SF36_PhysicalScore_PreOp": "3",
+                "FABQ_Work_PreOp": "3",
+                "classe_asa_1": "3"
+            }
+
+input_data2 = {
+                "nome_operazione": "Cifoplastiche",
+                "sesso": "M",
+                "anni_ricovero": "4",
                 "ODI_Total_PreOp": "3",
                 "Vas_Back_PreOp": "3",
                 "Vas_Leg_PreOp":"3",
@@ -610,15 +705,25 @@ input_data = {
                 "SF36_PhysicalScore_PreOp": "3",
                 "FABQ_Work_PreOp": "3",
                 "classe_asa_1": "3",
-                #"MORBIDITY": "3",
+                "MORBIDITY": "3"
             }
 
 input_data = pd.DataFrame.from_dict(input_data, orient="index").T
-predictionsRO = predictions_SpineR(input_data, "single_patient")
-print(predictionsRO)
+input_data = preprocessSpine(input_data)
+input_data['sesso'] = input_data['sesso'].apply(check_gender)
+estimation = predictions_SpineR(input_data, "single_patient")
 
-#predictionsCO = predictions_SpineC(input_data, "dataset")
-#print(predictionsCO)
+print("R: ", estimation)
+
+
+
+input_data2 = pd.DataFrame.from_dict(input_data2, orient="index").T
+input_data2 = preprocessSpine(input_data2)
+input_data2['sesso'] = input_data2['sesso'].apply(check_gender)
+predictionsC = predictions_SpineC(input_data2, "single_patient")
+
+print("C: ",predictionsC)
+"""
 
 
 

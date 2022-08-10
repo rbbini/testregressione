@@ -1,11 +1,29 @@
 //import { makeDistroChart } from './distrochart.js';
 var http = new XMLHttpRequest();
 let javascript_data = {};
+/* fare la get dal sessionstorage */
+let dataType = 'physical';
+const jsonControfact = {
+    'counterfactual':
+            {'physical': [
+                ['anni_ricovero', 8.36, 7.29, 6.220000000000001, 5.144, 4.07, 3.0, 1.93, 0.8559999999999999, -0.2200000000000002, -1.29, -2.3600000000000003], ['SF12_PhysicalScore_PreOp', 6.9399999999999995, 6.15, 5.359999999999999, 4.58, 3.7880000000000003, 3.0, 2.2119999999999997, 1.42, 0.6400000000000001, -0.1499999999999999, -0.94]
+                ],
+                'mental': [
+                    ['SF12_PhysicalScore_PreOp', 6.9399999999999995, 6.15, 5.359999999999999, 4.58, 3.7880000000000003, 3.0, 2.2119999999999997, 1.42, 0.6400000000000001, -0.1499999999999999, -0.94], ['SF12_MentalScore_PreOp', 9.11, 7.89, 6.66, 5.4399999999999995, 4.22, 3.0, 1.78, 0.56, -0.6600000000000001, -1.8899999999999997, -3.1100000000000003]
+                ]
+            },
+        'predictions': [
+            {'SF12_PhysicalScore_6months': [38.3406572248497], 'SF12_MentalScore_6months': [38.80162549314018], 'age': [3]},
+            [{'anni_ricovero': 8.36, 'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'prediction': [39.27150789362343]}, {'anni_ricovero': 8.36, 'SF12_PhysicalScore_PreOp': 6.15, 'prediction': [39.040320754089805]}, {'anni_ricovero': 8.36, 'SF12_PhysicalScore_PreOp': 5.359999999999999, 'prediction': [38.80913361455619]}, {'anni_ricovero': 8.36, 'SF12_PhysicalScore_PreOp': 4.58, 'prediction': [38.580872894510335]}, {'anni_ricovero': 8.36, 'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'prediction': [38.34910047107916]}, {'anni_ricovero': 8.36, 'SF12_PhysicalScore_PreOp': 3.0, 'prediction': [38.118498615443094]}, {'anni_ricovero': 8.36, 'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'prediction': [37.88789675980702]}, {'anni_ricovero': 8.36, 'SF12_PhysicalScore_PreOp': 1.42, 'prediction': [37.65612433637585]}, {'anni_ricovero': 8.36, 'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'prediction': [37.42786361633]}, {'anni_ricovero': 8.36, 'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'prediction': [37.19667647679638]}, {'anni_ricovero': 8.36, 'SF12_PhysicalScore_PreOp': -0.94, 'prediction': [36.96548933726275]}, {'anni_ricovero': 7.29, 'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'prediction': [39.315856720501245]}, {'anni_ricovero': 7.29, 'SF12_PhysicalScore_PreOp': 6.15, 'prediction': [39.08466958096762]}, {'anni_ricovero': 7.29, 'SF12_PhysicalScore_PreOp': 5.359999999999999, 'prediction': [38.853482441434]}, {'anni_ricovero': 7.29, 'SF12_PhysicalScore_PreOp': 4.58, 'prediction': [38.625221721388144]}, {'anni_ricovero': 7.29, 'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'prediction': [38.39344929795698]}, {'anni_ricovero': 7.29, 'SF12_PhysicalScore_PreOp': 3.0, 'prediction': [38.16284744232091]}, {'anni_ricovero': 7.29, 'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'prediction': [37.932245586684836]}, {'anni_ricovero': 7.29, 'SF12_PhysicalScore_PreOp': 1.42, 'prediction': [37.70047316325366]}, {'anni_ricovero': 7.29, 'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'prediction': [37.47221244320781]}, {'anni_ricovero': 7.29, 'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'prediction': [37.24102530367419]}, {'anni_ricovero': 7.29, 'SF12_PhysicalScore_PreOp': -0.94, 'prediction': [37.00983816414057]}, {'anni_ricovero': 6.220000000000001, 'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'prediction': [39.36020554737905]}, {'anni_ricovero': 6.220000000000001, 'SF12_PhysicalScore_PreOp': 6.15, 'prediction': [39.129018407845436]}, {'anni_ricovero': 6.220000000000001, 'SF12_PhysicalScore_PreOp': 5.359999999999999, 'prediction': [38.89783126831181]}, {'anni_ricovero': 6.220000000000001, 'SF12_PhysicalScore_PreOp': 4.58, 'prediction': [38.66957054826596]}, {'anni_ricovero': 6.220000000000001, 'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'prediction': [38.437798124834785]}, {'anni_ricovero': 6.220000000000001, 'SF12_PhysicalScore_PreOp': 3.0, 'prediction': [38.20719626919872]}, {'anni_ricovero': 6.220000000000001, 'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'prediction': [37.97659441356265]}, {'anni_ricovero': 6.220000000000001, 'SF12_PhysicalScore_PreOp': 1.42, 'prediction': [37.74482199013147]}, {'anni_ricovero': 6.220000000000001, 'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'prediction': [37.51656127008562]}, {'anni_ricovero': 6.220000000000001, 'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'prediction': [37.285374130552]}, {'anni_ricovero': 6.220000000000001, 'SF12_PhysicalScore_PreOp': -0.94, 'prediction': [37.05418699101838]}, {'anni_ricovero': 5.144, 'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'prediction': [39.404803059267394]}, {'anni_ricovero': 5.144, 'SF12_PhysicalScore_PreOp': 6.15, 'prediction': [39.17361591973378]}, {'anni_ricovero': 5.144, 'SF12_PhysicalScore_PreOp': 5.359999999999999, 'prediction': [38.94242878020015]}, {'anni_ricovero': 5.144, 'SF12_PhysicalScore_PreOp': 4.58, 'prediction': [38.7141680601543]}, {'anni_ricovero': 5.144, 'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'prediction': [38.482395636723126]}, {'anni_ricovero': 5.144, 'SF12_PhysicalScore_PreOp': 3.0, 'prediction': [38.25179378108706]}, {'anni_ricovero': 5.144, 'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'prediction': [38.02119192545099]}, {'anni_ricovero': 5.144, 'SF12_PhysicalScore_PreOp': 1.42, 'prediction': [37.78941950201981]}, {'anni_ricovero': 5.144, 'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'prediction': [37.56115878197396]}, {'anni_ricovero': 5.144, 'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'prediction': [37.32997164244034]}, {'anni_ricovero': 5.144, 'SF12_PhysicalScore_PreOp': -0.94, 'prediction': [37.098784502906724]}, {'anni_ricovero': 4.07, 'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'prediction': [39.44931767615222]}, {'anni_ricovero': 4.07, 'SF12_PhysicalScore_PreOp': 6.15, 'prediction': [39.2181305366186]}, {'anni_ricovero': 4.07, 'SF12_PhysicalScore_PreOp': 5.359999999999999, 'prediction': [38.986943397084985]}, {'anni_ricovero': 4.07, 'SF12_PhysicalScore_PreOp': 4.58, 'prediction': [38.75868267703913]}, {'anni_ricovero': 4.07, 'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'prediction': [38.52691025360795]}, {'anni_ricovero': 4.07, 'SF12_PhysicalScore_PreOp': 3.0, 'prediction': [38.296308397971885]}, {'anni_ricovero': 4.07, 'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'prediction': [38.06570654233582]}, {'anni_ricovero': 4.07, 'SF12_PhysicalScore_PreOp': 1.42, 'prediction': [37.833934118904644]}, {'anni_ricovero': 4.07, 'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'prediction': [37.60567339885879]}, {'anni_ricovero': 4.07, 'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'prediction': [37.37448625932517]}, {'anni_ricovero': 4.07, 'SF12_PhysicalScore_PreOp': -0.94, 'prediction': [37.14329911979155]}, {'anni_ricovero': 3.0, 'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'prediction': [39.493666503030035]}, {'anni_ricovero': 3.0, 'SF12_PhysicalScore_PreOp': 6.15, 'prediction': [39.26247936349641]}, {'anni_ricovero': 3.0, 'SF12_PhysicalScore_PreOp': 5.359999999999999, 'prediction': [39.031292223962794]}, {'anni_ricovero': 3.0, 'SF12_PhysicalScore_PreOp': 4.58, 'prediction': [38.80303150391694]}, {'anni_ricovero': 3.0, 'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'prediction': [38.57125908048577]}, {'anni_ricovero': 3.0, 'SF12_PhysicalScore_PreOp': 3.0, 'prediction': [38.3406572248497]}, {'anni_ricovero': 3.0, 'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'prediction': [38.110055369213626]}, {'anni_ricovero': 3.0, 'SF12_PhysicalScore_PreOp': 1.42, 'prediction': [37.87828294578246]}, {'anni_ricovero': 3.0, 'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'prediction': [37.650022225736606]}, {'anni_ricovero': 3.0, 'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'prediction': [37.41883508620298]}, {'anni_ricovero': 3.0, 'SF12_PhysicalScore_PreOp': -0.94, 'prediction': [37.18764794666936]}, {'anni_ricovero': 1.93, 'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'prediction': [39.53801532990785]}, {'anni_ricovero': 1.93, 'SF12_PhysicalScore_PreOp': 6.15, 'prediction': [39.306828190374226]}, {'anni_ricovero': 1.93, 'SF12_PhysicalScore_PreOp': 5.359999999999999, 'prediction': [39.0756410508406]}, {'anni_ricovero': 1.93, 'SF12_PhysicalScore_PreOp': 4.58, 'prediction': [38.84738033079475]}, {'anni_ricovero': 1.93, 'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'prediction': [38.61560790736358]}, {'anni_ricovero': 1.93, 'SF12_PhysicalScore_PreOp': 3.0, 'prediction': [38.385006051727515]}, {'anni_ricovero': 1.93, 'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'prediction': [38.15440419609144]}, {'anni_ricovero': 1.93, 'SF12_PhysicalScore_PreOp': 1.42, 'prediction': [37.92263177266027]}, {'anni_ricovero': 1.93, 'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'prediction': [37.694371052614414]}, {'anni_ricovero': 1.93, 'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'prediction': [37.4631839130808]}, {'anni_ricovero': 1.93, 'SF12_PhysicalScore_PreOp': -0.94, 'prediction': [37.23199677354717]}, {'anni_ricovero': 0.8559999999999999, 'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'prediction': [39.582529946792675]}, {'anni_ricovero': 0.8559999999999999, 'SF12_PhysicalScore_PreOp': 6.15, 'prediction': [39.35134280725906]}, {'anni_ricovero': 0.8559999999999999, 'SF12_PhysicalScore_PreOp': 5.359999999999999, 'prediction': [39.12015566772544]}, {'anni_ricovero': 0.8559999999999999, 'SF12_PhysicalScore_PreOp': 4.58, 'prediction': [38.89189494767959]}, {'anni_ricovero': 0.8559999999999999, 'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'prediction': [38.66012252424841]}, {'anni_ricovero': 0.8559999999999999, 'SF12_PhysicalScore_PreOp': 3.0, 'prediction': [38.42952066861234]}, {'anni_ricovero': 0.8559999999999999, 'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'prediction': [38.198918812976274]}, {'anni_ricovero': 0.8559999999999999, 'SF12_PhysicalScore_PreOp': 1.42, 'prediction': [37.9671463895451]}, {'anni_ricovero': 0.8559999999999999, 'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'prediction': [37.73888566949925]}, {'anni_ricovero': 0.8559999999999999, 'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'prediction': [37.50769852996562]}, {'anni_ricovero': 0.8559999999999999, 'SF12_PhysicalScore_PreOp': -0.94, 'prediction': [37.276511390432006]}, {'anni_ricovero': -0.2200000000000002, 'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'prediction': [39.62712745868102]}, {'anni_ricovero': -0.2200000000000002, 'SF12_PhysicalScore_PreOp': 6.15, 'prediction': [39.3959403191474]}, {'anni_ricovero': -0.2200000000000002, 'SF12_PhysicalScore_PreOp': 5.359999999999999, 'prediction': [39.16475317961378]}, {'anni_ricovero': -0.2200000000000002, 'SF12_PhysicalScore_PreOp': 4.58, 'prediction': [38.93649245956793]}, {'anni_ricovero': -0.2200000000000002, 'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'prediction': [38.70472003613675]}, {'anni_ricovero': -0.2200000000000002, 'SF12_PhysicalScore_PreOp': 3.0, 'prediction': [38.47411818050068]}, {'anni_ricovero': -0.2200000000000002, 'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'prediction': [38.243516324864615]}, {'anni_ricovero': -0.2200000000000002, 'SF12_PhysicalScore_PreOp': 1.42, 'prediction': [38.01174390143344]}, {'anni_ricovero': -0.2200000000000002, 'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'prediction': [37.78348318138759]}, {'anni_ricovero': -0.2200000000000002, 'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'prediction': [37.552296041853964]}, {'anni_ricovero': -0.2200000000000002, 'SF12_PhysicalScore_PreOp': -0.94, 'prediction': [37.32110890232035]}, {'anni_ricovero': -1.29, 'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'prediction': [39.67147628555883]}, {'anni_ricovero': -1.29, 'SF12_PhysicalScore_PreOp': 6.15, 'prediction': [39.44028914602521]}, {'anni_ricovero': -1.29, 'SF12_PhysicalScore_PreOp': 5.359999999999999, 'prediction': [39.20910200649159]}, {'anni_ricovero': -1.29, 'SF12_PhysicalScore_PreOp': 4.58, 'prediction': [38.98084128644574]}, {'anni_ricovero': -1.29, 'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'prediction': [38.749068863014564]}, {'anni_ricovero': -1.29, 'SF12_PhysicalScore_PreOp': 3.0, 'prediction': [38.5184670073785]}, {'anni_ricovero': -1.29, 'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'prediction': [38.28786515174242]}, {'anni_ricovero': -1.29, 'SF12_PhysicalScore_PreOp': 1.42, 'prediction': [38.056092728311256]}, {'anni_ricovero': -1.29, 'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'prediction': [37.8278320082654]}, {'anni_ricovero': -1.29, 'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'prediction': [37.59664486873178]}, {'anni_ricovero': -1.29, 'SF12_PhysicalScore_PreOp': -0.94, 'prediction': [37.365457729198155]}, {'anni_ricovero': -2.3600000000000003, 'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'prediction': [39.71582511243665]}, {'anni_ricovero': -2.3600000000000003, 'SF12_PhysicalScore_PreOp': 6.15, 'prediction': [39.48463797290302]}, {'anni_ricovero': -2.3600000000000003, 'SF12_PhysicalScore_PreOp': 5.359999999999999, 'prediction': [39.2534508333694]}, {'anni_ricovero': -2.3600000000000003, 'SF12_PhysicalScore_PreOp': 4.58, 'prediction': [39.025190113323546]}, {'anni_ricovero': -2.3600000000000003, 'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'prediction': [38.79341768989238]}, {'anni_ricovero': -2.3600000000000003, 'SF12_PhysicalScore_PreOp': 3.0, 'prediction': [38.56281583425631]}, {'anni_ricovero': -2.3600000000000003, 'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'prediction': [38.33221397862024]}, {'anni_ricovero': -2.3600000000000003, 'SF12_PhysicalScore_PreOp': 1.42, 'prediction': [38.100441555189065]}, {'anni_ricovero': -2.3600000000000003, 'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'prediction': [37.87218083514321]}, {'anni_ricovero': -2.3600000000000003, 'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'prediction': [37.640993695609595]}, {'anni_ricovero': -2.3600000000000003, 'SF12_PhysicalScore_PreOp': -0.94, 'prediction': [37.40980655607597]}], [{'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'SF12_MentalScore_PreOp': 9.11, 'prediction': [40.758392348699715]}, {'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'SF12_MentalScore_PreOp': 7.89, 'prediction': [40.42213956839026]}, {'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'SF12_MentalScore_PreOp': 6.66, 'prediction': [40.083130617750385]}, {'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'SF12_MentalScore_PreOp': 5.4399999999999995, 'prediction': [39.74687783744093]}, {'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'SF12_MentalScore_PreOp': 4.22, 'prediction': [39.41062505713146]}, {'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'SF12_MentalScore_PreOp': 3.0, 'prediction': [39.074372276822004]}, {'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'SF12_MentalScore_PreOp': 1.78, 'prediction': [38.73811949651254]}, {'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'SF12_MentalScore_PreOp': 0.56, 'prediction': [38.401866716203074]}, {'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'SF12_MentalScore_PreOp': -0.6600000000000001, 'prediction': [38.06561393589361]}, {'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'SF12_MentalScore_PreOp': -1.8899999999999997, 'prediction': [37.72660498525374]}, {'SF12_PhysicalScore_PreOp': 6.9399999999999995, 'SF12_MentalScore_PreOp': -3.1100000000000003, 'prediction': [37.390352204944286]}, {'SF12_PhysicalScore_PreOp': 6.15, 'SF12_MentalScore_PreOp': 9.11, 'prediction': [40.70370454181935]}, {'SF12_PhysicalScore_PreOp': 6.15, 'SF12_MentalScore_PreOp': 7.89, 'prediction': [40.36745176150989]}, {'SF12_PhysicalScore_PreOp': 6.15, 'SF12_MentalScore_PreOp': 6.66, 'prediction': [40.02844281087002]}, {'SF12_PhysicalScore_PreOp': 6.15, 'SF12_MentalScore_PreOp': 5.4399999999999995, 'prediction': [39.69219003056056]}, {'SF12_PhysicalScore_PreOp': 6.15, 'SF12_MentalScore_PreOp': 4.22, 'prediction': [39.355937250251095]}, {'SF12_PhysicalScore_PreOp': 6.15, 'SF12_MentalScore_PreOp': 3.0, 'prediction': [39.01968446994164]}, {'SF12_PhysicalScore_PreOp': 6.15, 'SF12_MentalScore_PreOp': 1.78, 'prediction': [38.68343168963217]}, {'SF12_PhysicalScore_PreOp': 6.15, 'SF12_MentalScore_PreOp': 0.56, 'prediction': [38.34717890932271]}, {'SF12_PhysicalScore_PreOp': 6.15, 'SF12_MentalScore_PreOp': -0.6600000000000001, 'prediction': [38.01092612901325]}, {'SF12_PhysicalScore_PreOp': 6.15, 'SF12_MentalScore_PreOp': -1.8899999999999997, 'prediction': [37.67191717837338]}, {'SF12_PhysicalScore_PreOp': 6.15, 'SF12_MentalScore_PreOp': -3.1100000000000003, 'prediction': [37.33566439806392]}, {'SF12_PhysicalScore_PreOp': 5.359999999999999, 'SF12_MentalScore_PreOp': 9.11, 'prediction': [40.64901673493898]}, {'SF12_PhysicalScore_PreOp': 5.359999999999999, 'SF12_MentalScore_PreOp': 7.89, 'prediction': [40.312763954629524]}, {'SF12_PhysicalScore_PreOp': 5.359999999999999, 'SF12_MentalScore_PreOp': 6.66, 'prediction': [39.97375500398965]}, {'SF12_PhysicalScore_PreOp': 5.359999999999999, 'SF12_MentalScore_PreOp': 5.4399999999999995, 'prediction': [39.637502223680194]}, {'SF12_PhysicalScore_PreOp': 5.359999999999999, 'SF12_MentalScore_PreOp': 4.22, 'prediction': [39.30124944337073]}, {'SF12_PhysicalScore_PreOp': 5.359999999999999, 'SF12_MentalScore_PreOp': 3.0, 'prediction': [38.96499666306127]}, {'SF12_PhysicalScore_PreOp': 5.359999999999999, 'SF12_MentalScore_PreOp': 1.78, 'prediction': [38.628743882751806]}, {'SF12_PhysicalScore_PreOp': 5.359999999999999, 'SF12_MentalScore_PreOp': 0.56, 'prediction': [38.29249110244234]}, {'SF12_PhysicalScore_PreOp': 5.359999999999999, 'SF12_MentalScore_PreOp': -0.6600000000000001, 'prediction': [37.95623832213288]}, {'SF12_PhysicalScore_PreOp': 5.359999999999999, 'SF12_MentalScore_PreOp': -1.8899999999999997, 'prediction': [37.61722937149301]}, {'SF12_PhysicalScore_PreOp': 5.359999999999999, 'SF12_MentalScore_PreOp': -3.1100000000000003, 'prediction': [37.28097659118355]}, {'SF12_PhysicalScore_PreOp': 4.58, 'SF12_MentalScore_PreOp': 9.11, 'prediction': [40.59502117877862]}, {'SF12_PhysicalScore_PreOp': 4.58, 'SF12_MentalScore_PreOp': 7.89, 'prediction': [40.258768398469165]}, {'SF12_PhysicalScore_PreOp': 4.58, 'SF12_MentalScore_PreOp': 6.66, 'prediction': [39.91975944782929]}, {'SF12_PhysicalScore_PreOp': 4.58, 'SF12_MentalScore_PreOp': 5.4399999999999995, 'prediction': [39.583506667519835]}, {'SF12_PhysicalScore_PreOp': 4.58, 'SF12_MentalScore_PreOp': 4.22, 'prediction': [39.24725388721037]}, {'SF12_PhysicalScore_PreOp': 4.58, 'SF12_MentalScore_PreOp': 3.0, 'prediction': [38.91100110690091]}, {'SF12_PhysicalScore_PreOp': 4.58, 'SF12_MentalScore_PreOp': 1.78, 'prediction': [38.57474832659145]}, {'SF12_PhysicalScore_PreOp': 4.58, 'SF12_MentalScore_PreOp': 0.56, 'prediction': [38.23849554628198]}, {'SF12_PhysicalScore_PreOp': 4.58, 'SF12_MentalScore_PreOp': -0.6600000000000001, 'prediction': [37.902242765972524]}, {'SF12_PhysicalScore_PreOp': 4.58, 'SF12_MentalScore_PreOp': -1.8899999999999997, 'prediction': [37.56323381533265]}, {'SF12_PhysicalScore_PreOp': 4.58, 'SF12_MentalScore_PreOp': -3.1100000000000003, 'prediction': [37.226981035023194]}, {'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'SF12_MentalScore_PreOp': 9.11, 'prediction': [40.540194921754264]}, {'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'SF12_MentalScore_PreOp': 7.89, 'prediction': [40.2039421414448]}, {'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'SF12_MentalScore_PreOp': 6.66, 'prediction': [39.86493319080493]}, {'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'SF12_MentalScore_PreOp': 5.4399999999999995, 'prediction': [39.52868041049547]}, {'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'SF12_MentalScore_PreOp': 4.22, 'prediction': [39.192427630186]}, {'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'SF12_MentalScore_PreOp': 3.0, 'prediction': [38.856174849876545]}, {'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'SF12_MentalScore_PreOp': 1.78, 'prediction': [38.51992206956708]}, {'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'SF12_MentalScore_PreOp': 0.56, 'prediction': [38.18366928925762]}, {'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'SF12_MentalScore_PreOp': -0.6600000000000001, 'prediction': [37.84741650894816]}, {'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'SF12_MentalScore_PreOp': -1.8899999999999997, 'prediction': [37.50840755830829]}, {'SF12_PhysicalScore_PreOp': 3.7880000000000003, 'SF12_MentalScore_PreOp': -3.1100000000000003, 'prediction': [37.17215477799883]}, {'SF12_PhysicalScore_PreOp': 3.0, 'SF12_MentalScore_PreOp': 9.11, 'prediction': [40.4856455650179]}, {'SF12_PhysicalScore_PreOp': 3.0, 'SF12_MentalScore_PreOp': 7.89, 'prediction': [40.14939278470843]}, {'SF12_PhysicalScore_PreOp': 3.0, 'SF12_MentalScore_PreOp': 6.66, 'prediction': [39.81038383406857]}, {'SF12_PhysicalScore_PreOp': 3.0, 'SF12_MentalScore_PreOp': 5.4399999999999995, 'prediction': [39.4741310537591]}, {'SF12_PhysicalScore_PreOp': 3.0, 'SF12_MentalScore_PreOp': 4.22, 'prediction': [39.137878273449644]}, {'SF12_PhysicalScore_PreOp': 3.0, 'SF12_MentalScore_PreOp': 3.0, 'prediction': [38.80162549314018]}, {'SF12_PhysicalScore_PreOp': 3.0, 'SF12_MentalScore_PreOp': 1.78, 'prediction': [38.465372712830714]}, {'SF12_PhysicalScore_PreOp': 3.0, 'SF12_MentalScore_PreOp': 0.56, 'prediction': [38.129119932521256]}, {'SF12_PhysicalScore_PreOp': 3.0, 'SF12_MentalScore_PreOp': -0.6600000000000001, 'prediction': [37.79286715221179]}, {'SF12_PhysicalScore_PreOp': 3.0, 'SF12_MentalScore_PreOp': -1.8899999999999997, 'prediction': [37.453858201571926]}, {'SF12_PhysicalScore_PreOp': 3.0, 'SF12_MentalScore_PreOp': -3.1100000000000003, 'prediction': [37.11760542126246]}, {'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'SF12_MentalScore_PreOp': 9.11, 'prediction': [40.43109620828153]}, {'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'SF12_MentalScore_PreOp': 7.89, 'prediction': [40.09484342797207]}, {'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'SF12_MentalScore_PreOp': 6.66, 'prediction': [39.7558344773322]}, {'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'SF12_MentalScore_PreOp': 5.4399999999999995, 'prediction': [39.41958169702274]}, {'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'SF12_MentalScore_PreOp': 4.22, 'prediction': [39.08332891671328]}, {'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'SF12_MentalScore_PreOp': 3.0, 'prediction': [38.74707613640382]}, {'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'SF12_MentalScore_PreOp': 1.78, 'prediction': [38.410823356094355]}, {'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'SF12_MentalScore_PreOp': 0.56, 'prediction': [38.07457057578489]}, {'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'SF12_MentalScore_PreOp': -0.6600000000000001, 'prediction': [37.738317795475425]}, {'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'SF12_MentalScore_PreOp': -1.8899999999999997, 'prediction': [37.39930884483556]}, {'SF12_PhysicalScore_PreOp': 2.2119999999999997, 'SF12_MentalScore_PreOp': -3.1100000000000003, 'prediction': [37.0630560645261]}, {'SF12_PhysicalScore_PreOp': 1.42, 'SF12_MentalScore_PreOp': 9.11, 'prediction': [40.37626995125717]}, {'SF12_PhysicalScore_PreOp': 1.42, 'SF12_MentalScore_PreOp': 7.89, 'prediction': [40.040017170947706]}, {'SF12_PhysicalScore_PreOp': 1.42, 'SF12_MentalScore_PreOp': 6.66, 'prediction': [39.701008220307834]}, {'SF12_PhysicalScore_PreOp': 1.42, 'SF12_MentalScore_PreOp': 5.4399999999999995, 'prediction': [39.364755439998376]}, {'SF12_PhysicalScore_PreOp': 1.42, 'SF12_MentalScore_PreOp': 4.22, 'prediction': [39.02850265968891]}, {'SF12_PhysicalScore_PreOp': 1.42, 'SF12_MentalScore_PreOp': 3.0, 'prediction': [38.692249879379446]}, {'SF12_PhysicalScore_PreOp': 1.42, 'SF12_MentalScore_PreOp': 1.78, 'prediction': [38.35599709906999]}, {'SF12_PhysicalScore_PreOp': 1.42, 'SF12_MentalScore_PreOp': 0.56, 'prediction': [38.01974431876052]}, {'SF12_PhysicalScore_PreOp': 1.42, 'SF12_MentalScore_PreOp': -0.6600000000000001, 'prediction': [37.683491538451065]}, {'SF12_PhysicalScore_PreOp': 1.42, 'SF12_MentalScore_PreOp': -1.8899999999999997, 'prediction': [37.34448258781119]}, {'SF12_PhysicalScore_PreOp': 1.42, 'SF12_MentalScore_PreOp': -3.1100000000000003, 'prediction': [37.008229807501735]}, {'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'SF12_MentalScore_PreOp': 9.11, 'prediction': [40.32227439509681]}, {'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'SF12_MentalScore_PreOp': 7.89, 'prediction': [39.98602161478735]}, {'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'SF12_MentalScore_PreOp': 6.66, 'prediction': [39.647012664147475]}, {'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'SF12_MentalScore_PreOp': 5.4399999999999995, 'prediction': [39.31075988383802]}, {'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'SF12_MentalScore_PreOp': 4.22, 'prediction': [38.97450710352855]}, {'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'SF12_MentalScore_PreOp': 3.0, 'prediction': [38.63825432321909]}, {'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'SF12_MentalScore_PreOp': 1.78, 'prediction': [38.30200154290962]}, {'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'SF12_MentalScore_PreOp': 0.56, 'prediction': [37.965748762600164]}, {'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'SF12_MentalScore_PreOp': -0.6600000000000001, 'prediction': [37.6294959822907]}, {'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'SF12_MentalScore_PreOp': -1.8899999999999997, 'prediction': [37.290487031650834]}, {'SF12_PhysicalScore_PreOp': 0.6400000000000001, 'SF12_MentalScore_PreOp': -3.1100000000000003, 'prediction': [36.954234251341376]}, {'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'SF12_MentalScore_PreOp': 9.11, 'prediction': [40.267586588216446]}, {'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'SF12_MentalScore_PreOp': 7.89, 'prediction': [39.93133380790698]}, {'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'SF12_MentalScore_PreOp': 6.66, 'prediction': [39.59232485726711]}, {'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'SF12_MentalScore_PreOp': 5.4399999999999995, 'prediction': [39.25607207695765]}, {'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'SF12_MentalScore_PreOp': 4.22, 'prediction': [38.919819296648186]}, {'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'SF12_MentalScore_PreOp': 3.0, 'prediction': [38.58356651633872]}, {'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'SF12_MentalScore_PreOp': 1.78, 'prediction': [38.24731373602926]}, {'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'SF12_MentalScore_PreOp': 0.56, 'prediction': [37.9110609557198]}, {'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'SF12_MentalScore_PreOp': -0.6600000000000001, 'prediction': [37.57480817541034]}, {'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'SF12_MentalScore_PreOp': -1.8899999999999997, 'prediction': [37.23579922477047]}, {'SF12_PhysicalScore_PreOp': -0.1499999999999999, 'SF12_MentalScore_PreOp': -3.1100000000000003, 'prediction': [36.89954644446101]}, {'SF12_PhysicalScore_PreOp': -0.94, 'SF12_MentalScore_PreOp': 9.11, 'prediction': [40.21289878133608]}, {'SF12_PhysicalScore_PreOp': -0.94, 'SF12_MentalScore_PreOp': 7.89, 'prediction': [39.876646001026614]}, {'SF12_PhysicalScore_PreOp': -0.94, 'SF12_MentalScore_PreOp': 6.66, 'prediction': [39.53763705038675]}, {'SF12_PhysicalScore_PreOp': -0.94, 'SF12_MentalScore_PreOp': 5.4399999999999995, 'prediction': [39.201384270077284]}, {'SF12_PhysicalScore_PreOp': -0.94, 'SF12_MentalScore_PreOp': 4.22, 'prediction': [38.86513148976782]}, {'SF12_PhysicalScore_PreOp': -0.94, 'SF12_MentalScore_PreOp': 3.0, 'prediction': [38.52887870945836]}, {'SF12_PhysicalScore_PreOp': -0.94, 'SF12_MentalScore_PreOp': 1.78, 'prediction': [38.192625929148896]}, {'SF12_PhysicalScore_PreOp': -0.94, 'SF12_MentalScore_PreOp': 0.56, 'prediction': [37.85637314883944]}, {'SF12_PhysicalScore_PreOp': -0.94, 'SF12_MentalScore_PreOp': -0.6600000000000001, 'prediction': [37.52012036852997]}, {'SF12_PhysicalScore_PreOp': -0.94, 'SF12_MentalScore_PreOp': -1.8899999999999997, 'prediction': [37.18111141789011]}, {'SF12_PhysicalScore_PreOp': -0.94, 'SF12_MentalScore_PreOp': -3.1100000000000003, 'prediction': [36.84485863758064]}]
+        ]};
 
 window.addEventListener('load', function () {
-    let dashboard = document.getElementById('results');
-    dashboard.classList.add('d-none');
-    getResults();
+    createCounterfactual(jsonControfact.counterfactual);
+    //let dashboard = document.getElementById('results');
+    //dashboard.classList.add('d-none');
+    let spinner = document.getElementById('spinner');
+    spinner.classList.add('d-none');
+    //getResults();
 })
 let datasetCustom = [
     {period: 'preOp', SF12_MentalScore_6Months: 10.5},
@@ -35,6 +53,149 @@ let datasetCustom = [
     {period: '6Months', SF12_MentalScore_6Months: 33},
     {period: 'preOp', SF12_MentalScore_6Months: 24}
 ]
+
+// crea l''interfaccia utente per la parte del controfattuale.
+// bisogna passare come parametro l'array contenente gli array con i valori dei campi del controfattuale
+function createCounterfactual(counterfactData) {
+    if(dataType == 'physical'){
+        let isParam = document.getElementById('isPhysicalParam');
+        isParam.classList.add('d-flex');
+        for (let i = 0; i < 2; i++) {
+            let id = "counterfact" + i;
+            let p = document.getElementById(id + "p");
+            let select = document.getElementById(id + "sel");
+
+            // nome del campo controfattuale in uno dei paragrafi
+            if(counterfactData.physical[i][0] == 'anni_ricovero'){
+                p.innerHTML = 'Età';
+                for (let j = 1; j < 12; j++) {
+                    if (counterfactData.physical[i][j] > 0){
+                        let opt = document.createElement('option');
+                        opt.value = counterfactData.physical[i][j];
+                        opt.innerHTML = Math.round(counterfactData.physical[i][j]);
+                        if (j == 6) {
+                            opt.selected = "selected";
+                        }
+                        select.appendChild(opt);
+                    }
+                }
+            } else {
+                p.innerHTML = counterfactData.physical[i][0].replace('_', " ");
+                for (let j = 1; j < 12; j++) {
+                    if (counterfactData.physical[i][j] > 0){
+                        let opt = document.createElement('option');
+                        opt.value = counterfactData.physical[i][j];
+                        opt.innerHTML = counterfactData.physical[i][j].toFixed(2);
+                        if (j == 6) {
+                            opt.selected = "selected";
+                        }
+                        select.appendChild(opt);
+                    }
+                }
+            }
+
+        }
+    } else if(dataType == 'mental'){
+        let isParam = document.getElementById('isMentalParam');
+        isParam.classList.add('d-flex');
+        for (let i = 5; i < 7; i++) {
+            let id = "counterfact" + i;
+            let p = document.getElementById(id + "p");
+            let select = document.getElementById(id + "sel");
+
+            p.innerHTML = counterfactData.mental[i-5][0].replace('_'," ");
+
+            for (let j = 1; j < 12; j++) {
+                if (counterfactData.physical[i-5][j] > 0){
+                    let opt = document.createElement('option');
+                    opt.value = counterfactData.mental[i-5][j];
+                    opt.innerHTML = counterfactData.mental[i-5][j];
+                    if (j == 6) {
+                        opt.selected = "selected";
+                    }
+                    select.appendChild(opt);
+                }
+            }
+        }
+    } else if(dataType == 'ODI'){
+        let isParam = document.getElementById('isODIParam');
+        isParam.classList.add('d-flex');
+        for (let i = 5; i < 7; i++) {
+            let id = "counterfact" + i;
+            let p = document.getElementById(id + "p");
+            let select = document.getElementById(id + "sel");
+
+            p.innerHTML = counterfactData.ODI[i-5][0].replace('_'," ");
+
+            for (let j = 1; j < 12; j++) {
+                if (counterfactData.physical[i-5][j] > 0){
+                    let opt = document.createElement('option');
+                    opt.value = counterfactData.ODI[i-5][j];
+                    opt.innerHTML = counterfactData.ODI[i-5][j];
+                    if (j == 6) {
+                        opt.selected = "selected";
+                    }
+                    select.appendChild(opt);
+                }
+            }
+        }
+    }
+}
+
+
+function newResultsP(data = jsonControfact) {
+    const pred_len = data.predictions[1].length;
+
+    let p0 = document.getElementById("counterfact0p").innerHTML;
+    if(p0 == 'Età'){
+        p0 = 'anni_ricovero';
+    }
+    let select0 = document.getElementById("counterfact0sel");
+    let p1 = document.getElementById("counterfact1p").innerHTML.replace(' ',"_");
+    let select1 = document.getElementById("counterfact1sel");
+
+
+    // scorro l'attay delle predizioni controfattuali e:
+    // 1) controllo che tutti i campi del controfattuale siano nell'oggetto corrente
+    // 2) controllo che il valore dei campi dell'oggetto sia uguale al valore scelto dall'utente
+    // se i controlli sono superati inserisco il valore della predizione nella tabella
+    for (let i = 0; i < pred_len; i++){
+        if (p0 in data.predictions[1][i] && p1 in data.predictions[1][i]
+            /* && p2 in data.predictions[1][i] && p3 in data.predictions[1][i] && p4 in data.predictions[1][i] */){
+            if (select0.value == data.predictions[1][i][p0] && select1.value == data.predictions[1][i][p1]
+                /*&& select2.value == data.predictions[1][i][p2] && select3.value == data.predictions[1][i][p3] && select4.value == data.predictions[1][i][p4]*/){
+                //document.getElementById("valore1tab").innerHTML = data.predictions[1][i].prediction;
+                sessionStorage.setItem('physicalValPrediction', data.predictions[1][i].prediction);
+            }
+        }
+    }
+}
+
+
+function newResultsM(data = jsonControfact) {
+    //const data = JSON.parse(sessionStorage.getItem('data'));
+    const pred_len = data.predictions[2].length;
+
+    let p0 = document.getElementById("counterfact5p").innerHTML;
+    let select0 = document.getElementById("counterfact5sel");
+    let p1 = document.getElementById("counterfact6p").innerHTML;
+    let select1 = document.getElementById("counterfact6sel");
+
+    // confronto il mio oggetto "stringhificato" con gli oggetti del controfattuale "stringhitifati"
+    // e quando trovo una corrispondenza prendo il valore della predizione e lo metto nella tabella
+    // dei risultati
+    for (let i = 0; i < pred_len; i++){
+        if (p0 in data.predictions[2][i] && p1 in data.predictions[2][i]
+            /* && p2 in data.predictions[2][i] && p3 in data.predictions[2][i] && p4 in data.predictions[2][i] */){
+            if (select0.value == data.predictions[2][i][p0] && select1.value == data.predictions[2][i][p1]
+                /*&& select2.value == data.predictions[2][i][p2] && select3.value == data.predictions[2][i][p3] && select4.value == data.predictions[2][i][p4]*/){
+                //document.getElementById("valore2tab").innerHTML = data.predictions[2][i].prediction;
+                sessionStorage.setItem('mentalValPrediction', data.predictions[2][i].prediction);
+            }
+        }
+    }
+}
+
 function getResults() {
     const data = JSON.parse(sessionStorage.getItem('dataEl'));
 
