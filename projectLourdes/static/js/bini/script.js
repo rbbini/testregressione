@@ -1,6 +1,6 @@
 /* 
  * il json ha come primo elemento un oggetto con i campi del controfattuale. Questi campi sono degli array contenenti il valore originale e tutti i valori
- * modificati (+0.5, +0.4, ..., -0.5). Questo oggetto serve per mettere i dati nei drop-down menu più comodamente
+ * modificati (+0.5, +0.4, ..., -0.5). Questo oggetto serve per mettere i dati nei drop-down menu piï¿½ comodamente
  */
 
 var http = new XMLHttpRequest();
@@ -20,11 +20,11 @@ function createCounterfactual(counterfactData) {
         // nome del campo controfattuale in uno dei paragrafi
         p.innerHTML = counterfactData.physical[i][0];
 
-        for (let j = 1; j < 12; j++) {
+        for (let j = 1; j < 10; j++) {
             let opt = document.createElement('option');
             opt.value = counterfactData.physical[i][j];
             opt.innerHTML = counterfactData.physical[i][j];
-            if (j == 6) {
+            if (j == 5) {
                 opt.selected = "selected";
             }
             select.appendChild(opt);
@@ -40,11 +40,11 @@ function createCounterfactual(counterfactData) {
 
             p.innerHTML = counterfactData.mental[i-5][0];
 
-            for (let j = 1; j < 12; j++) {
+            for (let j = 1; j < 10; j++) {
                 let opt = document.createElement('option');
                 opt.value = counterfactData.mental[i-5][j];
                 opt.innerHTML = counterfactData.mental[i-5][j];
-                if (j == 6) {
+                if (j == 5) {
                     opt.selected = "selected";
                 }
                 select.appendChild(opt);
@@ -59,11 +59,11 @@ function createCounterfactual(counterfactData) {
 
             p.innerHTML = counterfactData.ODI[i-5][0];
 
-            for (let j = 1; j < 12; j++) {
+            for (let j = 1; j < 10; j++) {
                 let opt = document.createElement('option');
                 opt.value = counterfactData.ODI[i-5][j];
                 opt.innerHTML = counterfactData.ODI[i-5][j];
-                if (j == 6) {
+                if (j == 5) {
                     opt.selected = "selected";
                 }
                 select.appendChild(opt);

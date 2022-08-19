@@ -18,41 +18,12 @@ const jsonControfact = {
         ]};
 
 window.addEventListener('load', function () {
-    createCounterfactual(jsonControfact.counterfactual);
-    //let dashboard = document.getElementById('results');
-    //dashboard.classList.add('d-none');
+    let dashboard = document.getElementById('results');
+    dashboard.classList.add('d-none');
     let spinner = document.getElementById('spinner');
-    spinner.classList.add('d-none');
-    //getResults();
+    spinner.classList.add('d-block');
+    getResults();
 })
-let datasetCustom = [
-    {period: 'preOp', SF12_MentalScore_6Months: 10.5},
-    {period: '6Months', SF12_MentalScore_6Months: 12.5},
-    {period: 'preOp', SF12_MentalScore_6Months: 14.5},
-    {period: 'preOp', SF12_MentalScore_6Months: 15},
-    {period: '6Months', SF12_MentalScore_6Months: 6},
-    {period: '6Months', SF12_MentalScore_6Months: 20},
-    {period: 'preOp', SF12_MentalScore_6Months: 35},
-    {period: 'preOp', SF12_MentalScore_6Months: 10.5},
-    {period: '6Months', SF12_MentalScore_6Months: 10.5},
-    {period: 'preOp', SF12_MentalScore_6Months: 53},
-    {period: '6Months', SF12_MentalScore_6Months: 44},
-    {period: '6Months', SF12_MentalScore_6Months: 34},
-    {period: 'preOp', SF12_MentalScore_6Months: 23},
-    {period: 'preOp', SF12_MentalScore_6Months: 5},
-    {period: '6Months', SF12_MentalScore_6Months: 10.5},
-    {period: 'preOp', SF12_MentalScore_6Months: 14.5},
-    {period: '6Months', SF12_MentalScore_6Months: 17.5},
-    {period: 'preOp', SF12_MentalScore_6Months: 16.5},
-    {period: '6Months', SF12_MentalScore_6Months: 15.5},
-    {period: 'preOp', SF12_MentalScore_6Months: 10.5},
-    {period: '6Months', SF12_MentalScore_6Months: 67},
-    {period: 'preOp', SF12_MentalScore_6Months: 57},
-    {period: '6Months', SF12_MentalScore_6Months: 19},
-    {period: 'preOp', SF12_MentalScore_6Months: 44},
-    {period: '6Months', SF12_MentalScore_6Months: 33},
-    {period: 'preOp', SF12_MentalScore_6Months: 24}
-]
 
 // crea l''interfaccia utente per la parte del controfattuale.
 // bisogna passare come parametro l'array contenente gli array con i valori dei campi del controfattuale
@@ -68,12 +39,12 @@ function createCounterfactual(counterfactData) {
             // nome del campo controfattuale in uno dei paragrafi
             if(counterfactData.physical[i][0] == 'anni_ricovero'){
                 p.innerHTML = 'Età';
-                for (let j = 1; j < 12; j++) {
+                for (let j = 1; j < 10; j++) {
                     if (counterfactData.physical[i][j] > 0){
                         let opt = document.createElement('option');
                         opt.value = counterfactData.physical[i][j];
                         opt.innerHTML = Math.round(counterfactData.physical[i][j]);
-                        if (j == 6) {
+                        if (j == 5) {
                             opt.selected = "selected";
                         }
                         select.appendChild(opt);
@@ -81,12 +52,12 @@ function createCounterfactual(counterfactData) {
                 }
             } else {
                 p.innerHTML = counterfactData.physical[i][0].replace('_', " ");
-                for (let j = 1; j < 12; j++) {
+                for (let j = 1; j < 10; j++) {
                     if (counterfactData.physical[i][j] > 0){
                         let opt = document.createElement('option');
                         opt.value = counterfactData.physical[i][j];
                         opt.innerHTML = counterfactData.physical[i][j].toFixed(2);
-                        if (j == 6) {
+                        if (j == 5) {
                             opt.selected = "selected";
                         }
                         select.appendChild(opt);
@@ -105,12 +76,12 @@ function createCounterfactual(counterfactData) {
 
             p.innerHTML = counterfactData.mental[i-5][0].replace('_'," ");
 
-            for (let j = 1; j < 12; j++) {
+            for (let j = 1; j < 10; j++) {
                 if (counterfactData.physical[i-5][j] > 0){
                     let opt = document.createElement('option');
                     opt.value = counterfactData.mental[i-5][j];
                     opt.innerHTML = counterfactData.mental[i-5][j];
-                    if (j == 6) {
+                    if (j == 5) {
                         opt.selected = "selected";
                     }
                     select.appendChild(opt);
@@ -127,12 +98,12 @@ function createCounterfactual(counterfactData) {
 
             p.innerHTML = counterfactData.ODI[i-5][0].replace('_'," ");
 
-            for (let j = 1; j < 12; j++) {
+            for (let j = 1; j < 10; j++) {
                 if (counterfactData.physical[i-5][j] > 0){
                     let opt = document.createElement('option');
                     opt.value = counterfactData.ODI[i-5][j];
                     opt.innerHTML = counterfactData.ODI[i-5][j];
-                    if (j == 6) {
+                    if (j == 5) {
                         opt.selected = "selected";
                     }
                     select.appendChild(opt);
@@ -198,6 +169,7 @@ function newResultsM(data = jsonControfact) {
 
 function getResults() {
     const data = JSON.parse(sessionStorage.getItem('dataEl'));
+    createCounterfactual(data.predictionsR.counterfactual);
 
     /* scatter plot */
     let margin = {top: 10, right: 30, bottom: 100, left: 100},
@@ -220,8 +192,12 @@ function getResults() {
     const scoreValue = sessionStorage.getItem('score');
     /* funzione separata per organizzare il codice */
     controlloTabelle(zonaOp, scoreValue);
-    let dataViz = data[3];
-    let patientData = data[0];
+    let dataViz = data.predictionsR.similar_patients;
+    let patientData = {
+        SF12_MentalScore_6months: data.predictionsR.predictions[0].SF12_MentalScore_6months[0],
+        SF12_PhysicalScore_6months: data.predictionsR.predictions[0].SF12_PhysicalScore_6months[0],
+        age: data.predictionsR.predictions[0].age[0]
+    };
     let objToAnalyze = [];
     if(scoreValue == 'Phisycal'){
         objToAnalyze = dataViz.slice(0,4);
@@ -278,8 +254,10 @@ function getResults() {
             .attr("r", 3)
             .style("fill", function (d) { return color(d.isTester) } )
     }
-    violinPlots(datasetCustom, 'period', 'SF12_MentalScore_6Months');
+    violinPlots(data.predictionsR.other_patients, 'period', 'score');
     plotWithBoxPlot(patientData);
+    let barPosition = document.getElementById('valueBar');
+    barPosition.style.left = data.predictionsC.mental_classif_score[0] * 100 + '%';
     setTimeout(function() {
         let dashboard = document.getElementById('results');
         dashboard.classList.remove('d-none');
@@ -349,8 +327,8 @@ function plotWithBoxPlot(dataset){
         .data(newDataset)
         .enter()
         .append("circle")
-        .attr("cx", function (d) { return x(d.SF12_MentalScore_6months[0]); } )
-        .attr("cy", function (d) { return y(d.SF12_PhysicalScore_6months[0]); } )
+        .attr("cx", function (d) { return x(d.SF12_MentalScore_6months); } )
+        .attr("cy", function (d) { return y(d.SF12_PhysicalScore_6months); } )
         .attr("r", 3)
         .style("fill", '#BADAE9' )
 
@@ -359,8 +337,8 @@ function plotWithBoxPlot(dataset){
         .data(newDataset)
         .enter()
         .append('circle')
-        .attr("cx", function (d) { return x(d.SF12_MentalScore_6months[0]); } )
-        .attr("cy", function (d) { return y(d.SF12_PhysicalScore_6months[0]); } )
+        .attr("cx", function (d) { return x(d.SF12_MentalScore_6months); } )
+        .attr("cy", function (d) { return y(d.SF12_PhysicalScore_6months); } )
         .attr('r', 10)
         .attr('stroke', '#BADAE9')
         .attr('fill', 'none');
@@ -372,15 +350,15 @@ function plotWithBoxPlot(dataset){
         .data(newDataset)
         .enter()
         .append("line")
-        .attr("x1", function(d){return(x(d.SF12_MentalScore_6months[0]))})
-        .attr("x2", function(d){return(x(d.SF12_MentalScore_6months[0]))})
-        .attr("y1", function(d){return(y(d.SF12_PhysicalScore_6months[0] + 10))})
-        .attr("y2", function(d){return(y(d.SF12_PhysicalScore_6months[0] - 10))})
+        .attr("x1", function(d){return(x(d.SF12_MentalScore_6months))})
+        .attr("x2", function(d){return(x(d.SF12_MentalScore_6months))})
+        .attr("y1", function(d){return(y(d.SF12_PhysicalScore_6months + 10))})
+        .attr("y2", function(d){return(y(d.SF12_PhysicalScore_6months - 10))})
         .attr("stroke", "#BADAE9")
         .style("width", 1)
 }
 
-function violinPlots(dataset, xGroup, yValue){
+function violinPlots(dataset){
     var margin = {top: 10, right: 30, bottom: 30, left: 40},
         width = 460 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
@@ -396,14 +374,14 @@ function violinPlots(dataset, xGroup, yValue){
 
         // Build and Show the Y scale
         var y = d3.scaleLinear()
-            .domain([ 0,100 ])          // Note that here the Y scale is set manually
+            .domain([ 0,1 ])          // Note that here the Y scale is set manually
             .range([height, 0])
         svg.append("g").call( d3.axisLeft(y) )
 
         // Build and Show the X scale. It is a band scale like for a boxplot: each group has an dedicated RANGE on the axis. This range has a length of x.bandwidth
         var x = d3.scaleBand()
             .range([ 0, width ])
-            .domain(["preOp", "6Months"])
+            .domain(["preOp", "6motnhs"])
             .padding(0.05)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
         svg.append("g")
             .attr("transform", "translate(0," + height + ")")
@@ -419,7 +397,7 @@ function violinPlots(dataset, xGroup, yValue){
        var sumstat = d3.nest()  // nest function allows to group the calculation per level of a factor
             .key(function(d) { return d.period;})
             .rollup(function(d) {   // For each key..
-                input = d.map(function(g) { return g.SF12_MentalScore_6Months;})    // Keep the variable called Sepal_Length
+                input = d.map(function(g) { return g.score;})    // Keep the variable called Sepal_Length
                 bins = histogram(input)   // And compute the binning on it.
                 return(bins)
             })
@@ -460,10 +438,10 @@ function violinPlots(dataset, xGroup, yValue){
         var sumstatBox = d3.nest() // nest function allows to group the calculation per level of a factor
             .key(function(d) { return d.period;})
             .rollup(function(d) {
-                q1 = d3.quantile(d.map(function(g) { return g.SF12_MentalScore_6Months;}).sort(d3.ascending),.25)
-                median = d3.quantile(d.map(function(g) { return g.SF12_MentalScore_6Months;}).sort(d3.ascending),.5)
-                patient = JSON.parse(sessionStorage.getItem('dataEl'))[0].SF12_PhysicalScore_6months[0]
-                q3 = d3.quantile(d.map(function(g) { return g.SF12_MentalScore_6Months;}).sort(d3.ascending),.75)
+                q1 = d3.quantile(d.map(function(g) { return g.score;}).sort(d3.ascending),.25)
+                median = d3.quantile(d.map(function(g) { return g.score;}).sort(d3.ascending),.5)
+                patient = JSON.parse(sessionStorage.getItem('dataEl')).predictionsC.mental_classif_score[0]
+                q3 = d3.quantile(d.map(function(g) { return g.score;}).sort(d3.ascending),.75)
                 interQuantileRange = q3 - q1
                 min = q1 - 1.5 * interQuantileRange
                 max = q3 + 1.5 * interQuantileRange
@@ -474,13 +452,13 @@ function violinPlots(dataset, xGroup, yValue){
         // Show the X scale
         var x = d3.scaleBand()
             .range([ 0, width ])
-            .domain(["preOp", "6Months"])
+            .domain(["preOp", "6motnhs"])
             .paddingInner(10.2)
             .paddingOuter(.52)
 
         // Show the Y scale
         var y = d3.scaleLinear()
-            .domain([0,100])
+            .domain([0,1])
             .range([height, 0])
     svg.append("g").call(d3.axisLeft(y))
 

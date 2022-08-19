@@ -19,10 +19,10 @@
 				</div>
 			</nav>
 		</header>
-		<div class="container my-5">
+		<div class="container my-5" id="indexEl">
 			<div class="row">
 				<div class="head-form pt-4 d-flex justify-content-between align-items-start col-lg-8 col-12 mx-auto">
-					<button class="btn btn-blue text-uppercase activeBtn">1</button>
+					<button class="btn btn-blue text-uppercase activeBtn" id="btnStep1">1</button>
 					<div class="lineToNext" id="goStep2"></div>
 					<button class="btn btn-blue text-uppercase" id="btnStep2">2</button>
 					<div class="lineToNext" id="goStep3"></div>
@@ -186,16 +186,6 @@
 								</select>
 								<small></small>
 							</div>
-<!--							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">-->
-<!--								<label for="data_operazione" class="form-label">Date of operation</label>-->
-<!--								<input class="form-control" aria-label="Data operazione" id="data_operazione" name="data_operazione" type="date" max="2021-05-05">-->
-<!--								<small></small>-->
-<!--							</div>-->
-<!--							<div class="form-group col-xl-4 col-md-6 col-12 mb-3">-->
-<!--								<label for="data_dimissione" class="form-label">Date of dimission</label>-->
-<!--								<input class="form-control" aria-label="Data dimissione" id="data_dimissione" name="data_dimissione" type="date" max="2021-05-05">-->
-<!--								<small></small>-->
-<!--							</div>-->
 						</div>
 						<div class="row d-none" id="isAnca2"> <!-- per anca-->
 							<div class="form-group col-xl-3 col-md-6 col-12 mb-3">
@@ -597,6 +587,21 @@
 		<!--			</button>-->
 				</div>
 			</form>
+		</div>
+		<div id="spinner" class="justify-content-center align-items-center my-5 py-4 d-none">
+			<strong class="text-darker-blue me-4">Loading results</strong>
+			<div class="spinner-grow text-darker-blue mx-2" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+			<div class="spinner-grow text-blue mx-2" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+			<div class="spinner-grow text-azure mx-2" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+			<div class="spinner-grow text-celeste mx-2" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
 		</div>
 		<script rel="script" src="/static/js/script.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
