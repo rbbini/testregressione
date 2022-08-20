@@ -146,27 +146,6 @@ def output():
                 "SF36_PhysicalScore_PreOp": form["SF36_PhysicalScore_PreOp"],
                 "fabqworkpreop": form["FABQ_Work_PreOp"],
                 "classe_asa_1": form["classe_asa_1"],
-            }
-
-            input_dataC = {
-                "nome_operazione": form["nome_operazione"],
-                "sesso": form["sesso"],
-                "anni ricovero": form["anni_ricovero"],
-                "ODI_Total_PreOp": form["ODI_Total_PreOp"],
-                "Vas_Back_PreOp": form["Vas_Back_PreOp"],
-                "Vas_Leg_PreOp": form["Vas_Leg_PreOp"],
-                "SF36_GeneralHealth_PreOp": form["SF36_GeneralHealth_PreOp"],
-                "SF36_PhysicalFunctioning_PreOp": form["SF36_PhysicalFunctioning_PreOp"],
-                "SF36_RoleLimitPhysical_PreOp": form["SF36_RoleLimitPhysical_PreOp"],
-                "SF36_RoleLimitEmotional_PreOp": form["SF36_RoleLimitEmotional_PreOp"],
-                "SF36_SocialFunctioning_PreOp": form["SF36_SocialFunctioning_PreOp"],
-                "SF36_Pain_PreOp": form["SF36_Pain_PreOp"],
-                "SF36energyfatiguepreop": form["SF36_EnergyFatigue_PreOp"],
-                "SF36_EmotionalWellBeing_PreOp": form["SF36_EmotionalWellBeing_PreOp"],
-                "SF36_MentalScore_PreOp": form["SF36_MentalScore_PreOp"],
-                "SF36_PhysicalScore_PreOp": form["SF36_PhysicalScore_PreOp"],
-                "fabqworkpreop": form["FABQ_Work_PreOp"],
-                "classe_asa_1": form["classe_asa_1"],
                 "MORBIDITY": form["MORBIDITY"],
             }
 
@@ -174,12 +153,8 @@ def output():
             input_data = preprocessSpine(input_data)
             input_data['sesso'] = input_data['sesso'].apply(check_gender)
 
-            input_dataC = pd.DataFrame.from_dict(input_dataC, orient="index").T
-            input_dataC = preprocessSpine(input_data)
-            input_dataC['sesso'] = input_dataC['sesso'].apply(check_gender)
-
             predictionsR = predictions_SpineR(input_data, "single_patient")
-            predictionsC = predictions_SpineC(input_dataC, "single_patient")
+            predictionsC = predictions_SpineC(input_data, "single_patient")
 
             results = {
                 "predictionsR": predictionsR,
