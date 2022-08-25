@@ -1,6 +1,7 @@
 var http = new XMLHttpRequest();
 let javascript_data = {};
 let valid = false;
+let patientPreop = {};
 const dataStructAnca = [
     'score',
     'sesso',
@@ -162,6 +163,10 @@ function goToResults() {
                 showError(inputEl, 'check the values of fields');
                 valid = false;
             }
+        }
+        patientPreop = {
+            mentalScore_PreOp: document.getElementById('SF36_MentalScore_PreOp'),
+            physicalScore_PreOp: document.getElementById('SF36_PhysicalScore_PreOp')
         };
     } else  {
         for (let i= 0; i < dataStructAnca.length; i++){
@@ -171,6 +176,10 @@ function goToResults() {
                 showError(inputEl, 'check the values of fields');
                 valid = false;
             }
+        }
+        patientPreop = {
+            mentalScore_PreOp: document.getElementById('mentalScore'),
+            physicalScore_PreOp: document.getElementById('physicalScore')
         };
     }
     if(valid) {
@@ -207,7 +216,8 @@ function getRequest(data){
                 return;
             } else {
                 sessionStorage.setItem('dataEl', JSON.stringify(rawdata));
-                sessionStorage.setItem('score',JSON.stringify(document.getElementById('score').value))
+                sessionStorage.setItem('score',JSON.stringify(document.getElementById('score').value));
+                sessionStorage.setItem('dataPreop', JSON.stringify(patientPreop));
                 window.location.href = 'results';
             }
 

@@ -95,11 +95,11 @@ small {
 /*}*/
 
 .circular-graph {
-    width: 100px;
-    height: 100px;
+    width: 160px;
+    height: 160px;
     background-image: conic-gradient(var(--grad-mig), #9AD9E6, var(--grad-inv), #F18250, var(--grad-peg));
-    border-radius: 50px;
-    padding: 10px;
+    border-radius: 100px;
+    padding: 30px;
     transform: rotate(-45deg);
 }
 .content-wrapper {
@@ -149,13 +149,11 @@ textPath {
     fill: var(--azure-color);
 }
 .improved {
-    top: 11px;
-    left: -113px;
-    width: 125px;
-    transform: scale(2.5);
+    top: -9px;
+    left: 3px;
 }
-.improved > svg {
-    transform: rotate(120deg);
+.improved img {
+    width: 100%;
 }
 .bar-el {
     width: 50px;
@@ -199,15 +197,27 @@ textPath {
     display: block;
 }
 
-.chart-wrapper > .position-absolute{
+.isBoxGrad{
     top: 10px;
     left: 40px;
-    right: 0;
+    right: 10px;
     bottom: 40px;
-    background: linear-gradient(130deg, var(--grad-mig) 33%, rgba(0, 0, 0, 0) 33%), linear-gradient(130deg, var(--grad-inv) 66%, var(--grad-peg) 66%);
+    width: 300px;
+    background: linear-gradient(-45deg, var(--grad-mig) 40%, rgba(0, 0, 0, 0) 40%), linear-gradient(-45deg, var(--grad-inv) 60%, var(--grad-peg) 60%);
     z-index: -1;
 }
 
-#isPhysicalParam, #isMentalParam, #isODIParam {
+#isPhysicalParam, #isMentalParam, #isODIParam, #results {
     display: none;
+}
+.border.border-blue {
+    border: 1px solid #93E1ED!important;
+    border-radius: 20px;
+}
+.border.border-blue h3 {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 120%;
+     color: var(--azure-color);
+    margin-bottom: 35px;
 }

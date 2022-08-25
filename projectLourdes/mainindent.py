@@ -10,11 +10,10 @@ from utilsindent import (
     predictions_SpineC
 )
 
-
-
 app = Flask(__name__)
 
 path = os.getcwd()
+IMG_FOLDER = os.path.join('static', 'img')
 UPLOAD_FOLDER = os.path.join(path, "static")
 
 # CREAZIONE CARTELLA static SE NON ESISTE
@@ -24,6 +23,7 @@ if not os.path.isdir(UPLOAD_FOLDER):
 ALLOWED_EXTENSIONS = {"xlsx", "xls"}
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = IMG_FOLDER
 app.config["ALLOWED_EXTENSIONS"] = ALLOWED_EXTENSIONS
 
 
@@ -34,17 +34,18 @@ def allowed_file(filename):
 
 @app.route("/", methods=["GET", "POST"])
 def home_page():
-    return render_template("index.html")
+    full_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'info.png')
+    return render_template("index.html", info_image=full_filename)
 
 
 @app.route("/results", methods=["GET", "POST"])
 def results():
-    return render_template("results.html")
+    full_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'stateofCircle.png')
+    return render_template("results.html", circle_image=full_filename)
 
 
 @app.route("/data/analysis", methods=["POST"])
 def output():
-
     if "dataSource" in request.form and request.form.get("dataSource") == "manually":
         file = request.files["file"]
         if file.filename == "":
@@ -122,7 +123,7 @@ def output():
 
             return json_results
 
-    #Spine
+        # Spine
         elif request.form.get("zona_operazione") == '2':
 
             form = request.form
@@ -169,11 +170,5 @@ def output():
         abort(400)
 
 
-
-
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-
-
