@@ -17,7 +17,7 @@ window.addEventListener('load', function () {
 // crea l''interfaccia utente per la parte del controfattuale.
 // bisogna passare come parametro l'array contenente gli array con i valori dei campi del controfattuale
 function createCounterfactual(counterfactData, dataType) {
-    if(dataType == 'Phisycal'){
+    if(dataType == 'Physical'){
         let isParam = document.getElementById('isPhysicalParam');
         isParam.classList.add('d-flex');
         for (let i = 0; i < 2; i++) {
@@ -128,7 +128,6 @@ function newResultsP() {
             if (select0.value == dataPrediction[i][p0] && select1.value == dataPrediction[i][p1]
                 /*&& select2.value == data.predictions[1][i][p2] && select3.value == data.predictions[1][i][p3] && select4.value == data.predictions[1][i][p4]*/){
                 //document.getElementById("valore1tab").innerHTML = data.predictions[1][i].prediction;
-                clearViz();
 
                 objOfPatient = {
                     predictionR_6M: dataPrediction[i].predictionR[0],
@@ -140,6 +139,7 @@ function newResultsP() {
                     scoreCPreOp: data.predictionsC.physical_classif_score[0],
                     age: dataPrediction[i].anni_ricovero
                 }
+                clearViz();
                 getResults(objOfPatient);
                 // sessionStorage.setItem('physicalValPrediction', dataPrediction[i].prediction);
             }
@@ -169,7 +169,6 @@ function newResultsM() {
                 /*&& select2.value == data.predictions[2][i][p2] && select3.value == data.predictions[2][i][p3] && select4.value == data.predictions[2][i][p4]*/){
                 //document.getElementById("valore2tab").innerHTML = data.predictions[2][i].prediction;
                 // sessionStorage.setItem('mentalValPrediction', dataPrediction[i].prediction);
-                clearViz();
                 objOfPatient = {
                     predictionR_6M: dataPrediction[i].predictionR[0],
                     predictionC_6M: dataPrediction[i].predictionC[0],
@@ -180,6 +179,7 @@ function newResultsM() {
                     scoreCPreOp: data.predictionsC.mental_classif_score[0],
                     age: data.predictionsR.predictions[0].age
                 }
+                clearViz();
                 getResults(objOfPatient);
             }
         }
@@ -201,6 +201,9 @@ function clearViz() {
     }
 }
 function getResults(patientObj) {
+    let dashboard = document.getElementById('results');
+    let spinner = document.getElementById('spinner');
+    spinner.classList.add('d-block');
     /* scatter plot */
     let margin = {top: 10, right: 30, bottom: 100, left: 100},
         width = 400 - margin.left - margin.right,
@@ -224,7 +227,7 @@ function getResults(patientObj) {
     let dataViz = data.predictionsR.similar_patients;
     let patientData = patientObj;
     let objToAnalyze = [];
-    if(scoreValue == 'Phisycal'){
+    if(scoreValue == 'Physical'){
         objToAnalyze = dataViz.slice(0,4);
         objToAnalyze.forEach(el => {
             el.isTester = 'noF';
@@ -257,7 +260,7 @@ function getResults(patientObj) {
         .domain(["yes", "noM", "noF" ])
         .range([ "#961A3C", "#E2A525", "#046697"])
     // Add dots
-    if(scoreValue == 'Phisycal'){
+    if(scoreValue == 'Physical'){
         svg.append('g')
             .selectAll("dot")
             .data(objToAnalyze)
@@ -309,9 +312,7 @@ function getResults(patientObj) {
     let circlePosition = document.getElementById('circleGradient');
     circlePosition.style.backgroundPositionX = patientObj.predictionC_6M * 100 + '%';
     setTimeout(function() {
-        let dashboard = document.getElementById('results');
         dashboard.classList.add('d-block');
-        let spinner = document.getElementById('spinner');
         spinner.classList.add('d-none');
     }, 3000);
 }
@@ -354,7 +355,7 @@ function plotWithBoxPlot(dataset, scoreVAL){
         .call(d3.axisLeft(y).ticks(6));
 
 
-    if(scoreVAL == 'Phisycal') {
+    if(scoreVAL == 'Physical') {
         svg.append('g')
             .selectAll("dot")
             .data(newDataset)
@@ -645,10 +646,27 @@ function violinPlots(dataset, patient){
             .attr("x1", function(d){return(x(d.key)-boxWidth/2) })
             .attr("x2", function(d){return(x(d.key)+boxWidth/2) })
             .attr("y1", function(d){return(y(d.value.patient.scoreCPreOp))})
-            .attr("y2", function(d){return(y(d.value.patient.predictionC_6M))})
+            .attr("y2", function(d){return(y(d.value.patient.scoreCPreOp))})
             .attr("stroke", "#000")
+            .attr("class", "lineP")
             .attr("stroke-width", 1)
             .attr("fill", "none");
+    svg.selectAll("indPoints")
+        .data(sumstatBox)
+        .enter()
+        .append("line")
+        .attr("x1", function(d){return(x(d.key)-boxWidth/2) })
+        .attr("x2", function(d){return(x(d.key)+boxWidth/2) })
+        .attr("y1", function(d){return(y(d.value.patient.predictionC_6M))})
+        .attr("y2", function(d){return(y(d.value.patient.predictionC_6M))})
+        .attr("stroke", "#000")
+        .attr("class", "line6")
+        .attr("stroke-width", 1)
+        .attr("fill", "none");
+    let line_post = document.getElementsByClassName('line6');
+    let line_pre = document.getElementsByClassName('lineP');
+    line_post[0].classList.add('d-none');
+    line_pre[1].classList.add('d-none');
 }
 
 function evalPred(type){

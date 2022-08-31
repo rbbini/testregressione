@@ -139,6 +139,34 @@ small {
     height: 10px;
     background-color: var(--grad-peg);
 }
+.pred:before {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 8px;
+    width: 10px;
+    height: 2px;
+    background-color: #000;
+}
+.dens:before  {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 8px;
+    width: 10px;
+    height: 15px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background-color: #c4c4c4;
+}
+.media:before  {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 8px;
+    width: 10px;
+    height: 2px;
+    background-color: #CFE6F3;
+}
 path {
     fill: transparent;
 }

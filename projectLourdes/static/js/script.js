@@ -165,8 +165,8 @@ function goToResults() {
             }
         }
         patientPreop = {
-            mentalScore_PreOp: document.getElementById('SF36_MentalScore_PreOp'),
-            physicalScore_PreOp: document.getElementById('SF36_PhysicalScore_PreOp')
+            mentalScore_PreOp: document.getElementById('SF36_MentalScore_PreOp').value,
+            physicalScore_PreOp: document.getElementById('SF36_PhysicalScore_PreOp').value
         };
     } else  {
         for (let i= 0; i < dataStructAnca.length; i++){
@@ -178,8 +178,8 @@ function goToResults() {
             }
         }
         patientPreop = {
-            mentalScore_PreOp: document.getElementById('mentalScore'),
-            physicalScore_PreOp: document.getElementById('physicalScore')
+            mentalScore_PreOp: document.getElementById('mentalScore').value,
+            physicalScore_PreOp: document.getElementById('physicalScore').value
         };
     }
     if(valid) {
