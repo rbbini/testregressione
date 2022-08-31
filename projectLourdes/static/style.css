@@ -167,6 +167,19 @@ small {
     height: 2px;
     background-color: #CFE6F3;
 }
+.similar:before {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 8px;
+    width: 10px;
+    height: 10px;
+    border-radius: 6px;
+    background-color: #E2A525;
+}
+.peg.rounded-pill:before {
+    border-radius: 6px;
+}
 path {
     fill: transparent;
 }
