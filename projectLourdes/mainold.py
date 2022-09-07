@@ -2,7 +2,7 @@ from flask import Flask, flash, request, render_template, jsonify, abort
 from werkzeug.utils import secure_filename
 import os
 import pandas as pd
-from utilsST import preprocessing, predictions_hip_6months
+from utils import preprocessing, predictions_hip_6months
 
 app = Flask(__name__)
 
