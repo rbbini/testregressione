@@ -2,6 +2,8 @@ var http = new XMLHttpRequest();
 let javascript_data = {};
 let valid = false;
 let patientPreop = {};
+
+// Structure defined to control required parameters at the submit of form
 const dataStructAnca = [
     'score',
     'sesso',

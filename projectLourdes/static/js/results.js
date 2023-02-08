@@ -3,6 +3,7 @@ let data;
 let scoreValue;
 let dataPreop;
 
+// Listener in load page to set loader starter and get parameters from sessionStorage
 window.addEventListener('load', function () {
     let dashboard = document.getElementById('results');
     dashboard.classList.remove('d-block');
@@ -14,9 +15,10 @@ window.addEventListener('load', function () {
     createCounterfactual(data.predictionsR.counterfactual, scoreValue);
 })
 
-// crea l''interfaccia utente per la parte del controfattuale.
-// bisogna passare come parametro l'array contenente gli array con i valori dei campi del controfattuale
+// counterfactual function
+// this function need to pass the array with the arrays with values of elements of counterfactual
 function createCounterfactual(counterfactData, dataType) {
+    // Control to change label of select in results page (input to control dynamic change of dashboard) for physical score data, ODI score data and mental score data
     if(dataType == 'Physical'){
         let isParam = document.getElementById('isPhysicalParam');
         isParam.classList.add('d-flex');
@@ -104,7 +106,7 @@ function createCounterfactual(counterfactData, dataType) {
     }
 }
 
-
+// Function to set new results coordinate by physical score
 function newResultsP() {
     const dataPrediction = data.predictionsR.predictions[1];
     const pred_len = dataPrediction.length;
@@ -148,6 +150,7 @@ function newResultsP() {
 }
 
 
+// Function to set new results coordinate by mental or ODI score
 function newResultsM() {
     //const data = JSON.parse(sessionStorage.getItem('data'));
     const dataPrediction = data.predictionsR.predictions[2];
@@ -186,6 +189,7 @@ function newResultsM() {
     }
 }
 
+// Function to clear data in visualization when value changes
 function clearViz() {
     let scatter = document.getElementById('scatterPlot1');
     if(scatter.hasChildNodes()) {
@@ -200,6 +204,8 @@ function clearViz() {
         violin.removeChild(violin.children[0]);
     }
 }
+
+// Function to get result by passing patient parameters from form page
 function getResults(patientObj) {
     let dashboard = document.getElementById('results');
     let spinner = document.getElementById('spinner');
@@ -218,11 +224,7 @@ function getResults(patientObj) {
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
-    /* aggiungere un controllo che fa visualizzare elementi nella tabella se zonaOp è settato a 2 (spine) o 0 e 1 (knee e hip)
-    * così da gestire i dati che vengono visualizzati in tabella per i diversi tipi di classificazione
-    * Volendo si può gestire la visualizzazione o meno di tabelle distinte a seconda del caso anche in relazione allo scoreValue */
 
-    /* funzione separata per organizzare il codice */
     // controlloTabelle(zonaOp, scoreValue);
     let dataViz = data.predictionsR.similar_patients;
     let patientData = patientObj;
@@ -258,7 +260,7 @@ function getResults(patientObj) {
 
     var color = d3.scaleOrdinal()
         .domain(["yes", "noM", "noF" ])
-        .range([ "#961A3C", "#E2A525", "#046697"])
+        .range([ "#961A3C", "#E2A525", "#E2A525"])
     // Add dots
     if(scoreValue == 'Physical'){
         svg.append('g')
@@ -305,6 +307,7 @@ function getResults(patientObj) {
             .attr("x", -margin.top - 150)
             .text("SF12 Mental Score");
     }
+    console.log(data.predictionsR.other_patients, patientData);
     violinPlots(data.predictionsR.other_patients, patientData);
     plotWithBoxPlot(patientData, scoreValue);
     let barPosition = document.getElementById('valueBar');
@@ -321,6 +324,7 @@ function transferFailed(){
     return alert("An error occurred while transferring the file.");
 }
 
+// Function to create box plot in violin plots
 function plotWithBoxPlot(dataset, scoreVAL){
     let newDataset = [];
     newDataset.push(dataset);
@@ -466,6 +470,7 @@ function plotWithBoxPlot(dataset, scoreVAL){
     }
 }
 
+// Function to create violin plots - this visualization is a combination of box plot and violin plot
 function violinPlots(dataset, patient){
     var margin = {top: 10, right: 30, bottom: 30, left: 40},
         width = 460 - margin.left - margin.right,
@@ -669,6 +674,7 @@ function violinPlots(dataset, patient){
     line_pre[1].classList.add('d-none');
 }
 
+// Function to open modal for evaluation
 function evalPred(type){
     let modale = document.getElementById('evalModal');
     if(!modale.classList.contains('show')){

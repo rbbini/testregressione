@@ -108,7 +108,7 @@ small {
     border: 2px solid var(--white-color);
     border-radius: 50%;
     background-image: linear-gradient(135deg,var(--grad-mig), #9AD9E6, var(--grad-inv), #F18250, var(--grad-peg));
-    background-size: 600%;
+    background-size: 1200%;
     background-position: 0% 50%;
 }
 
