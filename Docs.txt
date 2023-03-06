@@ -1,0 +1,55 @@
+Di seguito una breve descrizione delle funzioni presenti in utils.py.
+Una descrizione più dettagliata sul funzionamento delle funzioni è 
+presente all'interno del codice.
+
+
+check_gender(x: str) -> str
+	Funzione che ritorna 0 se "x" = 'm', 1 se "x" = 'f'.
+	viene usata per convertire il sesso del paziente in ingresso
+	in un numero.
+
+
+most_similar_scores(all_scores: list, ages: list, input_score: list, 
+		input_age: int) -> list:
+	Funzione che ritorna una lista contenente i 5 pazienti più 
+	simili a quello in ingresso.
+
+
+preprocessSpine(data_preop: DataFrame) -> DataFrame:
+	Funzione usata per il preprocessing dei dati nel caso "spine".
+
+
+pred_counterfact(data_to_pred: dataFrame, counterfact_values: list, 
+		counterfact_fields: list, model_nameR: str, model_nameC: str) -> list:
+	Funzione per il calcolo dei valori della parte controfattuale.
+
+
+predictions_hipAndKneeR(data_to_pred: DataFrame, mode: str) -> dict:
+	Funzione per il calcolo di:
+		- predizioni (sia mentale che fisica) del task 
+		  regressivo sui dati del paziente in input
+        	- dati controfattuali
+        	- i 5 pazienti piu' simili a quello in input
+	per anca e ginocchio.
+
+
+predictions_hipAndKneeC(data_to_pred: DataFrame, mode: str) -> dict:
+	Funzione per il calcolo delle predizioni (mentale e 
+	fisica) del task classificatorio per anca e 
+	ginocchio.
+
+
+predictions_SpineR(data_to_pred: DataFrame, mode: str) -> dict:
+	Funzione per il calcolo di:
+		- predizioni (sia mentale che fisica) del task 
+		  regressivo sui dati del paziente in input
+        	- dati controfattuali
+        	- i 5 pazienti piu' simili a quello in input
+	per spina dorsale.
+
+
+predictions_SpineC(data_to_pred: DataFrame, mode: str) -> dict:
+	Funzione per il calcolo delle predizioni (mentale e 
+	fisica) del task classificatorio per spina dorsale.
+
+

@@ -1,3 +1,12 @@
+"""
+Questo file serve per far comunicare front-end e back-end.
+
+In particolare i dati inseriti nel form vengono presi, preprocessati
+e usati per ricavare delle predizioni (attraverso le funzioni presenti 
+in utils.py).
+
+Il resto del codice serve appunto per la comunicazione con il front-end
+"""
 from flask import Flask, flash, request, render_template, jsonify, abort
 import os
 import pandas as pd
@@ -16,10 +25,12 @@ path = os.getcwd()
 IMG_FOLDER = os.path.join('static', 'img')
 UPLOAD_FOLDER = os.path.join(path, "static")
 
-# CREAZIONE CARTELLA static SE NON ESISTE
+# creazione cartella static se non esiste
 if not os.path.isdir(UPLOAD_FOLDER):
     os.mkdir(UPLOAD_FOLDER)
 
+# fino a riga 34 servirebbe per l'inserimento del dataset in input, ma
+# non e' un'opzione al momento funzionante, va implementata.
 ALLOWED_EXTENSIONS = {"xlsx", "xls"}
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -46,6 +57,8 @@ def results():
 
 @app.route("/data/analysis", methods=["POST"])
 def output():
+    # parte dedicata all'inserimento in input di un dataset. 
+    #   non funzionante, deve essere implementata
     if "dataSource" in request.form and request.form.get("dataSource") == "manually":
         file = request.files["file"]
         if file.filename == "":
@@ -59,7 +72,7 @@ def output():
 
         # predizioni:
         #   zona_operazione ==  0 o 1 -> anca/ginocchio
-        #   zona_operazione ==  2 -> colonna spinale
+        #   zona_operazione ==  2 -> spina dorsale
         if request.form.get("zona_operazione") == 0 or request.form.get("zona_operazione") == 1:
             # predizioni sia del physical che del mental score
             predictionsR = predictions_hipAndKneeR(dataset, "dataset")
@@ -81,11 +94,18 @@ def output():
         json_results = jsonify(results)
         return json_results
 
-
+    # parte dedicata all'inserimento delle informazioni di un singolo 
+    # paziente.
+    # i dati inseriti nel form sono inseriti in un dict convertito poi 
+    # in un dataframe.
+    # viene applicato un preprocessing sul sesso del paziente, poi si 
+    # calcolano le predizioni.
+    # il dict con le predizioni viene convertito in un json che viene 
+    # ritornato al front-end
     elif "dataSource" in request.form and request.form.get("dataSource") == "patientEpisode":
         form = request.form
 
-        # knee/hip
+        # anca/ginocchio
         if request.form.get("zona_operazione") == '0' or request.form.get("zona_operazione") == '1':
 
             input_data = {
@@ -123,7 +143,7 @@ def output():
 
             return json_results
 
-        # Spine
+        # spina dorsale
         elif request.form.get("zona_operazione") == '2':
 
             form = request.form
@@ -131,7 +151,7 @@ def output():
             input_data = {
                 "nome_operazione": form["nome_operazione"],
                 "sesso": form["sesso"],
-                "anni ricovero": form["anni_ricovero"],
+                "anni_ricovero": form["anni_ricovero"],
                 "ODI_Total_PreOp": form["ODI_Total_PreOp"],
                 "Vas_Back_PreOp": form["Vas_Back_PreOp"],
                 "Vas_Leg_PreOp": form["Vas_Leg_PreOp"],
@@ -141,15 +161,17 @@ def output():
                 "SF36_RoleLimitEmotional_PreOp": form["SF36_RoleLimitEmotional_PreOp"],
                 "SF36_SocialFunctioning_PreOp": form["SF36_SocialFunctioning_PreOp"],
                 "SF36_Pain_PreOp": form["SF36_Pain_PreOp"],
-                "SF36energyfatiguepreop": form["SF36_EnergyFatigue_PreOp"],
+                "SF36_EnergyFatigue_PreOp": form["SF36_EnergyFatigue_PreOp"],
                 "SF36_EmotionalWellBeing_PreOp": form["SF36_EmotionalWellBeing_PreOp"],
                 "SF36_MentalScore_PreOp": form["SF36_MentalScore_PreOp"],
                 "SF36_PhysicalScore_PreOp": form["SF36_PhysicalScore_PreOp"],
-                "fabqworkpreop": form["FABQ_Work_PreOp"],
+                "FABQ_Work_PreOp": form["FABQ_Work_PreOp"],
                 "classe_asa_1": form["classe_asa_1"],
                 "MORBIDITY": form["MORBIDITY"],
             }
 
+            # nel caso della spina dorsale il preprocessing richiede un
+            # passo aggiuntivo (preprocessSpine)
             input_data = pd.DataFrame.from_dict(input_data, orient="index").T
             input_data = preprocessSpine(input_data)
             input_data['sesso'] = input_data['sesso'].apply(check_gender)

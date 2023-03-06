@@ -3,7 +3,6 @@ let data;
 let scoreValue;
 let dataPreop;
 
-// Listener in load page to set loader starter and get parameters from sessionStorage
 window.addEventListener('load', function () {
     let dashboard = document.getElementById('results');
     dashboard.classList.remove('d-block');
@@ -15,26 +14,43 @@ window.addEventListener('load', function () {
     createCounterfactual(data.predictionsR.counterfactual, scoreValue);
 })
 
-// counterfactual function
-// this function need to pass the array with the arrays with values of elements of counterfactual
+/* 
+ * crea l'interfaccia utente per la parte del controfattuale.
+ * counterfactData e' l'array contenente gli array con i valori dei 
+ * campi del controfattuale.
+ * 
+ * in base allo score selezionato nel form iniziale si agisce in modo
+ * leggermente differente:
+ *      - score fisico: vengono selezionati gli oggetti con id 
+ *        'counterfact1' fino a 'counterfact4', viene chiamata la
+ *        funzione newResultsP()
+ *      - score mentale/ODI: vengono selezionati gli oggetti con id
+ *        'counterfact5' fino a 'counterfact8', viene chiamata la
+ *        funzione newResultsM()
+ */
 function createCounterfactual(counterfactData, dataType) {
-    // Control to change label of select in results page (input to control dynamic change of dashboard) for physical score data, ODI score data and mental score data
-    if(dataType == 'Physical'){
+    if (dataType == 'Physical') {
         let isParam = document.getElementById('isPhysicalParam');
         isParam.classList.add('d-flex');
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 4; i++) {
             let id = "counterfact" + i;
             let p = document.getElementById(id + "p");
             let select = document.getElementById(id + "sel");
 
-            // nome del campo controfattuale in uno dei paragrafi
-            if(counterfactData.physical[i][0] == 'anni_ricovero'){
+            // uno dei campi nel controfattuale si chiama
+            // 'anni_ricovero', ma noi lo mostriamo all'utente
+            // come 'Età'
+            if (counterfactData.physical[i][0] == 'anni_ricovero') {
                 p.innerHTML = 'Età';
                 for (let j = 1; j < 10; j++) {
-                    if (counterfactData.physical[i][j] > 0){
+                    if (counterfactData.physical[i][j] > 0) {
+                        // creo una option per ogni valore presente in
+                        // counterfactData.physical
                         let opt = document.createElement('option');
                         opt.value = counterfactData.physical[i][j];
                         opt.innerHTML = Math.round(counterfactData.physical[i][j]);
+                        // la quinta option (cioe' lo score non alternativo) viene
+                        // usato come scelta di default
                         if (j == 5) {
                             opt.selected = "selected";
                         }
@@ -44,7 +60,7 @@ function createCounterfactual(counterfactData, dataType) {
             } else {
                 p.innerHTML = counterfactData.physical[i][0].replace('_', " ");
                 for (let j = 1; j < 10; j++) {
-                    if (counterfactData.physical[i][j] > 0){
+                    if (counterfactData.physical[i][j] > 0) {
                         let opt = document.createElement('option');
                         opt.value = counterfactData.physical[i][j];
                         opt.innerHTML = counterfactData.physical[i][j].toFixed(2);
@@ -58,21 +74,25 @@ function createCounterfactual(counterfactData, dataType) {
 
         }
         newResultsP();
-    } else if(dataType == 'Mental'){
+    } else if (dataType == 'Mental') {
         let isParam = document.getElementById('isMentalParam');
         isParam.classList.add('d-flex');
-        for (let i = 5; i < 7; i++) {
+        for (let i = 5; i < 9; i++) {
             let id = "counterfact" + i;
             let p = document.getElementById(id + "p");
             let select = document.getElementById(id + "sel");
 
-            p.innerHTML = counterfactData.mental[i-5][0].replace('_'," ");
+            p.innerHTML = counterfactData.mental[i - 5][0].replace('_', " ");
 
             for (let j = 1; j < 10; j++) {
-                if (counterfactData.physical[i-5][j] > 0){
+                if (counterfactData.mental[i - 5][j] > 0) {
+                    // creo una option per ogni valore presente in
+                    // counterfactData.mental
                     let opt = document.createElement('option');
-                    opt.value = counterfactData.mental[i-5][j];
-                    opt.innerHTML = counterfactData.mental[i-5][j];
+                    opt.value = counterfactData.mental[i - 5][j];
+                    opt.innerHTML = counterfactData.mental[i - 5][j].toFixed(2);
+                    // la quinta option (cioe' lo score non alternativo) viene
+                    // usato come scelta di default
                     if (j == 5) {
                         opt.selected = "selected";
                     }
@@ -82,54 +102,91 @@ function createCounterfactual(counterfactData, dataType) {
         }
         newResultsM();
     } else if(dataType == 'ODI'){
-        let isParam = document.getElementById('isODIParam');
+        let isParam = document.getElementById('isMentalParam');
         isParam.classList.add('d-flex');
-        for (let i = 5; i < 7; i++) {
+        for (let i = 5; i < 9; i++) {
             let id = "counterfact" + i;
             let p = document.getElementById(id + "p");
             let select = document.getElementById(id + "sel");
 
-            p.innerHTML = counterfactData.ODI[i-5][0].replace('_'," ");
+            if (counterfactData.ODI[i - 5][0] == 'anni_ricovero') {
+                p.innerHTML = 'Età';
 
-            for (let j = 1; j < 10; j++) {
-                if (counterfactData.physical[i-5][j] > 0){
-                    let opt = document.createElement('option');
-                    opt.value = counterfactData.ODI[i-5][j];
-                    opt.innerHTML = counterfactData.ODI[i-5][j];
-                    if (j == 5) {
-                        opt.selected = "selected";
+                for (let j = 1; j < 10; j++) {
+                    if (counterfactData.ODI[i - 5][j] > 0) {
+                        // creo una option per ogni valore presente in
+                        // counterfactData.mental
+                        let opt = document.createElement('option');
+                        opt.value = counterfactData.ODI[i - 5][j];
+                        opt.innerHTML = Math.round(counterfactData.ODI[i - 5][j]);
+                        // la quinta option (cioe' lo score non alternativo) viene
+                        // usato come scelta di default
+                        if (j == 5) {
+                            opt.selected = "selected";
+                        }
+                        select.appendChild(opt);
                     }
-                    select.appendChild(opt);
+                }
+            } else {
+                p.innerHTML = counterfactData.ODI[i - 5][0].replace('_', " ");
+                for (let j = 1; j < 10; j++) {
+                    if (counterfactData.ODI[i - 5][j] > 0) {
+                        let opt = document.createElement('option');
+                        opt.value = counterfactData.ODI[i - 5][j];
+                        opt.innerHTML = counterfactData.ODI[i - 5][j].toFixed(2);
+                        if (j == 5) {
+                            opt.selected = "selected";
+                        }
+                        select.appendChild(opt);
+                    }
                 }
             }
         }
+        newResultsM();
     }
 }
 
-// Function to set new results coordinate by physical score
+
+/*
+ * funzione chiamata ogni volta che si modifica il valore di un campo 
+ * del controfattuale. 
+ * quando succede si scorre l'array delle predizioni controfattuali e:
+ * 1) controllo che tutti i campi del controfattuale siano nell'oggetto 
+ *    corrente
+ * 2) controllo che il valore dei campi dell'oggetto sia uguale al valore 
+ *    scelto dall'utente
+ * se i controlli sono superati creo un nuovo objOfPatient con i valori
+ * aggiornati e lo passo come parametro a getResults
+ */
 function newResultsP() {
     const dataPrediction = data.predictionsR.predictions[1];
     const pred_len = dataPrediction.length;
     let objOfPatient;
-    let p0 = document.getElementById("counterfact0p").innerHTML;
-    if(p0 == 'Età'){
-        p0 = 'anni_ricovero';
-    }
+    let p0 = document.getElementById("counterfact0p").innerHTML.replaceAll(' ',"_");
     let select0 = document.getElementById("counterfact0sel");
     let p1 = document.getElementById("counterfact1p").innerHTML.replaceAll(' ',"_");
     let select1 = document.getElementById("counterfact1sel");
+    let p2 = document.getElementById("counterfact2p").innerHTML.replaceAll(' ',"_");
+    let select2 = document.getElementById("counterfact2sel");
+    let p3 = document.getElementById("counterfact3p").innerHTML.replaceAll(' ',"_");
+    let select3 = document.getElementById("counterfact3sel");
+    if(p0 == 'Età'){
+        p0 = 'anni_ricovero';
+    } else if (p1 == 'Età') {
+        p1 = 'anni_ricovero';
+    } else if (p2 == 'Età') {
+        p2 = 'anni_ricovero';
+    } else if (p3 == 'Età') {
+        p3 = 'anni_ricovero';
+    }
 
 
-    // scorro l'attay delle predizioni controfattuali e:
-    // 1) controllo che tutti i campi del controfattuale siano nell'oggetto corrente
-    // 2) controllo che il valore dei campi dell'oggetto sia uguale al valore scelto dall'utente
-    // se i controlli sono superati inserisco il valore della predizione nella tabella
     for (let i = 0; i < pred_len; i++){
-        if (p0 in dataPrediction[i] && p1 in dataPrediction[i]
-            /* && p2 in data.predictions[1][i] && p3 in data.predictions[1][i] && p4 in data.predictions[1][i] */){
-            if (select0.value == dataPrediction[i][p0] && select1.value == dataPrediction[i][p1]
-                /*&& select2.value == data.predictions[1][i][p2] && select3.value == data.predictions[1][i][p3] && select4.value == data.predictions[1][i][p4]*/){
-                //document.getElementById("valore1tab").innerHTML = data.predictions[1][i].prediction;
+        if (p0 in dataPrediction[i] && p1 in dataPrediction[i] && p2 in dataPrediction[i] && p3 in dataPrediction[i]
+            /* && p4 in data.predictions[1][i] */) {
+            if (select0.value == dataPrediction[i][p0] && select1.value == dataPrediction[i][p1] && select2.value == dataPrediction[i][p2]
+                && select3.value == dataPrediction[i][p3]
+                /* && select4.value == data.predictions[1][i][p4]*/) {
 
                 objOfPatient = {
                     predictionR_6M: dataPrediction[i].predictionR[0],
@@ -150,7 +207,17 @@ function newResultsP() {
 }
 
 
-// Function to set new results coordinate by mental or ODI score
+/*
+ * funzione chiamata ogni volta che si modifica il valore di un campo
+ * del controfattuale.
+ * quando succede si scorre l'array delle predizioni controfattuali e:
+ * 1) controllo che tutti i campi del controfattuale siano nell'oggetto
+ *    corrente
+ * 2) controllo che il valore dei campi dell'oggetto sia uguale al valore
+ *    scelto dall'utente
+ * se i controlli sono superati creo un nuovo objOfPatient con i valori
+ * aggiornati e lo passo come parametro a getResults
+ */
 function newResultsM() {
     //const data = JSON.parse(sessionStorage.getItem('data'));
     const dataPrediction = data.predictionsR.predictions[2];
@@ -161,17 +228,29 @@ function newResultsM() {
     let select0 = document.getElementById("counterfact5sel");
     let p1 = document.getElementById("counterfact6p").innerHTML.replaceAll(' ',"_");
     let select1 = document.getElementById("counterfact6sel");
+    let p2 = document.getElementById("counterfact7p").innerHTML.replaceAll(' ',"_");
+    let select2 = document.getElementById("counterfact7sel");
+    let p3 = document.getElementById("counterfact8p").innerHTML.replaceAll(' ',"_");
+    let select3 = document.getElementById("counterfact8sel");
+    if (p0 == 'Età') {
+        p0 = 'anni_ricovero';
+    } else if (p1 == 'Età') {
+        p1 = 'anni_ricovero';
+    } else if (p2 == 'Età') {
+        p2 = 'anni_ricovero';
+    } else if (p3 == 'Età') {
+        p3 = 'anni_ricovero';
+    }
 
-    // confronto il mio oggetto "stringhificato" con gli oggetti del controfattuale "stringhitifati"
-    // e quando trovo una corrispondenza prendo il valore della predizione e lo metto nella tabella
-    // dei risultati
+
     for (let i = 0; i < pred_len; i++){
-        if (p0 in dataPrediction[i] && p1 in dataPrediction[i]
-            /* && p2 in data.predictions[2][i] && p3 in data.predictions[2][i] && p4 in data.predictions[2][i] */){
-            if (select0.value == dataPrediction[i][p0] && select1.value == dataPrediction[i][p1]
-                /*&& select2.value == data.predictions[2][i][p2] && select3.value == data.predictions[2][i][p3] && select4.value == data.predictions[2][i][p4]*/){
-                //document.getElementById("valore2tab").innerHTML = data.predictions[2][i].prediction;
+        if (p0 in dataPrediction[i] && p1 in dataPrediction[i] && p2 in dataPrediction[i] && p3 in dataPrediction[i]
+            /* && p4 in data.predictions[2][i] */){
+            if (select0.value == dataPrediction[i][p0] && select1.value == dataPrediction[i][p1] && select2.value == dataPrediction[i][p2]
+                && select3.value == dataPrediction[i][p3]
+                /* && select4.value == data.predictions[2][i][p4] */){
                 // sessionStorage.setItem('mentalValPrediction', dataPrediction[i].prediction);
+
                 objOfPatient = {
                     predictionR_6M: dataPrediction[i].predictionR[0],
                     predictionC_6M: dataPrediction[i].predictionC[0],
@@ -189,7 +268,6 @@ function newResultsM() {
     }
 }
 
-// Function to clear data in visualization when value changes
 function clearViz() {
     let scatter = document.getElementById('scatterPlot1');
     if(scatter.hasChildNodes()) {
@@ -204,8 +282,6 @@ function clearViz() {
         violin.removeChild(violin.children[0]);
     }
 }
-
-// Function to get result by passing patient parameters from form page
 function getResults(patientObj) {
     let dashboard = document.getElementById('results');
     let spinner = document.getElementById('spinner');
@@ -224,7 +300,11 @@ function getResults(patientObj) {
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
+    /* aggiungere un controllo che fa visualizzare elementi nella tabella se zonaOp è settato a 2 (spine) o 0 e 1 (knee e hip)
+    * così da gestire i dati che vengono visualizzati in tabella per i diversi tipi di classificazione
+    * Volendo si può gestire la visualizzazione o meno di tabelle distinte a seconda del caso anche in relazione allo scoreValue */
 
+    /* funzione separata per organizzare il codice */
     // controlloTabelle(zonaOp, scoreValue);
     let dataViz = data.predictionsR.similar_patients;
     let patientData = patientObj;
@@ -260,7 +340,7 @@ function getResults(patientObj) {
 
     var color = d3.scaleOrdinal()
         .domain(["yes", "noM", "noF" ])
-        .range([ "#961A3C", "#E2A525", "#E2A525"])
+        .range([ "#961A3C", "#E2A525", "#046697"])
     // Add dots
     if(scoreValue == 'Physical'){
         svg.append('g')
@@ -307,7 +387,6 @@ function getResults(patientObj) {
             .attr("x", -margin.top - 150)
             .text("SF12 Mental Score");
     }
-    console.log(data.predictionsR.other_patients, patientData);
     violinPlots(data.predictionsR.other_patients, patientData);
     plotWithBoxPlot(patientData, scoreValue);
     let barPosition = document.getElementById('valueBar');
@@ -324,7 +403,6 @@ function transferFailed(){
     return alert("An error occurred while transferring the file.");
 }
 
-// Function to create box plot in violin plots
 function plotWithBoxPlot(dataset, scoreVAL){
     let newDataset = [];
     newDataset.push(dataset);
@@ -470,7 +548,6 @@ function plotWithBoxPlot(dataset, scoreVAL){
     }
 }
 
-// Function to create violin plots - this visualization is a combination of box plot and violin plot
 function violinPlots(dataset, patient){
     var margin = {top: 10, right: 30, bottom: 30, left: 40},
         width = 460 - margin.left - margin.right,
@@ -674,7 +751,6 @@ function violinPlots(dataset, patient){
     line_pre[1].classList.add('d-none');
 }
 
-// Function to open modal for evaluation
 function evalPred(type){
     let modale = document.getElementById('evalModal');
     if(!modale.classList.contains('show')){

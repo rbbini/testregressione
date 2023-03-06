@@ -1,0 +1,6 @@
+Al progetto possono essere aggiunte ancora delle funzionalità, per
+esempio potrebbe essere implementata:
+
+- la gestione di un dataset dato in ingresso
+- una funzione per la ricerca dei 5 pazienti più simili a quello
+  dato in ingresso
